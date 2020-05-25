@@ -79,19 +79,20 @@ ctf_classes.register("medic", {
 	},
 })
 
---[[ctf_classes.register("rocketeer", {
-	description = "Rocketeer",
-	pros = { "Can craft rockets" },
+ctf_classes.register("grenadier", {
+	description = "Grenadier",
+	pros = { "Can use the grenade launcher" },
 	cons = {},
 	color = "#fa0",
 	properties = {
 		initial_stuff = {
-			"shooter_rocket:rocket_gun_loaded",
-			"shooter_rocket:rocket 4",
+			"grenade_launcher:launcher_loaded",
+			"shooter_guns:pistol",
+			"grenades:frag 4",
 		},
 
-		additional_item_blacklist = {
-			"shooter_rocket:rocket_gun",
+		item_blacklist = {
+			"grenade_launcher:launcher",
 		},
 
 		allowed_guns = {
@@ -99,9 +100,5 @@ ctf_classes.register("medic", {
 			"shooter_guns:machine_gun",
 			"shooter_guns:shotgun",
 		},
-
-		crafting = {
-			"shooter_rocket:rocket"
-		},
 	},
-})]]
+})

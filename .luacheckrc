@@ -1,45 +1,54 @@
 unused_args = false
-allow_defined_top = true
-
-exclude_files = {
-	"mods/mtg/default",
-	"mods/ctf_pvp_engine",
-	"mods/pvp/shooter",
-	"mods/other/wield3d",
-	"mods/other/treasurer",
-	"mods/other/hudbars",
-}
-
-ignore = {"631"}
 
 globals = {
-	"crafting", "vector", "table", "minetest", "worldedit", "ctf", "ctf_flag",
-	"ctf_colors", "hudkit", "default", "treasurer", "ChatCmdBuilder", "ctf_map",
-	"ctf_match", "ctf_stats", "ctf_treasure", "ctf_playertag", "chatplus", "irc",
-	"armor", "vote", "give_initial_stuff", "hud_score", "physics", "tsm_chests",
-	"armor", "shooter", "grenades", "ctf_classes", "ctf_bandages", "ctf_respawn_immunity",
-	"ctf_marker", "kill_assist"
+	"ctf_core", "ctf_map", "ctf_teams",
+
+	"PlayerObj", "PlayerName", "HumanReadable",
+	"ChatCmdBuilder", "hudkit",
+
+	"physics", "give_initial_stuff", "medkits", "grenades", "dropondie",
+	"vote", "random_messages", "sfinv", "email", "hb", "wield3d", "irc",
+	"default", "skybox",
+
+	"vector",
+}
+
+exclude_files = {
+	"mods/other/crafting",
+	"mods/mtg/"
 }
 
 read_globals = {
-	string = {fields = {"split", "trim"}},
-	table = {fields = {"copy", "getn"}},
-
-	"dump", "DIR_DELIM",
-	"sfinv", "creative",
-	"VoxelArea", "ItemStack",
+	"DIR_DELIM",
+	"minetest", "core",
+	"dump", "dump2",
+	"VoxelManip", "VoxelArea",
+	"PseudoRandom", "PcgRandom",
+	"ItemStack",
 	"Settings",
-	"prometheus", "hb",
-	"awards",
-	"potential_cowards",
+	"unpack",
 
-	"VoxelArea",
-	"VoxelManip",
-	"PseudoRandom",
+	table = {
+		fields = {
+			"copy",
+			"indexof",
+			"insert_all",
+			"key_value_swap",
+		}
+	},
 
+	string = {
+		fields = {
+			"split",
+			"trim",
+		}
+	},
 
-	-- Testing
-	"describe",
-	"it",
-	"assert",
+	math = {
+		fields = {
+			"hypot",
+			"sign",
+			"factorial"
+		}
+	},
 }

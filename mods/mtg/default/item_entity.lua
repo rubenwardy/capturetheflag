@@ -20,7 +20,7 @@ local item = {
 		minetest.sound_play("default_item_smoke", {
 			pos = p,
 			max_hear_distance = 8,
-		})
+		}, true)
 		minetest.add_particlespawner({
 			amount = 3,
 			time = 0.1,
@@ -43,16 +43,15 @@ local item = {
 		builtin_item.on_step(self, dtime, ...)
 
 		if self.flammable then
-			-- flammable, check for igniters
+			-- flammable, check for igniters every 10 s
 			self.ignite_timer = (self.ignite_timer or 0) + dtime
 			if self.ignite_timer > 10 then
 				self.ignite_timer = 0
 
 				local pos = self.object:get_pos()
-				if not pos then
-					return
+				if pos == nil then
+					return -- object already deleted
 				end
-
 				local node = minetest.get_node_or_nil(pos)
 				if not node then
 					return
@@ -75,5 +74,5 @@ local item = {
 }
 
 -- set defined item as new __builtin:item, with the old one as fallback table
-setmetatable(item, builtin_item)
+setmetatable(item, { __index = builtin_item })
 minetest.register_entity(":__builtin:item", item)

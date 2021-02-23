@@ -101,8 +101,7 @@ paramat (CC BY-SA 3.0):
   default_dry_grass.png
   default_dry_grass_side.png
   default_dry_grass_*.png
-  default_grass.png
-  default_grass_side.png
+  default_grass_side.png -- Derived from a texture by TumeniNodes (CC-BY-SA 3.0)
   default_mese_block.png
   default_silver_sand.png
   default_mese_post_light_side.png
@@ -116,6 +115,7 @@ paramat (CC BY-SA 3.0):
   default_emergent_jungle_sapling.png
   default_permafrost.png -- Derived from a texture by Neuromancer (CC BY-SA 3.0)
   default_stones.png -- Derived from a texture by sofar (CC0 1.0)
+  default_stones_side.png -- Derived from a texture by sofar (CC0 1.0)
   default_moss.png
   default_moss_side.png
   default_fence_rail_acacia_wood
@@ -123,11 +123,15 @@ paramat (CC BY-SA 3.0):
   default_fence_rail_junglewood
   default_fence_rail_pine_wood
   default_fence_rail_wood -- Derived from a texture by BlockMen (CC BY-SA 3.0)
+  gui_hotbar.png
+  gui_hotbar_selected.png
 
 TumeniNodes (CC BY-SA 3.0):
   default_desert_cobble.png -- Derived from a texture by brunob.santos (CC BY-SA 3.0)
   default_coniferous_litter.png
   default_coniferous_litter_side.png
+  default_grass.png
+  default_dry_dirt.png
 
 BlockMen (CC BY-SA 3.0):
   default_aspen_leaves.png -- Derived from Sofar's texture
@@ -147,8 +151,10 @@ BlockMen (CC BY-SA 3.0):
   default_chest_top.png
   default_mineral_mese.png
   default_meselamp.png
-  bubble.png
-  gui_*.png
+  gui_formbg.png
+  gui_furnace_arrow_bg.png
+  gui_furnace_arrow_fg.png
+  gui_hb_bg.png
 
 sofar (CC BY-SA 3.0):
   default_aspen_sapling
@@ -188,9 +194,6 @@ Gambit (CC BY-SA 3.0):
 
 asl97 (CC BY-SA 3.0):
   default_ice.png
-
-KevDoy (CC BY-SA 3.0):
-  heart.png
 
 Pithydon (CC BY-SA 3.0)
   default_coral_brown.png
@@ -246,6 +249,11 @@ Topywo (CC BY-SA 3.0)
 
 Extex101 (CC BY-SA 3.0)
   default_large_cactus_seedling.png
+  default_dry_shrub.png -- Derived from the original texture by celeron55
+
+An0n3m0us (CC BY-SA 3.0):
+  heart.png -- Derived from a texture by KevDoy (CC BY-SA 3.0)
+  bubble.png -- Derived from a texture by BlockMen (CC BY-SA 3.0)
 
 
 Sounds
@@ -256,32 +264,17 @@ Glass breaking sounds (CC BY 3.0):
   3: http://www.freesound.org/people/lsprice/sounds/88808/
 
 Mito551 (sounds) (CC BY-SA 3.0):
-  default_dig_choppy.ogg
-  default_dig_cracky.ogg
-  default_dig_crumbly.1.ogg
-  default_dig_crumbly.2.ogg
+  default_dig_crumbly.*.ogg
   default_dig_dig_immediate.ogg
   default_dig_oddly_breakable_by_hand.ogg
-  default_dug_node.1.ogg
-  default_dug_node.2.ogg
+  default_dug_node.*.ogg
   default_grass_footstep.1.ogg
   default_grass_footstep.2.ogg
   default_grass_footstep.3.ogg
-  default_gravel_footstep.1.ogg
-  default_gravel_footstep.2.ogg
-  default_gravel_footstep.3.ogg
-  default_gravel_footstep.4.ogg
-  default_grass_footstep.1.ogg
-  default_place_node.1.ogg
-  default_place_node.2.ogg
-  default_place_node.3.ogg
-  default_place_node_hard.1.ogg
-  default_place_node_hard.2.ogg
-  default_hard_footstep.1.ogg
-  default_hard_footstep.2.ogg
-  default_hard_footstep.3.ogg
-  default_sand_footstep.1.ogg
-  default_sand_footstep.2.ogg
+  default_gravel_footstep.*.ogg
+  default_place_node.*.ogg
+  default_place_node_hard.*.ogg
+  default_glass_footstep.ogg
   default_wood_footstep.1.ogg
   default_wood_footstep.2.ogg
   default_dirt_footstep.1.ogg
@@ -293,8 +286,8 @@ Metal sounds:
   - https://www.freesound.org/people/yadronoff/sounds/320397/
   default_dug_metal.*.ogg - Iwan Gabovitch - qubodup - CC0
   - http://opengameart.org/users/qubodup
-  default_metal_footstep.*.ogg - Ottomaani138 - CC0
-  - https://www.freesound.org/people/Ottomaani138/sounds/232692/
+  default_metal_footstep.*.ogg - (CC0 1.0) - CC0 1.0
+  - https://freesound.org/people/mypantsfelldown/sounds/398937/
   default_place_node_metal.*.ogg - Ogrebane - CC0
   - http://opengameart.org/content/wood-and-metal-sound-effects-volume-2
 
@@ -327,6 +320,47 @@ http://freesound.org/people/Ryding/sounds/94337/
 
 Ferk (CC0 1.0):
   default_item_smoke.ogg, based on a sound by http://opengameart.org/users/bart
+
+sonictechtonic (CC BY 3.0):
+https://www.freesound.org/people/sonictechtonic/sounds/241872/
+  player_damage.ogg
+
+Sheyvan (CC0 1.0):
+https://freesound.org/people/Sheyvan/sounds/476113/
+  default_dig_choppy.*.ogg
+
+lolamadeus (CC0 1.0):
+https://freesound.org/people/lolamadeus/sounds/179341/
+  default_gravel_dig.*.ogg
+  default_gravel_dug.*.ogg
+
+Benboncan (CC BY 3.0):
+https://freesound.org/people/Benboncan/sounds/71823/
+  default_dig_cracky.*.ogg
+
+Erdie (CC BY 3.0):
+https://freesound.org/people/Erdie/sounds/41579/
+  default_hard_footstep.*.ogg
+
+worthahep88 (CC0 1.0):
+https://freesound.org/people/worthahep88/sounds/319224/
+  default_sand_footstep.*.ogg
+
+dheming (CC BY 3.0):
+https://freesound.org/people/dheming/sounds/268023/
+  default_ice_dig.*.ogg
+
+InspectorJ (CC BY 3.0):
+https://freesound.org/people/InspectorJ/sounds/416967/
+  default_ice_footstep.*.ogg
+
+Angel_Perez_Grandi (CC BY 3.0):
+https://freesound.org/people/Angel_Perez_Grandi/sounds/49190/
+  default_ice_dug.ogg
+
+iankath (CC0 1.0)
+https://freesound.org/people/iankath/sounds/173991/
+  default_furnace_active.ogg
 
 
 Models
@@ -368,9 +402,6 @@ Shara RedCat (CC BY-SA 3.0):
   aspen_log.mts
   jungle_log.mts
   pine_log.mts
-
-sofar (CC BY-SA 3.0):
-  corals.mts
 
 TumeniNodes (CC BY-SA 3.0):
   pine_bush.mts

@@ -44,6 +44,16 @@ walls.register = function(wall_name, wall_desc, wall_texture_table, wall_mat, wa
 		sounds = wall_sounds,
 	})
 
+	-- crafting recipe
+	minetest.register_craft({
+		output = wall_name .. " 6",
+		recipe = {
+			{ "", "", "" },
+			{ wall_mat, wall_mat, wall_mat},
+			{ wall_mat, wall_mat, wall_mat},
+		}
+	})
+
 end
 
 walls.register("walls:cobble", S("Cobblestone Wall"), {"default_cobble.png"},
@@ -54,3 +64,4 @@ walls.register("walls:mossycobble", S("Mossy Cobblestone Wall"), {"default_mossy
 
 walls.register("walls:desertcobble", S("Desert Cobblestone Wall"), {"default_desert_cobble.png"},
 		"default:desert_cobble", default.node_sound_stone_defaults())
+

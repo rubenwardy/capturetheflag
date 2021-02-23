@@ -1,9 +1,11 @@
+-- player/init.lua
+
 dofile(minetest.get_modpath("player_api") .. "/api.lua")
 
 -- Default player appearance
 player_api.register_model("character.b3d", {
 	animation_speed = 30,
-	textures = {"character.png", },
+	textures = {"character.png"},
 	animations = {
 		-- Standard animations.
 		stand     = {x = 0,   y = 79},
@@ -29,6 +31,4 @@ minetest.register_on_joinplayer(function(player)
 		{x = 200, y = 219},
 		30
 	)
-	player:hud_set_hotbar_image("gui_hotbar.png")
-	player:hud_set_hotbar_selected_image("gui_hotbar_selected.png")
 end)

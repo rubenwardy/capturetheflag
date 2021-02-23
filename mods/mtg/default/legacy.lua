@@ -38,9 +38,12 @@ if minetest.get_modpath("player_api") then
 	default.player_set_animation     = player_api.set_animation
 end
 
+-- Chests
+default.register_chest = default.chest.register_chest
+
 -- Check for a volume intersecting protection
 function default.intersects_protection(minp, maxp, player_name, interval)
 	minetest.log("warning", "default.intersects_protection() is " ..
 		"deprecated, use minetest.is_area_protected() instead.")
-	minetest.is_area_protected(minp, maxp, player_name, interval)
+	return minetest.is_area_protected(minp, maxp, player_name, interval)
 end

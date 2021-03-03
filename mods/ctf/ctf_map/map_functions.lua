@@ -10,6 +10,19 @@ function ctf_map.announce_map(map)
 	end
 end
 
+function ctf_map.place_map(idx, dirname, mapmeta)
+	if not mapmeta then
+		mapmeta = ctf_map.load_map_meta(idx, dirname)
+	end
+
+	local schempath = ctf_map.maps_dir .. dirname .. "/map.mts"
+	local res = minetest.place_schematic(mapmeta.pos1, schempath)
+
+	assert(res, "Unable to place schematic, does the MTS file exist? Path: " .. schempath)
+
+	return mapmeta
+end
+
 local getpos_players = {}
 function ctf_map.get_pos_from_player(name, amount, donefunc)
 	getpos_players[name] = {amount = amount, func = donefunc, positions = {}}

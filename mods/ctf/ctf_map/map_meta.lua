@@ -151,7 +151,6 @@ function ctf_map.load_map_meta(idx, dirname)
 		end
 	end
 
-	minetest.log(dump(map))
 	return map
 end
 
@@ -165,6 +164,10 @@ function ctf_map.save_map(mapmeta)
 	local meta = Settings(path .. "map.conf")
 
 	mapmeta.pos1, mapmeta.pos2 = vector.sort(mapmeta.pos1, mapmeta.pos2)
+
+	if not mapmeta.offset then
+		mapmeta.offset = mapmeta.pos1
+	end
 
 	for id, def in pairs(mapmeta.chests) do
 		def.pos1, def.pos2 = vector.sort(def.pos1, def.pos2)

@@ -132,7 +132,7 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 		if not context[player].teams[name] then
 			context[player].teams[name] = {
 				enabled = false,
-				base_pos = vector.new(),
+				flag_pos = vector.new(),
 			}
 		end
 	end
@@ -293,16 +293,33 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 		elements[teamname.."_button"] = {
 			type = "button",
 			exit = true,
-			label = "Base Pos: " .. minetest.pos_to_string(def.base_pos),
+			label = "Flag Pos: " .. minetest.pos_to_string(def.flag_pos),
 			pos = {2.2, idx-(ctf_gui.ELEM_SIZE[2]/2)},
 			size = {5, ctf_gui.ELEM_SIZE[2]},
 			func = function(pname, fields)
-				ctf_map.get_pos_from_player(pname, 1, function(name, positions)
-					context[pname].teams[teamname].base_pos = positions[1]
-					minetest.after(0.1, function()
-						ctf_map.show_map_save_form(pname, minetest.explode_scrollbar_event(fields.formcontent).value)
+					ctf_map.get_pos_from_player(pname, 1, function(name, positions)
+						local p = positions[1]
+
+						context[pname].teams[teamname].flag_pos = p
+
+						minetest.set_node(p, {name = "ctf_modebase:flag"})
+						p = vector.offset(p, 0, 1, 0)
+						minetest.set_node(p, {name = "ctf_modebase:flag_top_" .. teamname})
+
+						minetest.after(0.1, function()
+							ctf_map.show_map_save_form(pname, minetest.explode_scrollbar_event(fields.formcontent).value)
+						end)
 					end)
-				end)
+			end,
+		}
+		elements[teamname.."_teleport"] = {
+			type = "button",
+			exit = true,
+			label = "Go to pos",
+			pos = {2.2 + 5 + 0.1, idx-(ctf_gui.ELEM_SIZE[2]/2)},
+			size = {2, ctf_gui.ELEM_SIZE[2]},
+			func = function(pname)
+				PlayerObj(pname):set_pos(context[pname].teams[teamname].flag_pos)
 			end,
 		}
 		idx = idx + 1

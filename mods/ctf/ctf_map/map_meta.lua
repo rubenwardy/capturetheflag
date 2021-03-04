@@ -58,7 +58,7 @@ function ctf_map.load_map_meta(idx, dirname)
 
 			map.teams[tname] = {
 				enabled = true,
-				base_pos = vector.add(offset, tpos),
+				flag_pos = vector.add(offset, tpos),
 			}
 
 			i = i + 1
@@ -117,6 +117,7 @@ function ctf_map.load_map_meta(idx, dirname)
 		offset.y = -size.y
 
 		map = {
+			map_version   = CURRENT_MAP_VERSION,
 			pos1          = offset,
 			pos2          = vector.add(offset, size),
 			offset        = offset,
@@ -147,7 +148,7 @@ function ctf_map.load_map_meta(idx, dirname)
 		end
 
 		for id, def in pairs(map.teams) do
-			map.teams[id].base_pos = vector.add(offset, def.base_pos)
+			map.teams[id].flag_pos = vector.add(offset, def.flag_pos)
 		end
 	end
 
@@ -177,7 +178,7 @@ function ctf_map.save_map(mapmeta)
 	end
 
 	for id, def in pairs(mapmeta.teams) do
-		mapmeta.teams[id].base_pos = vector.subtract(def.base_pos, mapmeta.offset)
+		mapmeta.teams[id].flag_pos = vector.subtract(def.flag_pos, mapmeta.offset)
 	end
 
 	-- Remove teams from the list if not enabled

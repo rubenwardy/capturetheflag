@@ -1,7 +1,7 @@
 unused_args = false
 
 globals = {
-	"ctf_core", "ctf_map", "ctf_teams",
+	"ctf_core", "ctf_map", "ctf_teams", "ctf_modebase", "ctf_gui",
 
 	"PlayerObj", "PlayerName", "HumanReadable",
 	"ChatCmdBuilder", "hudkit",
@@ -34,6 +34,7 @@ read_globals = {
 			"indexof",
 			"insert_all",
 			"key_value_swap",
+			"shuffle",
 		}
 	},
 

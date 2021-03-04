@@ -1,19 +1,19 @@
 ctf_teams = {
 	team = {
 		red = {
-			color = "#ff0000"
+			color = "#dd0000"
 		},
 		green = {
-			color = "#00ff00",
+			color = "#00bb00",
 		},
 		blue = {
-			color = "#0000ff",
+			color = "#0073ff",
 		},
 		orange = {
-			color = "#ff8800",
+			color = "#ff7700",
 		},
 		purple = {
-			color = "#aa00aa"
+			color = "#6f00a7"
 		},
 	}
 }

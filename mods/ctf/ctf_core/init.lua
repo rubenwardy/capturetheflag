@@ -4,6 +4,7 @@ ctf_core = {
 	}
 }
 
+---@param files table
 function ctf_core.include_files(files)
 	for _, file in ipairs(files) do
 		dofile(minetest.get_modpath(minetest.get_current_modname()).."/"..file)

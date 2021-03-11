@@ -15,5 +15,8 @@ ctf_teams = {
 		purple = {
 			color = "#6f00a7"
 		},
-	}
+	},
+	players = {},
 }
+
+ctf_core.include_files({"alloc.lua"})

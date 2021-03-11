@@ -207,7 +207,7 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 			pos = {0, 15.6},
 			size = {6, ctf_gui.ELEM_SIZE[2]},
 			items = skyboxes,
-			startidx = table.indexof(skyboxes, context[player].skybox),
+			default_idx = table.indexof(skyboxes, context[player].skybox),
 			func = function(pname, fields, name)
 				local oldval = context[pname].skybox
 				context[pname].skybox = fields[name]

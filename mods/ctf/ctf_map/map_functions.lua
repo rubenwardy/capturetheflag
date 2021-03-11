@@ -21,6 +21,7 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 	if tonumber(mapmeta.map_version or "0") < 2 then
 		minetest.chat_send_all(minetest.colorize("red", "Not placing flags because map version is < 2 " ..
 				"and maps that old may mess up placement"))
+	else
 		for name, def in pairs(mapmeta.teams) do
 			local p = def.flag_pos
 

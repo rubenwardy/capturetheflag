@@ -178,13 +178,11 @@ function ctf_map.save_map(mapmeta)
 	end
 
 	for id, def in pairs(mapmeta.teams) do
-		mapmeta.teams[id].flag_pos = vector.subtract(def.flag_pos, mapmeta.offset)
-	end
-
-	-- Remove teams from the list if not enabled
-	for name, def in pairs(mapmeta.teams) do
+		-- Remove team from the list if not enabled
 		if not def.enabled then
-			mapmeta.teams[name] = nil
+			mapmeta.teams[id] = nil
+		else
+			mapmeta.teams[id].flag_pos = vector.subtract(def.flag_pos, mapmeta.offset)
 		end
 	end
 

@@ -20,10 +20,10 @@ function ctf_gui.init()
 	end)
 end
 
-function ctf_gui.show_formspec(player, form, formdef)
+function ctf_gui.show_formspec(player, formname, formdef)
 	player = PlayerName(player)
 
-	formdef.formname = form
+	formdef.formname = formname
 
 	local maxyscroll = 0
 	local formspec = "formspec_version[4]" ..
@@ -99,7 +99,7 @@ function ctf_gui.show_formspec(player, form, formdef)
 					def.size[2],
 					id,
 					table.concat(def.items, ","),
-					def.startidx or 1,
+					def.default_idx or 1,
 					def.give_idx and "true" or "false"
 				)
 			elseif def.type == "checkbox" then

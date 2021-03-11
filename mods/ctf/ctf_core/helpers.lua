@@ -50,6 +50,16 @@ function HumanReadable(string)
 	return string:gsub("(%l)(%w*)", function(a,b) return string.upper(a)..b end)
 end
 
+--
+--- TABLES
+--
+
+-- Borrowed from random_messages mod
+function table.count( t ) -- luacheck: ignore
+	local i = 0
+	for k in pairs( t ) do i = i + 1 end
+	return i
+end
 
 --
 --- VECTORS/POSITIONS

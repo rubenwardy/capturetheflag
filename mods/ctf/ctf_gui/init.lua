@@ -6,8 +6,15 @@ ctf_gui = {
 
 local context = {}
 
+local gui_users_initialized = {}
 function ctf_gui.init()
-	ctf_core.register_on_formspec_input(minetest.get_current_modname()..":", function(pname, formname, fields)
+	local modname = minetest.get_current_modname()
+
+	assert(not gui_users_initialized[modname], "Already initialized for mod "..dump(modname))
+
+	gui_users_initialized[modname] = true
+
+	ctf_core.register_on_formspec_input(modname..":", function(pname, formname, fields)
 		if not context[pname] then return end
 
 		if context[pname].formname == formname then
@@ -42,7 +49,17 @@ function ctf_gui.show_formspec(player, formname, formdef)
 				end
 			end
 
-			if not def.size then def.size = ctf_gui.ELEM_SIZE end
+			if not def.size then
+				def.size = ctf_gui.ELEM_SIZE
+			else
+				if not def.size[1] then def.size[1] = ctf_gui.ELEM_SIZE[1] end
+				if not def.size[2] then def.size[2] = ctf_gui.ELEM_SIZE[2] end
+			end
+
+
+			if def.pos[1] == "center" then
+				def.pos[1] = (ctf_gui.FORM_SIZE[1] - def.size[1] - ctf_gui.SCROLLBAR_WIDTH)/2
+			end
 
 			if def.type == "label" then
 				if def.centered then

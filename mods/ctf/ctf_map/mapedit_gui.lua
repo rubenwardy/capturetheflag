@@ -28,7 +28,7 @@ function ctf_map.show_map_editor(player)
 		elements = {
 			newmap = {
 				type = "button", exit = true, label = "Create New Map",
-				pos = {(ctf_gui.FORM_SIZE[1] - ctf_gui.ELEM_SIZE[1])/2, 0},
+				pos = {"center", 0},
 				func = function(pname)
 					minetest.chat_send_player(pname,
 							"Please decide what the size of your map will be and punch nodes on two opposite corners of it")
@@ -65,7 +65,7 @@ function ctf_map.show_map_editor(player)
 			},
 			editexisting = {
 				type = "button", exit = true, label = "Edit Existing map",
-				pos = {(ctf_gui.FORM_SIZE[1] - ctf_gui.ELEM_SIZE[1])/2, 1.8},
+				pos = {"center", 1.8},
 				func = function(pname, fields)
 					local p = PlayerObj(pname)
 					-- Set skybox and related on map start
@@ -110,7 +110,7 @@ function ctf_map.show_map_editor(player)
 			},
 			currentmaps = {
 				type = "dropdown",
-				pos = {(ctf_gui.FORM_SIZE[1] - 5)/2, 1.9 + ctf_gui.ELEM_SIZE[2]},
+				pos = {"center", 1.9 + ctf_gui.ELEM_SIZE[2]},
 				size = {5, ctf_gui.ELEM_SIZE[2]},
 				items = dirlist_sorted,
 			},

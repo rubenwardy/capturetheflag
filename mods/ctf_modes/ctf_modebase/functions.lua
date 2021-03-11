@@ -1,5 +1,3 @@
-ctf_gui.init()
-
 local choices = {}
 function ctf_modebase.start_new_match(show_form)
 	if show_form then
@@ -45,7 +43,7 @@ function ctf_modebase.show_modechoose_form(player)
 			type = "button",
 			label = HumanReadable(modename),
 			exit = true,
-			pos = {((ctf_gui.FORM_SIZE[1] - ctf_gui.ELEM_SIZE[1]) - ctf_gui.SCROLLBAR_WIDTH)/2, idx},
+			pos = {"center", idx},
 			func = function(playername, fields, field_name)
 				choices[playername] = modename
 			end,

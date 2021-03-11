@@ -4,6 +4,8 @@ ctf_modebase = {
 	modelist = {},
 }
 
+ctf_gui.init()
+
 ctf_core.include_files({
 	"flags.lua",
 	"functions.lua",

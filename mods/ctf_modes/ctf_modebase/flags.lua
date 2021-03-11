@@ -1,7 +1,32 @@
 local function flag_on_punch(pos, node, puncher, pointed_thing)
-	local above = vector.offset(pos, 0, 1, 0)
-	if node.name == "ctf_modebase:flag" and not minetest.get_node(above).name:find("ctf_modebase") then
+	if ctf_core.settings.server_mode == "mapedit" then
+		local above = vector.offset(pos, 0, 1, 0)
+		local set_pos = pos
 
+		if node.name == "ctf_modebase:flag" then
+			set_pos = above
+		end
+
+		ctf_gui.show_formspec(puncher, "ctf_modebase:flag_color_select", {
+			title = "Flag Color Selection",
+			description = "Choose a color for this flag",
+			elements = {
+				teams = {
+					type = "dropdown",
+					pos = {"center", 0.5},
+					items = ctf_teams.teamlist,
+				},
+				choose = {
+					type = "button",
+					label = "Choose",
+					exit = true,
+					pos = {"center", 1.5},
+					func = function(playername, fields, field_name)
+						minetest.set_node(set_pos, {name = "ctf_modebase:flag_top_"..fields.teams})
+					end,
+				},
+			},
+		})
 	end
 end
 

@@ -16,7 +16,12 @@ ctf_teams = {
 			color = "#6f00a7"
 		},
 	},
+	teamlist = {},
 	players = {},
 }
+
+for team in pairs(ctf_teams.team) do
+	table.insert(ctf_teams.teamlist, team)
+end
 
 ctf_core.include_files({"alloc.lua"})

@@ -1,6 +1,6 @@
 ctf_core = {
 	settings = {
-		server_mode = minetest.settings:get("ctf_server_mode")
+		server_mode = minetest.settings:get("ctf_server_mode") or "play"
 	}
 }
 

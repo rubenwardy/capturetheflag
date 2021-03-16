@@ -78,7 +78,7 @@ function ctf_map.show_map_editor(player)
 
 							p:set_pos(vector.add(map.pos1, vector.divide(map.size, 2)))
 
-							skybox.set(p, table.indexof(skyboxes, map.skybox)-1)
+							skybox.set(p, table.indexof(ctf_map.skyboxes, map.skybox)-1)
 
 							physics.set(pname, "ctf_map:editor_speed", {
 								speed = map.phys_speed,
@@ -196,14 +196,14 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 			type = "dropdown",
 			pos = {0, 15.6},
 			size = {6, ctf_gui.ELEM_SIZE[2]},
-			items = skyboxes,
-			default_idx = table.indexof(skyboxes, context[player].skybox),
+			items = ctf_map.skyboxes,
+			default_idx = table.indexof(ctf_map.skyboxes, context[player].skybox),
 			func = function(pname, fields, name)
 				local oldval = context[pname].skybox
 				context[pname].skybox = fields[name]
 
 				if context[pname].skybox ~= oldval then
-					skybox.set(PlayerObj(pname), table.indexof(skyboxes, fields[name])-1)
+					skybox.set(PlayerObj(pname), table.indexof(ctf_map.skyboxes, fields[name])-1)
 				end
 			end,
 		},

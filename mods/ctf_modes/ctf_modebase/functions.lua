@@ -1,4 +1,5 @@
 local choices = {}
+
 function ctf_modebase.start_new_match(show_form)
 	if show_form then
 		for _, player in pairs(minetest.get_connected_players()) do
@@ -21,6 +22,8 @@ function ctf_modebase.start_new_match(show_form)
 		if not most.n then
 			most.n = ctf_modebase.modelist[math.random(1, #ctf_modebase.modelist)]
 		end
+
+		ctf_modebase.current_mode = most.n
 
 		local mode_def = ctf_modebase.modes[most.n]
 
@@ -73,6 +76,34 @@ function ctf_modebase.place_map(mode_def, mapidx)
 	end
 
 	local map = ctf_map.place_map(mapidx, dirlist[mapidx])
+
+	-- Set time, time_speed, skyboxes, and physics
+
+	minetest.set_timeofday(map.start_time/2400)
+
+	for _, player in pairs(minetest.get_connected_players()) do
+		local name = PlayerName(player)
+		local pinv = player:get_inventory()
+
+		if map.initial_stuff ~= nil then
+			for _, item in pairs(map.initial_stuff) do
+				pinv:add_item("main", ItemStack(item))
+			end
+		end
+
+		skybox.set(player, table.indexof(ctf_map.skyboxes, map.skybox))
+
+		physics.set(name, "ctf_modebase:map_physics", {
+			speed = map.phys_speed,
+			jump = map.phys_jump,
+			gravity = map.phys_gravity,
+		})
+		-- TODO: time_speed
+	end
+
+	-- Allocate teams and start match
+
+	ctf_teams.allocate_teams(map.teams)
 
 	ctf_map.announce_map(map)
 

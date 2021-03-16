@@ -133,7 +133,7 @@ function ctf_map.load_map_meta(idx, dirname)
 			initial_stuff = minetest.deserialize(meta:get("initial_stuff")),
 			treasures     = minetest.deserialize(meta:get("treasures")),
 			skybox        = meta:get("skybox"),
-			start_time    = meta:get("start_time"),
+			start_time    = tonumber(meta:get("start_time")),
 			time_speed    = tonumber(meta:get("time_speed")),
 			phys_speed    = tonumber(meta:get("phys_speed")),
 			phys_jump     = tonumber(meta:get("phys_jump")),

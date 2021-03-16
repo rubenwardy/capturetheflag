@@ -9,10 +9,20 @@ minetest.register_alias("mapgen_singlenode", "ctf_map:ignore")
 
 ctf_map = {
 	DEFAULT_CHEST_AMOUNT = 23,
-	DEFAULT_START_TIME = "6:00",
+	DEFAULT_START_TIME = 6000,
 	CHAT_COLOR = "orange",
 	maps_dir = minetest.get_modpath("ctf_map").."/maps/",
+	skyboxes = {"none"},
+	current_mode = false,
 }
+
+minetest.register_on_mods_loaded(function()
+	local skyboxlist = skybox.get_skies()
+
+	for _, s in ipairs(skyboxlist) do
+		table.insert(ctf_map.skyboxes, s[1])
+	end
+end)
 
 minetest.register_tool("ctf_map:adminpick", {
 	description = "Admin pickaxe used to break indestructible nodes.",

@@ -1,13 +1,3 @@
-local skyboxes = {"none"}
-
-minetest.register_on_mods_loaded(function()
-	local skyboxlist = skybox.get_skies()
-
-	for _, s in ipairs(skyboxlist) do
-		table.insert(skyboxes, s[1])
-	end
-end)
-
 ctf_gui.init()
 
 local context = {}
@@ -97,7 +87,7 @@ function ctf_map.show_map_editor(player)
 							})
 
 							minetest.settings:set("time_speed", map.time_speed * 72)
-							minetest.registered_chatcommands["time"].func(pname, map.start_time)
+							minetest.registered_chatcommands["time"].func(pname, tostring(map.start_time))
 						end)
 
 						minetest.after(10, function()
@@ -258,10 +248,10 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 			default = context[player].start_time or ctf_map.DEFAULT_START_TIME,
 			func = function(pname, fields, name)
 				local oldval = context[pname].start_time
-				context[pname].start_time = fields[name] or ctf_map.DEFAULT_START_TIME
+				context[pname].start_time = tonumber(fields[name] or ctf_map.DEFAULT_START_TIME)
 
 				if context[pname].start_time ~= oldval then
-					minetest.registered_chatcommands["time"].func(pname, context[pname].start_time)
+					minetest.registered_chatcommands["time"].func(pname, tostring(context[pname].start_time))
 				end
 			end,
 		},

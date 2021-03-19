@@ -1,5 +1,5 @@
 ---@param teams table
-function ctf_teams.allocate_teams(teams)
+function ctf_teams.allocate_teams(teams, on_alloc_callback)
 	local players = minetest.get_connected_players()
 	local team_list = {}
 	local tpos = 1
@@ -25,12 +25,14 @@ function ctf_teams.allocate_teams(teams)
 	end
 end
 
+---@param player string | ObjectRef
 ---@param teamname string
 function ctf_teams.set_team(player, teamname)
 	assert(type(teamname) == "string")
 	player = PlayerName(player)
 
-	if not ctf_teams.players[player] or not ctf_teams.players[player].locked then
+	if not (ctf_teams.players[player] and ctf_teams.players[player].locked) then
+		RunCallbacks(ctf_teams.registered_on_allocplayer, PlayerObj(player), teamname)
 		ctf_teams.players[player] = {name = teamname}
 	end
 end

@@ -24,4 +24,14 @@ for team in pairs(ctf_teams.team) do
 	table.insert(ctf_teams.teamlist, team)
 end
 
-ctf_core.include_files({"alloc.lua"})
+minetest.register_privilege("ctf_team_admin", {
+	description = "Allows advanced team management.",
+	give_to_singleplayer = false,
+	give_to_admin = false,
+})
+
+ctf_core.include_files({
+	"alloc.lua",
+	"commands.lua",
+	"register.lua",
+})

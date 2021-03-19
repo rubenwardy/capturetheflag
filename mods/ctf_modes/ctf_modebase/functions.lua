@@ -1,40 +1,62 @@
 local choices = {}
+local voting = false
+
+ctf_teams.register_on_allocplayer(function(...)
+	if ctf_modebase.modes[ctf_modebase.current_mode].init_player then
+		ctf_modebase.modes[ctf_modebase.current_mode].init_player(...)
+	end
+end)
 
 function ctf_modebase.start_new_match(show_form)
-	if show_form then
-		for _, player in pairs(minetest.get_connected_players()) do
-			ctf_modebase.show_modechoose_form(player)
-		end
+	local function after_vote()
+		local map = ctf_modebase.place_map(ctf_modebase.current_mode)
+
+		ctf_teams.allocate_teams(map.teams)
+
+		ctf_modebase.current_mode_matches = ctf_modebase.current_mode_matches + 1
 	end
 
-	minetest.after(ctf_modebase.VOTING_TIME, function()
-		local mode_votes = {}
-		local most = {c = 0}
-		for _, mode in pairs(choices) do
-			mode_votes[mode] = (mode_votes[mode] or 0) + 1
-
-			if mode_votes[mode] > most.c then
-				most.n = mode
-				most.c = mode_votes[mode]
-			end
-		end
-
-		if not most.n then
-			most.n = ctf_modebase.modelist[math.random(1, #ctf_modebase.modelist)]
-		end
-
-		ctf_modebase.current_mode = most.n
-
-		local mode_def = ctf_modebase.modes[most.n]
-
-		if mode_def.map_whitelist then
-			local map = ctf_modebase.place_map(most.n)
-
-			ctf_teams.allocate_teams(map.teams)
-		end
+	-- Show mode selection form every 'ctf_modebase.MAPS_PER_MODE'-th match
+	if ctf_modebase.current_mode_matches >= ctf_modebase.MAPS_PER_MODE or show_form then
+		ctf_modebase.current_mode_matches = 0
 
 		choices = {}
-	end)
+		voting = true
+
+		for _, player in pairs(minetest.get_connected_players()) do
+			local pname = player:get_player_name()
+
+			local formname = ctf_modebase.show_modechoose_form(player)
+
+			minetest.after(ctf_modebase.VOTING_TIME, minetest.close_formspec, pname, formname)
+		end
+
+		minetest.after(ctf_modebase.VOTING_TIME, function()
+			local mode_votes = {}
+			local most = {c = 0}
+			for pname, mode in pairs(choices) do
+				mode_votes[mode] = (mode_votes[mode] or 0) + 1
+
+				if mode_votes[mode] > most.c then
+					most.n = mode
+					most.c = mode_votes[mode]
+				end
+			end
+
+			if not most.n then
+				most.n = ctf_modebase.modelist[math.random(1, #ctf_modebase.modelist)]
+			end
+
+			ctf_modebase.current_mode = most.n
+
+			choices = {}
+			voting = false
+
+			after_vote()
+		end)
+	else
+		after_vote()
+	end
 end
 
 function ctf_modebase.show_modechoose_form(player)
@@ -48,7 +70,9 @@ function ctf_modebase.show_modechoose_form(player)
 			exit = true,
 			pos = {"center", idx},
 			func = function(playername, fields, field_name)
-				choices[playername] = modename
+				if voting then
+					choices[playername] = modename
+				end
 			end,
 		}
 
@@ -60,17 +84,25 @@ function ctf_modebase.show_modechoose_form(player)
 		description = "Please vote on what gamemode you would like to play",
 		elements = elements,
 	})
+
+	return "ctf_modebase:mode_select"
 end
 
+--- @param mode_def table | string
 function ctf_modebase.place_map(mode_def, mapidx)
-	if not mapidx and mode_def.map_whitelist then
-		mapidx = mode_def.map_whitelist[math.random(1, #mode_def.map_whitelist)]
+	-- Convert name of mode into it's def
+	if type(mode_def) == "string" then
+		mode_def = ctf_modebase.modes[mode_def]
 	end
 
 	local dirlist = minetest.get_dir_list(ctf_map.maps_dir, true)
 
 	if not mapidx then
-		mapidx = math.random(1, #dirlist)
+		if mode_def.map_whitelist then
+			mapidx = table.indexof(dirlist, mode_def.map_whitelist[math.random(1, #mode_def.map_whitelist)])
+		else
+			mapidx = math.random(1, #dirlist)
+		end
 	elseif type(mapidx) ~= "number" then
 		mapidx = table.indexof(dirlist, mapidx)
 	end
@@ -79,7 +111,7 @@ function ctf_modebase.place_map(mode_def, mapidx)
 
 	-- Set time, time_speed, skyboxes, and physics
 
-	minetest.set_timeofday(map.start_time/2400)
+	minetest.set_timeofday(map.start_time/24000)
 
 	for _, player in pairs(minetest.get_connected_players()) do
 		local name = PlayerName(player)
@@ -91,26 +123,18 @@ function ctf_modebase.place_map(mode_def, mapidx)
 			end
 		end
 
-		skybox.set(player, table.indexof(ctf_map.skyboxes, map.skybox))
+		skybox.set(player, table.indexof(ctf_map.skyboxes, map.skybox)-1)
 
 		physics.set(name, "ctf_modebase:map_physics", {
 			speed = map.phys_speed,
 			jump = map.phys_jump,
 			gravity = map.phys_gravity,
 		})
-		-- TODO: time_speed
+
+		minetest.settings:set("time_speed", map.time_speed * 72)
 	end
-
-	-- Allocate teams and start match
-
-	ctf_teams.allocate_teams(map.teams)
 
 	ctf_map.announce_map(map)
 
 	return map
-end
-
-function ctf_modebase.register_mode(name, def)
-	ctf_modebase.modes[name] = def
-	table.insert(ctf_modebase.modelist, name)
 end

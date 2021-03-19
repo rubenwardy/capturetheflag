@@ -61,6 +61,15 @@ function table.count( t ) -- luacheck: ignore
 	return i
 end
 
+---@param funclist table
+function RunCallbacks(funclist, ...)
+	for _, func in ipairs(funclist) do
+		if func(...) then
+			break
+		end
+	end
+end
+
 --
 --- VECTORS/POSITIONS
 --

@@ -3,7 +3,8 @@ unused_args = false
 globals = {
 	"ctf_core", "ctf_map", "ctf_teams", "ctf_modebase", "ctf_gui",
 
-	"PlayerObj", "PlayerName", "HumanReadable",
+	"PlayerObj", "PlayerName", "HumanReadable", "RunCallbacks",
+
 	"ChatCmdBuilder", "hudkit",
 
 	"physics", "give_initial_stuff", "medkits", "grenades", "dropondie",

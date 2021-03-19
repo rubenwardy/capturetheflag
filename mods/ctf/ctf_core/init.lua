@@ -11,4 +11,7 @@ function ctf_core.include_files(files)
 	end
 end
 
-ctf_core.include_files({"helpers.lua"})
+ctf_core.include_files({
+	"helpers.lua",
+	"privileges.lua",
+})

@@ -13,6 +13,12 @@ Capture the flag uses several submodules. Make sure to grab them all by cloning 
 git clone --recursive https://github.com/MT-CTF/capturetheflag.git
 ```
 
+## Development
+
+* Lone_Wolf uses Visual Studio Code with these extensions:
+  * https://marketplace.visualstudio.com/items?itemName=sumneko.lua
+  * https://marketplace.visualstudio.com/items?itemName=dwenegar.vscode-luacheck
+
 ## System Requirements
 
 ### Recommended

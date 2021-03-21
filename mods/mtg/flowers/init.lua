@@ -169,7 +169,7 @@ function flowers.flower_spread(pos, node)
 	end
 end
 
-minetest.register_abm({
+--[[ minetest.register_abm({
 	label = "Flower spread",
 	nodenames = {"group:flora"},
 	interval = 13,
@@ -177,7 +177,7 @@ minetest.register_abm({
 	action = function(...)
 		flowers.flower_spread(...)
 	end,
-})
+}) ]]
 
 
 --
@@ -246,7 +246,7 @@ function flowers.mushroom_spread(pos, node)
 	end
 end
 
-minetest.register_abm({
+--[[ minetest.register_abm({
 	label = "Mushroom spread",
 	nodenames = {"flowers:mushroom_brown", "flowers:mushroom_red"},
 	interval = 11,
@@ -254,7 +254,7 @@ minetest.register_abm({
 	action = function(...)
 		flowers.mushroom_spread(...)
 	end,
-})
+}) ]]
 
 
 -- These old mushroom related nodes can be simplified now

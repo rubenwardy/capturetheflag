@@ -159,7 +159,7 @@ default.cool_lava = function(pos, node)
 end
 
 if minetest.settings:get_bool("enable_lavacooling") ~= false then
-	minetest.register_abm({
+	--[[ minetest.register_abm({
 		label = "Lava cooling",
 		nodenames = {"default:lava_source", "default:lava_flowing"},
 		neighbors = {"group:cools_lava", "group:water"},
@@ -169,7 +169,7 @@ if minetest.settings:get_bool("enable_lavacooling") ~= false then
 		action = function(...)
 			default.cool_lava(...)
 		end,
-	})
+	}) ]]
 end
 
 
@@ -252,7 +252,7 @@ function default.grow_papyrus(pos, node)
 	return true
 end
 
-minetest.register_abm({
+--[[ minetest.register_abm({
 	label = "Grow cactus",
 	nodenames = {"default:cactus"},
 	neighbors = {"group:sand"},
@@ -261,9 +261,9 @@ minetest.register_abm({
 	action = function(...)
 		default.grow_cactus(...)
 	end
-})
+}) ]]
 
-minetest.register_abm({
+--[[ minetest.register_abm({
 	label = "Grow papyrus",
 	nodenames = {"default:papyrus"},
 	-- Grows on the dirt and surface dirt nodes of the biomes papyrus appears in,
@@ -282,7 +282,7 @@ minetest.register_abm({
 	action = function(...)
 		default.grow_papyrus(...)
 	end
-})
+}) ]]
 
 
 --
@@ -579,7 +579,7 @@ end
 -- Convert default:dirt to something that fits the environment
 --
 
-minetest.register_abm({
+--[[ minetest.register_abm({
 	label = "Grass spread",
 	nodenames = {"default:dirt"},
 	neighbors = {
@@ -618,14 +618,14 @@ minetest.register_abm({
 			minetest.set_node(pos, {name = "default:dirt_with_dry_grass"})
 		end
 	end
-})
+}) ]]
 
 
 --
 -- Grass and dry grass removed in darkness
 --
 
-minetest.register_abm({
+--[[ minetest.register_abm({
 	label = "Grass covered",
 	nodenames = {"group:spreading_dirt_type", "default:dry_dirt_with_dry_grass"},
 	interval = 8,
@@ -645,7 +645,7 @@ minetest.register_abm({
 			end
 		end
 	end
-})
+}) ]]
 
 
 --
@@ -660,7 +660,7 @@ local moss_correspondences = {
 	["stairs:stair_outer_cobble"] = "stairs:stair_outer_mossycobble",
 	["walls:cobble"] = "walls:mossycobble",
 }
-minetest.register_abm({
+--[[ minetest.register_abm({
 	label = "Moss growth",
 	nodenames = {"default:cobble", "stairs:slab_cobble", "stairs:stair_cobble",
 		"stairs:stair_inner_cobble", "stairs:stair_outer_cobble",
@@ -675,7 +675,7 @@ minetest.register_abm({
 			minetest.set_node(pos, node)
 		end
 	end
-})
+}) ]]
 
 --
 -- Register a craft to copy the metadata of items

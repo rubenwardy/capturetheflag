@@ -63,7 +63,7 @@ local fire_node = {
 local flame_fire_node = table.copy(fire_node)
 flame_fire_node.description = S("Fire")
 flame_fire_node.groups.not_in_creative_inventory = 1
-flame_fire_node.on_timer = function(pos)
+--[[ flame_fire_node.on_timer = function(pos)
 	if not minetest.find_node_near(pos, 1, {"group:flammable"}) then
 		minetest.remove_node(pos)
 		return
@@ -73,7 +73,7 @@ flame_fire_node.on_timer = function(pos)
 end
 flame_fire_node.on_construct = function(pos)
 	minetest.get_node_timer(pos):start(math.random(30, 60))
-end
+end ]]
 
 minetest.register_node("fire:basic_flame", flame_fire_node)
 
@@ -264,7 +264,7 @@ function fire.update_sounds_around() end
 -- ABMs
 --
 
-if fire_enabled then
+--[[ if fire_enabled then
 	-- Ignite neighboring nodes, add basic flames
 	minetest.register_abm({
 		label = "Ignite flame",
@@ -304,4 +304,4 @@ if fire_enabled then
 			end
 		end
 	})
-end
+end ]]

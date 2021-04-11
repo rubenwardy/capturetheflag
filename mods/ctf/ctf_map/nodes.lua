@@ -120,7 +120,6 @@ for name, def in pairs(minetest.registered_nodes) do
 	end
 end
 
-local torch_defs = table.copy(default.torch)
-make_immortal(torch_defs.floor)
-torch_defs.floor.drop = "ctf_map:torch"
-default.register_torch("ctf_map:torch", torch_defs)
+minetest.register_alias("ctf_map:torch", "default:torch")
+minetest.register_alias("ctf_map:torch_wall", "default:torch_wall")
+minetest.register_alias("ctf_map:torch_ceiling", "default:torch_ceiling")

@@ -59,8 +59,6 @@ ctf_modebase.register_mode("classic", {
 		celebrate_team(ctf_teams.get_team(player))
 
 		flag_huds.update()
-
-		minetest.after(10, ctf_modebase.start_new_match)
 	end,
 	on_flag_drop = function(player, teamname)
 		flag_huds.update()
@@ -69,5 +67,7 @@ ctf_modebase.register_mode("classic", {
 		celebrate_team(ctf_teams.get_team(player))
 
 		flag_huds.update()
+
+		minetest.after(10, ctf_modebase.start_new_match)
 	end,
 })

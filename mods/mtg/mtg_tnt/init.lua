@@ -591,7 +591,7 @@ if enable_tnt then
 		}
 	})
 
-	--[[ minetest.register_abm({
+	minetest.register_abm({
 		label = "TNT ignition",
 		nodenames = {"group:tnt", "tnt:gunpowder"},
 		neighbors = {"fire:basic_flame", "default:lava_source", "default:lava_flowing"},
@@ -600,7 +600,7 @@ if enable_tnt then
 		action = function(pos, node)
 			tnt.burn(pos, node.name)
 		end,
-	}) ]]
+	})
 end
 
 function tnt.register_tnt(def)

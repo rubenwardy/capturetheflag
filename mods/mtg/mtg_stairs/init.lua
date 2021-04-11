@@ -279,7 +279,7 @@ end
 -- Disabled by default.
 
 if replace then
-	--[[ minetest.register_abm({
+	minetest.register_abm({
 		label = "Slab replace",
 		nodenames = {"group:slabs_replace"},
 		interval = 16,
@@ -294,7 +294,7 @@ if replace then
 			end
 			minetest.set_node(pos, node)
 		end,
-	}) ]]
+	})
 end
 
 

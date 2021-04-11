@@ -110,8 +110,7 @@ for name, def in pairs(minetest.registered_nodes) do
 	local prefix = mod_prefixes[mod]
 	if nodename and prefix and name ~= "default:torch" and
 			not (def.groups and (def.groups.immortal or def.groups.not_in_creative_inventory)) then
-		-- HACK to preserve backwards compatibility
-		local new_name = "ctf_map:" .. prefix .. nodename
+		local new_name = "ctf_map:" .. prefix .. nodename -- HACK to preserve backwards compatibility
 		local new_def = table.copy(def)
 		if def.drop == name then
 			new_def.drop = new_name

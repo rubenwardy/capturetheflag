@@ -13,15 +13,17 @@ ctf_teams = {
 			color = "#ff7700",
 		},
 		purple = {
-			color = "#6f00a7"
+			color = "#6f00a7",
 		},
 	},
 	teamlist = {},
-	players = {},
+	player_team = {},
 }
 
-for team in pairs(ctf_teams.team) do
+for team, def in pairs(ctf_teams.team) do
 	table.insert(ctf_teams.teamlist, team)
+
+	ctf_teams.team[team].color_hex = tonumber("0x"..def.color:sub(2))
 end
 
 minetest.register_privilege("ctf_team_admin", {
@@ -30,8 +32,12 @@ minetest.register_privilege("ctf_team_admin", {
 	give_to_admin = false,
 })
 
-ctf_core.include_files({
-	"alloc.lua",
+ctf_core.include_files(
+	"functions.lua",
 	"commands.lua",
-	"register.lua",
-})
+	"register.lua"
+)
+
+minetest.register_on_joinplayer(function(player)
+	ctf_teams.allocate_player(player)
+end)

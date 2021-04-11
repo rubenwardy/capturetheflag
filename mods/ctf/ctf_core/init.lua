@@ -5,13 +5,23 @@ ctf_core = {
 }
 
 ---@param files table
-function ctf_core.include_files(files)
-	for _, file in ipairs(files) do
-		dofile(minetest.get_modpath(minetest.get_current_modname()).."/"..file)
+-- Returns dofile() return values in order that files are given
+--
+-- Example: local f1, f2 = ctf_core.include_files("file1", "file2")
+function ctf_core.include_files(...)
+	local PATH = minetest.get_modpath(minetest.get_current_modname()) .. "/"
+	local returns = {}
+
+	for _, file in pairs({...}) do
+		for _, value in pairs{dofile(PATH .. file)} do
+			table.insert(returns, value)
+		end
 	end
+
+	return unpack(returns)
 end
 
-ctf_core.include_files({
+ctf_core.include_files(
 	"helpers.lua",
-	"privileges.lua",
-})
+	"privileges.lua"
+)

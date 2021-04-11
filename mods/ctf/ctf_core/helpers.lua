@@ -64,8 +64,10 @@ end
 ---@param funclist table
 function RunCallbacks(funclist, ...)
 	for _, func in ipairs(funclist) do
-		if func(...) then
-			break
+		local temp = func(...)
+
+		if temp then
+			return temp
 		end
 	end
 end

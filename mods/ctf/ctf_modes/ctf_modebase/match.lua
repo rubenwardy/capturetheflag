@@ -1,17 +1,15 @@
 local choices = {}
 local voting = false
 
-ctf_teams.register_on_allocplayer(function(...)
-	if ctf_modebase.modes[ctf_modebase.current_mode].init_player then
-		ctf_modebase.modes[ctf_modebase.current_mode].init_player(...)
-	end
-end)
-
 function ctf_modebase.start_new_match(show_form)
-	local function after_vote()
+	local old_map = ctf_map.current_map
+
+	local function start_new_match()
 		local map = ctf_modebase.place_map(ctf_modebase.current_mode)
 
 		ctf_teams.allocate_teams(map.teams)
+
+		RunCallbacks(ctf_modebase.registered_on_new_match, map, old_map)
 
 		ctf_modebase.current_mode_matches = ctf_modebase.current_mode_matches + 1
 	end
@@ -52,10 +50,10 @@ function ctf_modebase.start_new_match(show_form)
 			choices = {}
 			voting = false
 
-			after_vote()
+			start_new_match()
 		end)
 	else
-		after_vote()
+		start_new_match()
 	end
 end
 

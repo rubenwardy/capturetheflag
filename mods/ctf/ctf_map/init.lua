@@ -13,7 +13,7 @@ ctf_map = {
 	CHAT_COLOR = "orange",
 	maps_dir = minetest.get_modpath("ctf_map").."/maps/",
 	skyboxes = {"none"},
-	current_mode = false,
+	current_map = nil,
 }
 
 minetest.register_on_mods_loaded(function()
@@ -25,20 +25,25 @@ minetest.register_on_mods_loaded(function()
 end)
 
 minetest.register_tool("ctf_map:adminpick", {
-	description = "Admin pickaxe used to break indestructible nodes.",
+	description = "Admin pickaxe used to break indestructible nodes.\nRightclick to remove non-indestructible nodes",
 	inventory_image = "default_tool_diamondpick.png^default_obsidian_shard.png",
 	range = 16,
 	tool_capabilities = {
 		full_punch_interval = 1.0,
 		max_drop_level = 3,
 		groupcaps = {
-			immortal = {times = {[1] = 0.5}, uses = 0, maxlevel = 3}
+			immortal = {times = {[1] = 0.2}, uses = 0, maxlevel = 3}
 		},
 		damage_groups = {fleshy = 10000}
-	}
+	},
+	on_place = function(itemstack, placer, pointed_thing)
+		if pointed_thing and pointed_thing.under then
+			minetest.remove_node(pointed_thing.under)
+		end
+	end,
 })
 
-minetest.register_privilege("mapeditor", {
+minetest.register_privilege("ctf_mapeditor", {
 	description = "Allows use of map editing features",
 	give_to_singleplayer = false,
 	give_to_admin = false,
@@ -49,13 +54,13 @@ function ctf_map.register_map_command(match, func)
 	registered_commands[match] = func
 end
 
-ctf_core.include_files({
+ctf_core.include_files(
 	"emerge.lua",
 	"nodes.lua",
 	"map_meta.lua",
 	"map_functions.lua",
-	"mapedit_gui.lua",
-})
+	"mapedit_gui.lua"
+)
 
 minetest.register_chatcommand("ctf_map", {
 	description = "Run map related commands",

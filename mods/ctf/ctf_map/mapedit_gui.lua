@@ -15,6 +15,7 @@ function ctf_map.show_map_editor(player)
 	ctf_gui.show_formspec(player, "ctf_map:start", {
 		title = "Capture The Flag Map Editor",
 		description = "Would you like to edit an existing map or create a new one?",
+		privs = {ctf_mapeditor = true},
 		elements = {
 			newmap = {
 				type = "button", exit = true, label = "Create New Map",
@@ -292,10 +293,6 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 
 						context[pname].teams[teamname].flag_pos = p
 
-						minetest.set_node(p, {name = "ctf_modebase:flag"})
-						p = vector.offset(p, 0, 1, 0)
-						minetest.set_node(p, {name = "ctf_modebase:flag_top_" .. teamname})
-
 						minetest.after(0.1, function()
 							ctf_map.show_map_save_form(pname, minetest.explode_scrollbar_event(fields.formcontent).value)
 						end)
@@ -409,6 +406,7 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 		title = "Capture The Flag Map Editor",
 		description = "Save your map or edit the config.\nRemember to press ENTER after writing to a field",
 		scrollheight = 176 + ((idx - 24) * 10) + 4,
+		privs = {ctf_mapeditor = true},
 		elements = elements,
 		scroll_pos = scroll_pos or 0,
 	})

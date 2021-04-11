@@ -16,15 +16,23 @@ ctf_modebase = {
 
 	-- Amount of matches played since this mode won the last vote
 	current_mode_matches = 0,     ---@type integer
+
+	-- taken_flags[Player Name] = list of team names
+	taken_flags          = {},
+
+	-- flag_taken[Team Name] = Name of thief
+	flag_taken           = {},
 }
 
 ctf_gui.init()
 
-ctf_core.include_files({
+ctf_core.include_files(
 	"register.lua",
-	"flags.lua",
-	"functions.lua",
-})
+	"flag_nodes.lua",
+	"match.lua",
+	"flag_taking.lua",
+	"mode_functions.lua"
+)
 
 if ctf_core.settings.server_mode == "play" then
 	local match_started = false
@@ -43,7 +51,7 @@ minetest.register_chatcommand("ctf_next", {
 	params = "[mode]",
 	privs = {ctf_admin = true},
 	func = function(name, param)
-		ctf_modebase.start_new_match(false)
+		ctf_modebase.start_new_match()
 
 		return true
 	end,

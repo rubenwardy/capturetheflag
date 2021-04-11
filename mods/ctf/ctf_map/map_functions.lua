@@ -19,19 +19,21 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 	local res = minetest.place_schematic(mapmeta.pos1, schempath)
 
 	if tonumber(mapmeta.map_version or "0") < 2 then
-		minetest.chat_send_all(minetest.colorize("red", "Not placing flags because map version is < 2 " ..
-				"and maps that old may mess up placement"))
-	else
-		for name, def in pairs(mapmeta.teams) do
-			local p = def.flag_pos
+		minetest.chat_send_all(minetest.colorize("red", "Map version is < 2. You won't find any flags"))
+	end
 
-			minetest.set_node(p, {name = "ctf_modebase:flag"})
-			p = vector.offset(p, 0, 1, 0)
-			minetest.set_node(p, {name = "ctf_modebase:flag_top_"..name})
+	for name, def in pairs(mapmeta.teams) do
+		local p = def.flag_pos
+
+		if minetest.get_node(p).name ~= "ctf_modebase:flag" then
+			minetest.log("error", "Team flag positions were set incorrectly")
+			break
 		end
 	end
 
 	assert(res, "Unable to place schematic, does the MTS file exist? Path: " .. schempath)
+
+	ctf_map.current_map = mapmeta
 
 	return mapmeta
 end

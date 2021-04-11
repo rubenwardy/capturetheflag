@@ -114,7 +114,7 @@ function ctf_map.load_map_meta(idx, dirname)
 		-- You should also update the version number too
 		local size = minetest.deserialize(meta:get("size"))
 
-		offset.y = -size.y
+		offset.y = -size.y/2
 
 		map = {
 			map_version   = CURRENT_MAP_VERSION,

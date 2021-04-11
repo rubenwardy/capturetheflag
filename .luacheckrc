@@ -5,7 +5,7 @@ globals = {
 
 	"PlayerObj", "PlayerName", "HumanReadable", "RunCallbacks",
 
-	"ChatCmdBuilder", "hudkit",
+	"ChatCmdBuilder", "mhud",
 
 	"physics", "give_initial_stuff", "medkits", "grenades", "dropondie",
 	"vote", "random_messages", "sfinv", "email", "hb", "wield3d", "irc",

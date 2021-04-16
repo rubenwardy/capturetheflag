@@ -44,7 +44,7 @@ local flag_huds = ctf_core.include_files(
 )
 
 ctf_modebase.register_mode("classic", {
-	map_whitelist = {"bridge", "caverns", "coast", "iceage", "two_hills", "plains"},
+	map_whitelist = {--[[ "bridge", "caverns", "coast", "iceage", "two_hills",  ]]"plains"},
 	on_allocplayer = function(player, teamname)
 		player:set_properties({
 			textures = {"character.png^(ctf_mode_classic_shirt.png^[colorize:"..ctf_teams.team[teamname].color..":180)"}

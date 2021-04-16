@@ -52,6 +52,10 @@ end
 
 setmetatable(give_initial_stuff, {
 	__call = function(self, player, mode)
+		if ctf_core.settings.server_mode == "mapedit" then
+			return
+		end
+
 		minetest.log("action", "Giving initial stuff to player "
 				.. player:get_player_name())
 		local inv = player:get_inventory()

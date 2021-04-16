@@ -18,16 +18,24 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 	local schempath = ctf_map.maps_dir .. dirname .. "/map.mts"
 	local res = minetest.place_schematic(mapmeta.pos1, schempath)
 
-	if tonumber(mapmeta.map_version or "0") < 2 then
-		minetest.chat_send_all(minetest.colorize("red", "Map version is < 2. You won't find any flags"))
-	end
-
 	for name, def in pairs(mapmeta.teams) do
 		local p = def.flag_pos
 
-		if minetest.get_node(p).name ~= "ctf_modebase:flag" then
-			minetest.log("error", "Team flag positions were set incorrectly")
-			break
+		local node = minetest.get_node(p)
+
+		if node.name ~= "ctf_modebase:flag" then
+			minetest.log("error", name.."'s flag was set incorrectly")
+		else
+			minetest.set_node(vector.offset(p, 0, 1, 0), {name="ctf_modebase:flag_top_"..name, param2 = node.param2})
+
+			-- Place flag base if needed
+			if tonumber(mapmeta.map_version or "0") < 2 then
+				for x = -2, 2 do
+					for z = -2, 2 do
+						minetest.set_node(vector.offset(p, x, -1, z), {name = def.base_node or "ctf_map:cobble"})
+					end
+				end
+			end
 		end
 	end
 

@@ -73,12 +73,10 @@ return {
 		for tname, def in pairs(ctf_map.current_map.teams) do
 			local flag_pos = table.copy(def.flag_pos)
 
-			flag_pos.y = flag_pos.y + 1
-
 			if not hud:exists(player, "flag_pos:"..tname) then
 				hud:add(player, "flag_pos:"..tname, {
 					hud_elem_type = "waypoint",
-					waypoint_text = HumanReadable(tname).."'s flag",
+					waypoint_text = HumanReadable(tname).."'s base",
 					color = ctf_teams.team[tname].color_hex,
 					world_pos = flag_pos,
 				})

@@ -15,7 +15,7 @@ function ctf_map.show_map_editor(player)
 	ctf_gui.show_formspec(player, "ctf_map:start", {
 		title = "Capture The Flag Map Editor",
 		description = "Would you like to edit an existing map or create a new one?",
-		privs = {ctf_mapeditor = true},
+		privs = {ctf_map_editor = true},
 		elements = {
 			newmap = {
 				type = "button", exit = true, label = "Create New Map",
@@ -36,7 +36,7 @@ function ctf_map.show_map_editor(player)
 							hint          = "hint",
 							license       = "CC-BY",
 							others        = "Other info",
-							base_node     = "ctf_map:ignore",
+							base_node     = "ctf_map:cobble",
 							initial_stuff = {},
 							treasures     = {},
 							skybox        = "none",
@@ -81,7 +81,7 @@ function ctf_map.show_map_editor(player)
 
 							skybox.set(p, table.indexof(ctf_map.skyboxes, map.skybox)-1)
 
-							physics.set(pname, "ctf_map:editor_speed", {
+							physics.set(pname, "ctf_map_editor_speed", {
 								speed = map.phys_speed,
 								jump = map.phys_jump,
 								gravity = map.phys_gravity,
@@ -128,146 +128,120 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 		end
 	end
 
-	local elements = {
-		positions = {
-			type = "button", exit = true,
-			label = "Corners - " .. minetest.pos_to_string(context[player].pos1, 0) ..
-					" - " .. minetest.pos_to_string(context[player].pos2, 0),
-			pos = {0, 0.5},
-			size = {10 - (ctf_gui.SCROLLBAR_WIDTH + 0.1), ctf_gui.ELEM_SIZE[2]},
-			func = function(pname)
-				ctf_map.get_pos_from_player(pname, 2, function(p, positions)
-					context[p].pos1 = positions[1]
-					context[p].pos2 = positions[2]
-				end)
-			end,
-		},
-		enabled = {
-			type = "checkbox", label = "Map Enabled", pos = {0, 2}, default = context[player].enabled,
-			func = function(pname, fields, name) context[pname].enabled = fields[name] == "true" or false end,
-		},
-		dirname = {
-			type = "field", label = "Folder Name", pos = {0, 3}, size = {6, 0.7}, default = context[player].dirname,
-			func = function(pname, fields, name) context[pname].dirname = fields[name] end,
-		},
-		mapname = {
-			type = "field", label = "Map Name", pos = {0, 4.4}, size = {6, 0.7}, default = context[player].name,
-			func = function(pname, fields, name) context[pname].name = fields[name] end,
-		},
-		author = {
-			type = "field", label = "Map Author(s)", pos = {0, 5.8}, size = {6, 0.7}, default = context[player].author,
-			func = function(pname, fields, name) context[pname].author = fields[name] end,
-		},
-		hint = {
-			type = "field", label = "Map Hint", pos = {0, 7.2}, size = {6, 0.7}, default = context[player].hint,
-			func = function(pname, fields, name) context[pname].hint = fields[name] end,
-		},
-		license = {
-			type = "field", label = "Map License", pos = {0, 8.6}, size = {6, 0.7}, default = context[player].license,
-			func = function(pname, fields, name) context[pname].license = fields[name] end,
-		},
-		others = {
-			type = "field", label = "Other Info", pos = {0, 10}, size = {6, 0.7}, default = context[player].others,
-			func = function(pname, fields, name) context[pname].others = fields[name] end,
-		},
-		base_node = {
-			type = "field", label = "Base Node", pos = {0, 11.4}, size = {6, 0.7}, default = context[player].base_node,
-			func = function(pname, fields, name) context[pname].base_node = fields[name] end,
-		},
-		initial_stuff = {
-			type = "field", label = "Map Initial Stuff", pos = {0, 12.8}, size = {6, 0.7},
-			default = table.concat(context[player].initial_stuff or {"none"}, ","),
-			func = function(pname, fields, name)
-				context[pname].initial_stuff = string.split(fields[name]:gsub("%s?,%s?", ","), ",")
-			end,
-		},
-		treasures = {
-			type = "field", label = "Map Treasures", pos = {0, 14.2}, size = {6, 0.7},
-			default = table.concat(context[player].treasures or {"none"}, ","),
-			func = function(pname, fields, name)
-				context[pname].treasures = string.split(fields[name], ",")
-			end,
-		},
-		skybox_label = {
-			type = "label",
-			pos = {0, 15.4},
-			label = "Skybox",
-		},
-		skybox = {
-			type = "dropdown",
-			pos = {0, 15.6},
-			size = {6, ctf_gui.ELEM_SIZE[2]},
-			items = ctf_map.skyboxes,
-			default_idx = table.indexof(ctf_map.skyboxes, context[player].skybox),
-			func = function(pname, fields, name)
-				local oldval = context[pname].skybox
-				context[pname].skybox = fields[name]
+	local elements = {}
 
-				if context[pname].skybox ~= oldval then
-					skybox.set(PlayerObj(pname), table.indexof(ctf_map.skyboxes, fields[name])-1)
+	elements.positions = {
+		type = "button", exit = true,
+		label = "Corners - " .. minetest.pos_to_string(context[player].pos1, 0) ..
+				" - " .. minetest.pos_to_string(context[player].pos2, 0),
+		pos = {0, 0.5},
+		size = {10 - (ctf_gui.SCROLLBAR_WIDTH + 0.1), ctf_gui.ELEM_SIZE[2]},
+		func = function(pname)
+			ctf_map.get_pos_from_player(pname, 2, function(p, positions)
+				context[p].pos1 = positions[1]
+				context[p].pos2 = positions[2]
+			end)
+		end,
+	}
+	elements.enabled = {
+		type = "checkbox", label = "Map Enabled", pos = {0, 2}, default = context[player].enabled,
+		func = function(pname, fields, name) context[pname].enabled = fields[name] == "true" or false end,
+	}
+
+	local ypos = 3
+	for name, label in pairs({
+			dirname = "Folder Name", mapname = "Map Name"   , author = "Map Author(s)",
+			hint    = "Map Hint"   , license = "Map License", others = "Other Info"
+		}) do
+		elements[name] = {
+			type = "field", label = label,
+			pos = {0, ypos}, size = {6, 0.7},
+			default = context[player][name],
+			func = function(pname, fields, fname)
+				context[pname][name] = fields[fname]
+			end,
+		}
+
+		ypos = ypos + 1.4
+	end
+
+	elements.initial_stuff = {
+		type = "field", label = "Map Initial Stuff", pos = {0, 12.8}, size = {6, 0.7},
+		default = table.concat(context[player].initial_stuff or {"none"}, ","),
+		func = function(pname, fields, name)
+			context[pname].initial_stuff = string.split(fields[name]:gsub("%s?,%s?", ","), ",")
+		end,
+	}
+	elements.treasures = {
+		type = "field", label = "Map Treasures", pos = {0, 14.2}, size = {6, 0.7},
+		default = table.concat(context[player].treasures or {"none"}, ","),
+		func = function(pname, fields, name)
+			context[pname].treasures = string.split(fields[name], ",")
+		end,
+	}
+	elements.skybox_label = {
+		type = "label",
+		pos = {0, 15.4},
+		label = "Skybox",
+	}
+	elements.skybox = {
+		type = "dropdown",
+		pos = {0, 15.6},
+		size = {6, ctf_gui.ELEM_SIZE[2]},
+		items = ctf_map.skyboxes,
+		default_idx = table.indexof(ctf_map.skyboxes, context[player].skybox),
+		func = function(pname, fields, name)
+			local oldval = context[pname].skybox
+			context[pname].skybox = fields[name]
+
+			if context[pname].skybox ~= oldval then
+				skybox.set(PlayerObj(pname), table.indexof(ctf_map.skyboxes, fields[name])-1)
+			end
+		end,
+	}
+
+	ypos = 17
+	for name, label in pairs({speed = "Map Movement Speed", jump = "Map Jump Height", gravity = "Map Gravity"}) do
+		elements[name] = {
+			type = "field", label = label,
+			pos = {0, ypos}, size = {4, 0.7},
+			default = context[player]["phys_"..name] or 1,
+			func = function(pname, fields, fname)
+				local oldval = context[pname]["phys_"..name]
+				context[pname]["phys_"..name] = tonumber(fields[fname]) or 1
+
+				if context[pname]["phys_"..name] ~= oldval then
+					physics.set(pname, "ctf_map_editor_"..name, {[name] = tonumber(fields[fname] or 1)})
 				end
 			end,
-		},
-		speed = {
-			type = "field", label = "Map Movement Speed", pos = {0, 17}, size = {4, 0.7},
-			default = context[player].phys_speed or 1,
-			func = function(pname, fields, name)
-				local oldval = context[pname].phys_speed
-				context[pname].phys_speed = tonumber(fields[name]) or 1
+		}
 
-				if context[pname].phys_speed ~= oldval then
-					physics.set(pname, "ctf_map:editor_speed", {speed = tonumber(fields[name] or 1)})
-				end
-			end,
-		},
-		jump = {
-			type = "field", label = "Map Jump Height", pos = {0, 18.4}, size = {4, 0.7},
-			default = context[player].phys_jump or 1,
-			func = function(pname, fields, name)
-				local oldval = context[pname].phys_jump
-				context[pname].phys_jump = tonumber(fields[name]) or 1
+		ypos = ypos + 1.4
+	end
 
-				if context[pname].phys_jump ~= oldval then
-					physics.set(pname, "ctf_map:editor_jump", {jump = tonumber(fields[name] or 1)})
-				end
-			end,
-		},
-		gravity = {
-			type = "field", label = "Map Gravity", pos = {0, 19.8}, size = {4, 0.7},
-			default = context[player].phys_gravity or 1,
-			func = function(pname, fields, name)
-				local oldval = context[pname].phys_gravity
-				context[pname].phys_gravity = tonumber(fields[name]) or 1
+	elements.start_time = {
+		type = "field", label = "Map start_time", pos = {0, 21.2}, size = {4, 0.7},
+		default = context[player].start_time or ctf_map.DEFAULT_START_TIME,
+		func = function(pname, fields, name)
+			local oldval = context[pname].start_time
+			context[pname].start_time = tonumber(fields[name] or ctf_map.DEFAULT_START_TIME)
 
-				if context[pname].phys_gravity ~= oldval then
-					physics.set(pname, "ctf_map:editor_gravity", {gravity = tonumber(fields[name] or 1)})
-				end
-			end,
-		},
-		start_time = {
-			type = "field", label = "Map start_time", pos = {0, 21.2}, size = {4, 0.7},
-			default = context[player].start_time or ctf_map.DEFAULT_START_TIME,
-			func = function(pname, fields, name)
-				local oldval = context[pname].start_time
-				context[pname].start_time = tonumber(fields[name] or ctf_map.DEFAULT_START_TIME)
+			if context[pname].start_time ~= oldval then
+				minetest.registered_chatcommands["time"].func(pname, tostring(context[pname].start_time))
+			end
+		end,
+	}
+	elements.time_speed = {
+		type = "field", label = "Map time_speed (Multiplier)", pos = {0, 22.6},
+		size = {4, 0.7}, default = context[player].time_speed or "1",
+		func = function(pname, fields, name)
+			local oldval = context[pname].time_speed
+			context[pname].time_speed = tonumber(fields[name] or "1")
 
-				if context[pname].start_time ~= oldval then
-					minetest.registered_chatcommands["time"].func(pname, tostring(context[pname].start_time))
-				end
-			end,
-		},
-		time_speed = {
-			type = "field", label = "Map time_speed (Multiplier)", pos = {0, 22.6},
-			size = {4, 0.7}, default = context[player].time_speed or "1",
-			func = function(pname, fields, name)
-				local oldval = context[pname].time_speed
-				context[pname].time_speed = tonumber(fields[name] or "1")
-
-				if context[pname].time_speed ~= oldval then
-					minetest.settings:set("time_speed", context[pname].time_speed * 72)
-				end
-			end,
-		},
+			if context[pname].time_speed ~= oldval then
+				minetest.settings:set("time_speed", context[pname].time_speed * 72)
+			end
+		end,
 	}
 
 	local idx = 24.2
@@ -406,7 +380,7 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 		title = "Capture The Flag Map Editor",
 		description = "Save your map or edit the config.\nRemember to press ENTER after writing to a field",
 		scrollheight = 176 + ((idx - 24) * 10) + 4,
-		privs = {ctf_mapeditor = true},
+		privs = {ctf_map_editor = true},
 		elements = elements,
 		scroll_pos = scroll_pos or 0,
 	})

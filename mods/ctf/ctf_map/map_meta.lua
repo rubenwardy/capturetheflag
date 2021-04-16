@@ -129,7 +129,6 @@ function ctf_map.load_map_meta(idx, dirname)
 			hint          = meta:get("hint"),
 			license       = meta:get("license"),
 			others        = meta:get("others"),
-			base_node     = meta:get("base_node"),
 			initial_stuff = minetest.deserialize(meta:get("initial_stuff")),
 			treasures     = minetest.deserialize(meta:get("treasures")),
 			skybox        = meta:get("skybox"),
@@ -194,7 +193,6 @@ function ctf_map.save_map(mapmeta)
 	meta:set("hint"         , mapmeta.hint)
 	meta:set("license"      , mapmeta.license)
 	meta:set("others"       , mapmeta.others)
-	meta:set("base_node"    , mapmeta.base_node)
 	meta:set("initial_stuff", minetest.serialize(mapmeta.initial_stuff))
 	meta:set("treasures"    , minetest.serialize(mapmeta.treasures))
 	meta:set("skybox"       , mapmeta.skybox)

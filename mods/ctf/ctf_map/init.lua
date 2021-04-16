@@ -43,7 +43,7 @@ minetest.register_tool("ctf_map:adminpick", {
 	end,
 })
 
-minetest.register_privilege("ctf_mapeditor", {
+minetest.register_privilege("ctf_map_editor", {
 	description = "Allows use of map editing features",
 	give_to_singleplayer = false,
 	give_to_admin = false,
@@ -64,7 +64,7 @@ ctf_core.include_files(
 
 minetest.register_chatcommand("ctf_map", {
 	description = "Run map related commands",
-	privs = {mapeditor = true},
+	privs = {ctf_map_editor = true},
 	params = "[editor | e]",
 	func = function(name, params)
 		params = string.split(params, " ")

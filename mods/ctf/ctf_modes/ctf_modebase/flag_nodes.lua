@@ -6,7 +6,7 @@ local function show_flag_color_form(player, target_pos, param2)
 	ctf_gui.show_formspec(player, "ctf_modebase:flag_color_select", {
 		title = "Flag Color Selection",
 		description = "Choose a color for this flag",
-		privs = {ctf_mapeditor = true},
+		privs = {ctf_map_editor = true},
 		elements = {
 			teams = {
 				type = "dropdown",
@@ -51,14 +51,14 @@ minetest.register_node("ctf_modebase:flag", {
 	},
 	groups = {immortal=1,is_flag=1,flag_bottom=1},
 	on_punch = function(pos, node, puncher, pointed_thing, ...)
-		local pos_above = vector.offfset(pos, 0, 1, 0)
+		local pos_above = vector.offset(pos, 0, 1, 0)
 		local node_above = minetest.get_node(pos_above)
 
 		if node_above.name ~= "ctf_modebase:flag_captured_top" then
 			ctf_modebase.flag_on_punch(puncher, pos_above, node_above)
-		else
-			minetest.node_punch(pos, node, puncher, pointed_thing, ...)
 		end
+
+		minetest.node_punch(pos, node, puncher, pointed_thing, ...)
 	end,
 	on_rightclick = function(pos, node, clicker)
 		if ctf_core.settings.server_mode == "mapedit" then
@@ -66,6 +66,8 @@ minetest.register_node("ctf_modebase:flag", {
 		end
 	end,
 })
+
+minetest.register_alias("ctf_map:flag", "ctf_modebase:flag")
 
 for name, def in pairs(ctf_teams.team) do
 	local color = def.color
@@ -96,9 +98,9 @@ for name, def in pairs(ctf_teams.team) do
 
 			if node.name ~= "ctf_modebase:flag_captured_top" then
 				ctf_modebase.flag_on_punch(puncher, pos, node)
-			else
-				minetest.node_punch(pos, node, puncher, pointed_thing, ...)
 			end
+
+			minetest.node_punch(pos, node, puncher, pointed_thing, ...)
 		end,
 		on_rightclick = function(pos, node, clicker)
 			if ctf_core.settings.server_mode == "mapedit" then

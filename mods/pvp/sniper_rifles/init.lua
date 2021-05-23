@@ -37,7 +37,7 @@ local function show_scope(name, item_name, fov_mult)
 		hud_elem_type = "image",
 		position = {x = 0.5, y = 0.5},
 		offset = {x = (-65*scale_const)/2, y = (-65*scale_const)/2},
-		text = "rifle_crosshair.png^[makealpha:178,178,178", -- Approx. 70% opacity
+		text = "rifle_crosshair.png^[makealpha:77,77,77", -- Approx. 70% opacity
 		scale = {x = scale_const, y = scale_const},
 		alignment = {x = 1, y = 1},
 	})

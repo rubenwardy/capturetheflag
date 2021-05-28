@@ -4,6 +4,15 @@ A tool for easily creating basic CTF-themed GUIs
 
 # API
 
+```lua
+ctf_gui.show_formspec(player, "modname:formname", {
+	title = "Formspec Title",
+	description = "Text below the title",
+	privs = {server = true},
+	elements = { ... }
+})
+```
+
 ## Global variables
 
 * `ctf_gui.ELEM_SIZE`       -- Default element size

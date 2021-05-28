@@ -1,3 +1,8 @@
+local flag_huds, rankings = ctf_core.include_files(
+	"flag_huds.lua",
+	"rankings.lua"
+)
+
 local function tp_player_near_flag(player)
 	local pname = PlayerName(player)
 
@@ -39,10 +44,6 @@ local function celebrate_team(teamname)
 	end
 end
 
-local flag_huds = ctf_core.include_files(
-	"flag_huds.lua"
-)
-
 ctf_modebase.register_mode("classic", {
 	map_whitelist = {--[[ "bridge", "caverns", "coast", "iceage", "two_hills",  ]]"plains"},
 	on_allocplayer = function(player, teamname)
@@ -54,9 +55,17 @@ ctf_modebase.register_mode("classic", {
 
 		flag_huds.on_allocplayer(player)
 	end,
+	on_dieplayer = function(player, reason)
+		if reason.type == "punch" and reason.object:is_player() then
+			rankings.give(reason.object, {kills = 1, score = rankings.calculate_killscore(player)})
+			rankings.give(player, {deaths = 1})
+		end
+	end,
 	on_respawnplayer = tp_player_near_flag,
 	on_flag_take = function(player, teamname)
 		celebrate_team(ctf_teams.get_team(player))
+
+		rankings.give(player, {score = 20})
 
 		flag_huds.update()
 	end,
@@ -68,6 +77,11 @@ ctf_modebase.register_mode("classic", {
 
 		flag_huds.update()
 
+		rankings.give(player, {score = 30})
+
 		minetest.after(10, ctf_modebase.start_new_match)
+	end,
+	on_new_match = function()
+		rankings.reset_recent()
 	end,
 })

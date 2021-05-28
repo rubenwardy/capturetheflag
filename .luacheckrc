@@ -2,6 +2,7 @@ unused_args = false
 
 globals = {
 	"ctf_core", "ctf_map", "ctf_teams", "ctf_modebase", "ctf_gui",
+	"ctf_rankings",
 
 	"PlayerObj", "PlayerName", "HumanReadable", "RunCallbacks",
 
@@ -12,6 +13,15 @@ globals = {
 	"default", "skybox",
 
 	"vector",
+	math = {
+		fields = {
+			"round",
+			"hypot",
+			"sign",
+			"factorial",
+			"ceil",
+		}
+	},
 }
 
 exclude_files = {
@@ -43,14 +53,6 @@ read_globals = {
 		fields = {
 			"split",
 			"trim",
-		}
-	},
-
-	math = {
-		fields = {
-			"hypot",
-			"sign",
-			"factorial"
 		}
 	},
 }

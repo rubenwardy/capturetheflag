@@ -129,6 +129,13 @@ function ctf_modebase.place_map(mode_def, mapidx)
 			gravity = map.phys_gravity,
 		})
 
+		if mode_def.physics then
+			player:set_physics_override({
+				sneak_glitch = mode_def.physics.sneak_glitch or false,
+				new_move = mode_def.physics.new_move or true
+			})
+		end
+
 		minetest.settings:set("time_speed", map.time_speed * 72)
 	end
 

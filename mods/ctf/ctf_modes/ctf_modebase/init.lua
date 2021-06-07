@@ -49,7 +49,6 @@ end
 
 minetest.register_chatcommand("ctf_next", {
 	description = "Skip to a new match.",
-	params = "[mode]",
 	privs = {ctf_admin = true},
 	func = function(name, param)
 		ctf_modebase.start_new_match()

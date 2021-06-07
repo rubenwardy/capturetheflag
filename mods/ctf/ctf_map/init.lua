@@ -14,6 +14,7 @@ ctf_map = {
 	maps_dir = minetest.get_modpath("ctf_map").."/maps/",
 	skyboxes = {"none"},
 	current_map = nil,
+	barrier_nodes = {}, -- populated in nodes.lua
 }
 
 minetest.register_on_mods_loaded(function()
@@ -68,6 +69,10 @@ minetest.register_chatcommand("ctf_map", {
 	params = "[editor | e]",
 	func = function(name, params)
 		params = string.split(params, " ")
+
+		if not params then
+			return false, "/ctf_map [editor | e]"
+		end
 
 		if params[1] == "e" or params[1] == "editor" then
 			local inv = PlayerObj(name):get_inventory()

@@ -46,6 +46,38 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 	return mapmeta
 end
 
+-- Takes [mapmeta] or [pos1, pos2] arguments
+function ctf_map.remove_barrier(mapmeta, pos2)
+	local pos1 = mapmeta
+
+	if not pos2 then
+		pos1, pos2 = mapmeta.pos1, mapmeta.pos2
+	end
+
+	local vm = VoxelManip(pos1, pos2)
+	local area = VoxelArea:new{MinEdge = pos1, MaxEdge = pos2}
+	local data = vm:get_data()
+
+	for z = pos1.z, pos2.z do
+		for y = pos1.y, pos2.y do
+			for x = pos1.x, pos2.x do
+				local vi = area:index(x, y, z)
+
+				for barriernode_id, replacement_id in pairs(ctf_map.barrier_nodes) do
+					if data[vi] == barriernode_id then
+						data[vi] = replacement_id
+						break
+					end
+				end
+			end
+		end
+	end
+
+	vm:set_data(data)
+	vm:update_liquids()
+	vm:write_to_map(false)
+end
+
 local getpos_players = {}
 function ctf_map.get_pos_from_player(name, amount, donefunc)
 	getpos_players[name] = {amount = amount, func = donefunc, positions = {}}

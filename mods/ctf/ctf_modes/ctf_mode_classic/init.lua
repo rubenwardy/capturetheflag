@@ -1,6 +1,7 @@
-local flag_huds, rankings = ctf_core.include_files(
+local flag_huds, rankings, build_timer = ctf_core.include_files(
 	"flag_huds.lua",
-	"rankings.lua"
+	"rankings.lua",
+	"build_timer.lua"
 )
 
 local function tp_player_near_flag(player)
@@ -80,9 +81,11 @@ ctf_modebase.register_mode("classic", {
 
 		rankings.give(player, {score = 30})
 
-		minetest.after(10, ctf_modebase.start_new_match)
+		minetest.after(3, ctf_modebase.start_new_match)
 	end,
-	on_new_match = function()
+	on_new_match = function(mapdef)
 		rankings.reset_recent()
+
+		build_timer.start(mapdef)
 	end,
 })

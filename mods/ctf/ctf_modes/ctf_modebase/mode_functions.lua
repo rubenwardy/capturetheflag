@@ -27,4 +27,4 @@ add_mode_func(ctf_modebase.register_on_flag_take    , "on_flag_take"    )
 add_mode_func(ctf_modebase.register_on_flag_drop    , "on_flag_drop"    )
 add_mode_func(ctf_modebase.register_on_flag_capture , "on_flag_capture" )
 
-add_mode_func(ctf_modebase.register_on_treasurefy_node, "on_treasurechest_open")
+add_mode_func(ctf_modebase.register_on_treasurefy_node, "on_treasurefy_node")

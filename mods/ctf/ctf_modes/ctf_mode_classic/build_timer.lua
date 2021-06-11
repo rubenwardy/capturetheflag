@@ -11,6 +11,9 @@ local build_timer = {
 		timer = BUILD_TIME
 		target_map = mapdef
 	end,
+	in_progress = function()
+		return timer ~= nil
+	end,
 	finish = function()
 		timer = nil
 

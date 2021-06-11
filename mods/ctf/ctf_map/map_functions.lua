@@ -54,7 +54,9 @@ function ctf_map.remove_barrier(mapmeta, pos2)
 		pos1, pos2 = mapmeta.pos1, mapmeta.pos2
 	end
 
-	local vm = VoxelManip(pos1, pos2)
+	local vm = VoxelManip()
+	pos1, pos2 = vm:read_from_map(pos1, pos2)
+
 	local area = VoxelArea:new{MinEdge = pos1, MaxEdge = pos2}
 	local data = vm:get_data()
 
@@ -78,49 +80,52 @@ function ctf_map.remove_barrier(mapmeta, pos2)
 	vm:write_to_map(false)
 end
 
-local getpos_players = {}
-function ctf_map.get_pos_from_player(name, amount, donefunc)
-	getpos_players[name] = {amount = amount, func = donefunc, positions = {}}
+function ctf_map.place_chests(mapmeta, pos2, amount)
+	local pos1 = mapmeta
+	local pos_list
 
-	minetest.chat_send_player(name, "Please punch a node or run /ctf_map thispos to supply coordinates")
-end
-
-local function add_position(player, pos)
-	pos = vector.round(pos)
-
-	table.insert(getpos_players[player].positions, pos)
-	minetest.chat_send_player(player, "Got pos "..minetest.pos_to_string(pos, 1))
-
-	if getpos_players[player].amount > 1 then
-		getpos_players[player].amount = getpos_players[player].amount - 1
+	if not pos2 then
+		pos_list = mapmeta.chests
+		pos1, pos2 = mapmeta.pos1, mapmeta.pos2
 	else
-		minetest.chat_send_player(player, "Done getting positions!")
-		getpos_players[player].func(player, getpos_players[player].positions)
-		getpos_players[player] = nil
+		pos_list = {{pos1 = pos1, pos2 = pos2, amount = amount or ctf_map.DEFAULT_CHEST_AMOUNT}}
 	end
-end
 
-ctf_map.register_map_command("thispos", function(name, params)
-	local player = PlayerObj(name)
+	local vm = VoxelManip()
+	pos1, pos2 = vm:read_from_map(pos1, pos2)
 
-	if player then
-		if getpos_players[name] then
-			add_position(name, player:get_pos())
-			return true
-		else
-			return false, "You aren't doing anything that requires coordinates"
+	local area = VoxelArea:new{MinEdge = pos1, MaxEdge = pos2}
+	local data = vm:get_data()
+
+	for _, a in pairs(pos_list) do
+		local place_positions = {}
+		local chest_node = minetest.get_content_id("ctf_map:chest")
+
+		for z = a.pos1.z, a.pos2.z, (a.pos1.z <= a.pos2.z) and 1 or -1 do
+			for y = a.pos1.y, a.pos2.y, (a.pos1.y <= a.pos2.y) and 1 or -1 do
+				for x = a.pos1.x, a.pos2.x, (a.pos1.x <= a.pos2.x) and 1 or -1 do
+					local vi = area:index(x, y, z)
+					local id_below = data[area:index(x, y-1, z)]
+
+					if data[vi] == minetest.CONTENT_AIR and
+					id_below ~= minetest.CONTENT_AIR and id_below ~= minetest.CONTENT_IGNORE and
+					data[area:index(x, y+1, z)] == minetest.CONTENT_AIR then
+						table.insert(place_positions, vi)
+					end
+				end
+			end
+		end
+
+		for i = 1, a.amount, 1 do
+			local idx = math.random(1, #place_positions)
+
+			data[place_positions[idx]] = chest_node
+
+			table.remove(place_positions, idx)
 		end
 	end
-end)
 
-minetest.register_on_punchnode(function(pos, _, puncher)
-	puncher = PlayerName(puncher)
-
-	if getpos_players[puncher] then
-		add_position(puncher, pos)
-	end
-end)
-
-minetest.register_on_leaveplayer(function(player)
-	getpos_players[PlayerName(player)] = nil
-end)
+	vm:set_data(data)
+	vm:update_liquids()
+	vm:write_to_map(false)
+end

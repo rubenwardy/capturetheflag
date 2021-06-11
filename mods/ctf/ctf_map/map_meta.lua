@@ -174,6 +174,7 @@ function ctf_map.save_map(mapmeta)
 
 		mapmeta.chests[id].pos1 = vector.subtract(def.pos1, mapmeta.offset)
 		mapmeta.chests[id].pos2 = vector.subtract(def.pos2, mapmeta.offset)
+		mapmeta.amount = def.amount
 	end
 
 	for id, def in pairs(mapmeta.teams) do

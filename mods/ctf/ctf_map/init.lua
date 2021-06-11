@@ -15,6 +15,7 @@ ctf_map = {
 	skyboxes = {"none"},
 	current_map = nil,
 	barrier_nodes = {}, -- populated in nodes.lua
+	treasurefy_node = function(pos) end, -- See ctf_modebase for function
 }
 
 minetest.register_on_mods_loaded(function()
@@ -60,6 +61,7 @@ ctf_core.include_files(
 	"nodes.lua",
 	"map_meta.lua",
 	"map_functions.lua",
+	"editor_functions.lua",
 	"mapedit_gui.lua"
 )
 

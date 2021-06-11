@@ -45,10 +45,20 @@ ctf_modebase.registered_on_new_match = {}
 ---@param func function
 --- Passed params: `mapdef`, `old_map` (`old_map` may be nil)
 function ctf_modebase.register_on_new_match(func, load_first)
-	table.insert(ctf_modebase.registered_on_new_match, func)
 	if load_first then
 		table.insert(ctf_modebase.registered_on_new_match, 1, func)
 	else
 		table.insert(ctf_modebase.registered_on_new_match, func)
+	end
+end
+
+ctf_modebase.registered_on_treasurefy_node = {}
+---@param func function
+--- Passed params: Same as node `on_rightclick`
+function ctf_modebase.register_on_treasurefy_node(func, load_first)
+	if load_first then
+		table.insert(ctf_modebase.registered_on_treasurefy_node, 1, func)
+	else
+		table.insert(ctf_modebase.registered_on_treasurefy_node, func)
 	end
 end

@@ -27,6 +27,7 @@ ctf_modebase = {
 ctf_gui.init()
 
 ctf_core.include_files(
+	"treasure.lua",
 	"register.lua",
 	"flag_nodes.lua",
 	"match.lua",

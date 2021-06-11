@@ -47,6 +47,18 @@ end
 
 ctf_modebase.register_mode("classic", {
 	map_whitelist = {--[[ "bridge", "caverns", "coast", "iceage", "two_hills",  ]]"plains"},
+	treasures = {
+		["default:ladder"] = {max_count = 20, rarity = 0.3, max_stacks = 5},
+		["default:torch"] = {max_count = 20, rarity = 0.3, max_stacks = 5},
+		["default:cobble"] = {min_count = 45, max_count = 99, rarity = 0.4, max_stacks = 5},
+		["default:wood"] = {min_count = 10, max_count = 60, rarity = 0.5, max_stacks = 4},
+
+		["default:pick_steel"] = {max_count = 1, rarity = 0.5, max_stacks = 3},
+		["default:shovel_steel"] = {max_count = 1, rarity = 0.5, max_stacks = 2},
+		["default:axe_steel"] = {max_count = 1, rarity = 0.5, max_stacks = 2},
+
+		["default:apple"] = {min_count = 5, max_count = 30, rarity = 0.1, max_stacks = 3},
+	},
 	physics = {sneak_glitch = true, new_move = false},
 	on_allocplayer = function(player, teamname)
 		player:set_properties({
@@ -65,6 +77,12 @@ ctf_modebase.register_mode("classic", {
 	end,
 	on_respawnplayer = tp_player_near_flag,
 	on_flag_take = function(player, teamname)
+		if build_timer.in_progress() then
+			tp_player_near_flag(player)
+
+			return "You can't take the enemy flag during build time!"
+		end
+
 		celebrate_team(ctf_teams.get_team(player))
 
 		rankings.give(player, {score = 20})
@@ -87,5 +105,7 @@ ctf_modebase.register_mode("classic", {
 		rankings.reset_recent()
 
 		build_timer.start(mapdef)
+
+		ctf_map.place_chests(mapdef)
 	end,
 })

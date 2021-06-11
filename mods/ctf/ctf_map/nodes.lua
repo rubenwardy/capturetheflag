@@ -125,3 +125,91 @@ end
 minetest.register_alias("ctf_map:torch", "default:torch")
 minetest.register_alias("ctf_map:torch_wall", "default:torch_wall")
 minetest.register_alias("ctf_map:torch_ceiling", "default:torch_ceiling")
+
+--
+--- credit for most of code goes to tsm_chests mod used by CTF 2.0
+
+local chest_formspec =
+	"size[8,9]" ..
+	"list[current_name;main;0,0.3;8,4;]" ..
+	"list[current_player;main;0,4.85;8,1;]" ..
+	"list[current_player;main;0,6.08;8,3;8]" ..
+	"listring[current_name;main]" ..
+	"listring[current_player;main]" ..
+	default.get_hotbar_bg(0,4.85)
+
+minetest.register_node("ctf_map:chest", {
+	description = "Loot Chest",
+	tiles = {"default_chest_top.png", "default_chest_top.png", "default_chest_side.png",
+		"default_chest_side.png", "default_chest_side.png", "default_chest_front.png"},
+	paramtype2 = "facedir",
+	groups = {immortal = 1},
+	light_source = 2,
+	is_ground_content = false,
+	sounds = default.node_sound_wood_defaults(),
+	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
+		if player then
+			minetest.chat_send_player(player:get_player_name(),
+				"You're not allowed to put things in treasure chests!")
+			return 0
+		end
+	end,
+	on_rightclick = function(pos, node, clicker, ...)
+		if not clicker:is_player() then return end
+
+		local meta = minetest.get_meta(pos)
+		local pname = clicker:get_player_name()
+
+		if meta:get_string("treasured") == "yes" then
+			return
+		else
+			minetest.registered_nodes[node.name].on_construct(pos)
+			ctf_map.treasurefy_node(pos, node, clicker, ...)
+			meta:set_string("treasured", "yes")
+		end
+
+		local special_form = chest_formspec
+		special_form = special_form:gsub("current_player", "player:"..pname)
+		special_form = special_form:gsub("current_name", string.format("nodemeta:%d,%d,%d", pos.x, pos.y, pos.z))
+
+		minetest.show_formspec(pname, "ctf_map:chest_formspec", special_form)
+	end,
+	on_construct = function(pos)
+		local meta = minetest.get_meta(pos)
+		meta:set_string("formspec", chest_formspec)
+		meta:set_string("infotext", "Loot Chest")
+		local inv = meta:get_inventory()
+		inv:set_size("main", 8*4)
+	end,
+	can_dig = function(pos,player)
+		local meta = minetest.get_meta(pos);
+		local inv = meta:get_inventory()
+		return inv:is_empty("main")
+	end,
+	on_metadata_inventory_move = function(pos, from_list, from_index,
+			to_list, to_index, count, player)
+		minetest.log("action", player:get_player_name() ..
+			" moves stuff in chest at " .. minetest.pos_to_string(pos))
+	end,
+	on_metadata_inventory_put = function(pos, listname, index, stack, player)
+		minetest.log("action", player:get_player_name() ..
+			" moves stuff to chest at " .. minetest.pos_to_string(pos))
+	end,
+	on_metadata_inventory_take = function(pos, listname, index, stack, player)
+		local inv = minetest.get_inventory({type = "node", pos = pos})
+		local swapped_item = inv:get_stack(listname, index)
+
+		if swapped_item:get_name() ~= "" then
+			inv:remove_item(listname, swapped_item)
+			player:get_inventory():add_item("main", swapped_item)
+		end
+
+		minetest.log("action", player:get_player_name() ..
+			" takes stuff from chest at " .. minetest.pos_to_string(pos))
+
+		if not inv or inv:is_empty("main") then
+			minetest.set_node(pos, {name="air"})
+			minetest.show_formspec(player:get_player_name(), "", player:get_inventory_formspec())
+		end
+	end,
+})

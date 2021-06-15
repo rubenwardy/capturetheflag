@@ -9,7 +9,7 @@ minetest.register_alias("mapgen_singlenode", "ctf_map:ignore")
 
 ctf_map = {
 	DEFAULT_CHEST_AMOUNT = 23,
-	DEFAULT_START_TIME = 6000,
+	DEFAULT_START_TIME = 5500,
 	CHAT_COLOR = "orange",
 	maps_dir = minetest.get_modpath("ctf_map").."/maps/",
 	skyboxes = {"none"},

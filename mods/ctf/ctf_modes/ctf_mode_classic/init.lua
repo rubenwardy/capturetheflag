@@ -53,11 +53,14 @@ ctf_modebase.register_mode("classic", {
 		["default:cobble"] = {min_count = 45, max_count = 99, rarity = 0.4, max_stacks = 5},
 		["default:wood"] = {min_count = 10, max_count = 60, rarity = 0.5, max_stacks = 4},
 
-		["default:pick_steel"] = {max_count = 1, rarity = 0.5, max_stacks = 3},
-		["default:shovel_steel"] = {max_count = 1, rarity = 0.5, max_stacks = 2},
-		["default:axe_steel"] = {max_count = 1, rarity = 0.5, max_stacks = 2},
+		["default:pick_steel"] = {max_count = 1, rarity = 0.4, max_stacks = 3},
+		["default:shovel_steel"] = {max_count = 1, rarity = 0.4, max_stacks = 2},
+		["default:axe_steel"] = {max_count = 1, rarity = 0.4, max_stacks = 2},
 
-		["default:apple"] = {min_count = 5, max_count = 30, rarity = 0.1, max_stacks = 3},
+		["ctf_melee:sword_steel"] = {max_count = 1, rarity = 0.2, max_stacks = 2},
+		["ctf_melee:sword_mese"] = {max_count = 1, rarity = 0.05, max_stacks = 1},
+
+		["default:apple"] = {min_count = 5, max_count = 30, rarity = 0.1, max_stacks = 2},
 	},
 	physics = {sneak_glitch = true, new_move = false},
 	on_allocplayer = function(player, teamname)

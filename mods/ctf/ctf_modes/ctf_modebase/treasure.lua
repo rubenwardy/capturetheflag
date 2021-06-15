@@ -8,10 +8,10 @@ ctf_map.treasurefy_node = function(pos, node, clicker)
 			local inv = meta:get_inventory()
 
 			for item, def in pairs(ctf_modebase.modes[ctf_modebase.current_mode].treasures or {}) do
-				for i = 1, math.random(def.min_stacks or 0, def.max_stacks or 1), 1 do
-					if math.random(1, 100) > (def.rarity or 0.5) * 100 then
-						local treasure = ItemStack(item)
 
+				for c = 1, def.max_stacks or 1, 1 do
+					if math.random(1, 100) < (def.rarity or 0.5) * 100 then
+						local treasure = ItemStack(item)
 						treasure:set_count(math.random(def.min_count or 1, def.max_count))
 						inv:add_item("main", treasure)
 					end

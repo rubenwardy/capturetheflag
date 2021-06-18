@@ -15,6 +15,10 @@ function ctf_map.load_map_meta(idx, dirname)
 			error("Map was not properly configured: " .. ctf_map.maps_dir .. dirname .. "/map.conf")
 		end
 
+		if meta:get("rotation") and meta:get("rotation") == "x" then
+			minetest.chat_send_all(minetest.colorize("red", "Map must be rotated 90 degress along the y axis"))
+		end
+
 		local mapr = meta:get("r")
 		local maph = meta:get("h")
 		local start_time = meta:get("start_time")
@@ -22,8 +26,12 @@ function ctf_map.load_map_meta(idx, dirname)
 		local initial_stuff = meta:get("initial_stuff")
 		local treasures = meta:get("treasures")
 
-		local pos1 = vector.add(offset, { x = -mapr, y = -maph / 2, z = -mapr })
-		local pos2 = vector.add(offset, { x =  mapr, y =  maph / 2, z =  mapr })
+		offset.y = -maph / 2
+
+		local offset_to_new = vector.new(mapr, maph/2, mapr)
+
+		local pos1 = offset
+		local pos2 = vector.add(offset, vector.new(mapr * 2,  maph, mapr * 2))
 
 		map = {
 			pos1          = pos1,
@@ -58,7 +66,9 @@ function ctf_map.load_map_meta(idx, dirname)
 
 			map.teams[tname] = {
 				enabled = true,
-				flag_pos = vector.add(offset, tpos),
+				flag_pos = vector.add(offset, vector.add( tpos, offset_to_new )),
+				pos1 = vector.new(),
+				pos2 = vector.new()
 			}
 
 			i = i + 1
@@ -76,38 +86,21 @@ function ctf_map.load_map_meta(idx, dirname)
 			from, to = vector.sort(from, to)
 
 			map.chests[i] = {
-				pos1   = from,
-				pos2   = to,
+				pos1   = vector.add(from, offset_to_new),
+				pos2   = vector.add(to,   offset_to_new),
 				amount = tonumber(meta:get("chests." .. i .. ".n") or "20"),
 			}
 
 			i = i + 1
 		end
 
-		-- Add default chest zones if none given
+		-- Add default chest zone if none given
 		if i == 1 then
-			while meta:get("team." .. i) do
-				local chests1
-				if i == 1 then
-					chests1 = vector.add(offset, { x = -mapr, y = -maph / 2, z = 0 })
-				elseif i == 2 then
-					chests1 = map.pos1
-				end
-
-				local chests2
-				if i == 1 then
-					chests2 = map.pos2
-				elseif i == 2 then
-					chests2 = vector.add(offset, { x = mapr, y = maph / 2, z = 0 })
-				end
-
-				map.chests[i] = {
-					pos1 = chests1,
-					pos2 = chests2,
-					amount = ctf_map.DEFAULT_CHEST_AMOUNT,
-				}
-				i = i + 1
-			end
+			map.chests[i] = {
+				pos1 = map.pos1,
+				pos2 = map.pos2,
+				amount = ctf_map.DEFAULT_CHEST_AMOUNT,
+			}
 		end
 	elseif meta:get("map_version") == CURRENT_MAP_VERSION then
 		-- If new items are added also remember to change the table in mapedit_gui.lua
@@ -148,6 +141,9 @@ function ctf_map.load_map_meta(idx, dirname)
 
 		for id, def in pairs(map.teams) do
 			map.teams[id].flag_pos = vector.add(offset, def.flag_pos)
+
+			map.teams[id].pos1 = vector.add(offset, def.pos1)
+			map.teams[id].pos2 = vector.add(offset, def.pos2)
 		end
 	end
 
@@ -182,6 +178,9 @@ function ctf_map.save_map(mapmeta)
 			mapmeta.teams[id] = nil
 		else
 			mapmeta.teams[id].flag_pos = vector.subtract(def.flag_pos, mapmeta.offset)
+
+			mapmeta.teams[id].pos1 = vector.subtract(def.pos1, mapmeta.offset)
+			mapmeta.teams[id].pos2 = vector.subtract(def.pos2, mapmeta.offset)
 		end
 	end
 

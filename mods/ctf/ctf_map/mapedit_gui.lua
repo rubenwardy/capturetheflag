@@ -59,8 +59,6 @@ function ctf_map.show_map_editor(player)
 				pos = {"center", 1.8},
 				func = function(pname, fields)
 					local p = PlayerObj(pname)
-					-- Set skybox and related on map start
-					-- Test out map saving
 
 					minetest.after(0.1, function()
 						ctf_gui.show_formspec(pname, "ctf_map:loading", {
@@ -124,12 +122,15 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 			context[player].teams[name] = {
 				enabled = false,
 				flag_pos = vector.new(),
+				pos1 = vector.new(),
+				pos2 = vector.new(),
 			}
 		end
 	end
 
 	local elements = {}
 
+	-- MAP CORNERS
 	elements.positions = {
 		type = "button", exit = true,
 		label = "Corners - " .. minetest.pos_to_string(context[player].pos1, 0) ..
@@ -143,11 +144,14 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 			end)
 		end,
 	}
+
+	-- MAP ENABLED
 	elements.enabled = {
 		type = "checkbox", label = "Map Enabled", pos = {0, 2}, default = context[player].enabled,
 		func = function(pname, fields, name) context[pname].enabled = fields[name] == "true" or false end,
 	}
 
+	-- FOLDER NAME, MAP NAME, MAP AUTHOR(S), MAP HINT, MAP LICENSE, OTHER INFO
 	local ypos = 3
 	for name, label in pairs({
 			dirname = "Folder Name", mapname = "Map Name"   , author = "Map Author(s)",
@@ -165,6 +169,7 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 		ypos = ypos + 1.4
 	end
 
+	-- MAP INITIAL STUFF
 	elements.initial_stuff = {
 		type = "field", label = "Map Initial Stuff", pos = {0, 12.8}, size = {6, 0.7},
 		default = table.concat(context[player].initial_stuff or {"none"}, ","),
@@ -172,6 +177,8 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 			context[pname].initial_stuff = string.split(fields[name]:gsub("%s?,%s?", ","), ",")
 		end,
 	}
+
+	-- MAP TREASURES
 	elements.treasures = {
 		type = "field", label = "Map Treasures", pos = {0, 14.2}, size = {6, 0.7},
 		default = table.concat(context[player].treasures or {"none"}, ","),
@@ -179,6 +186,8 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 			context[pname].treasures = string.split(fields[name], ",")
 		end,
 	}
+
+	-- SKYBOX SELECTOR
 	elements.skybox_label = {
 		type = "label",
 		pos = {0, 15.4},
@@ -200,6 +209,7 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 		end,
 	}
 
+	-- MAP PHYSICS
 	ypos = 17
 	for name, label in pairs({speed = "Map Movement Speed", jump = "Map Jump Height", gravity = "Map Gravity"}) do
 		elements[name] = {
@@ -219,6 +229,7 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 		ypos = ypos + 1.4
 	end
 
+	-- MAP START TIME
 	elements.start_time = {
 		type = "field", label = "Map start_time", pos = {0, 21.2}, size = {4, 0.7},
 		default = context[player].start_time or ctf_map.DEFAULT_START_TIME,
@@ -231,6 +242,8 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 			end
 		end,
 	}
+
+	-- MAP time_speed
 	elements.time_speed = {
 		type = "field", label = "Map time_speed (Multiplier)", pos = {0, 22.6},
 		size = {4, 0.7}, default = context[player].time_speed or "1",
@@ -244,6 +257,7 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 		end,
 	}
 
+	-- TEAMS
 	local idx = 24.2
 	for teamname, def in pairs(context[player].teams) do
 		elements[teamname.."_checkbox"] = {
@@ -255,11 +269,13 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 				context[pname].teams[teamname].enabled = fields[name] == "true" or false
 			end,
 		}
+		idx = idx + 1
+
 		elements[teamname.."_button"] = {
 			type = "button",
 			exit = true,
-			label = "Flag Pos: " .. minetest.pos_to_string(def.flag_pos),
-			pos = {2.2, idx-(ctf_gui.ELEM_SIZE[2]/2)},
+			label = "Set Flag Pos: " .. minetest.pos_to_string(def.flag_pos),
+			pos = {0.2, idx-(ctf_gui.ELEM_SIZE[2]/2)},
 			size = {5, ctf_gui.ELEM_SIZE[2]},
 			func = function(pname, fields)
 					ctf_map.get_pos_from_player(pname, 1, function(name, positions)
@@ -273,19 +289,37 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 					end)
 			end,
 		}
+
 		elements[teamname.."_teleport"] = {
 			type = "button",
 			exit = true,
 			label = "Go to pos",
-			pos = {2.2 + 5 + 0.1, idx-(ctf_gui.ELEM_SIZE[2]/2)},
+			pos = {0.2 + 5 + 0.1, idx-(ctf_gui.ELEM_SIZE[2]/2)},
 			size = {2, ctf_gui.ELEM_SIZE[2]},
 			func = function(pname)
 				PlayerObj(pname):set_pos(context[pname].teams[teamname].flag_pos)
 			end,
 		}
+
 		idx = idx + 1
+
+		elements[teamname.."_positions"] = {
+			type = "button", exit = true,
+			label = "Zone Bounds - " .. minetest.pos_to_string(context[player].teams[teamname].pos1, 0) ..
+					" - " .. minetest.pos_to_string(context[player].teams[teamname].pos2, 0),
+			pos = {0.2, idx-(ctf_gui.ELEM_SIZE[2]/2)},
+			size = {9 - (ctf_gui.SCROLLBAR_WIDTH + 0.1), ctf_gui.ELEM_SIZE[2]},
+			func = function(pname)
+				ctf_map.get_pos_from_player(pname, 2, function(p, positions)
+					context[pname].teams[teamname].pos1 = positions[1]
+					context[pname].teams[teamname].pos2 = positions[2]
+				end)
+			end,
+		}
+		idx = idx + 1.5
 	end
 
+	-- CHEST ZONES
 	elements.addchestzone = {
 		type = "button",
 		exit = true,
@@ -357,9 +391,9 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 			idx = idx + 1
 		end
 	end
-
 	idx = idx + 1
 
+	-- FINISH EDITING
 	elements.finishediting = {
 		type = "button",
 		exit = true,
@@ -372,10 +406,9 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 			end)
 		end,
 	}
-
 	idx = idx + 1
 
-	-- Need to set offset
+	-- Show formspec
 	ctf_gui.show_formspec(player, "ctf_map:save", {
 		title = "Capture The Flag Map Editor",
 		description = "Save your map or edit the config.\nRemember to press ENTER after writing to a field",

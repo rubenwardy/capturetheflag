@@ -116,12 +116,16 @@ function ctf_map.place_chests(mapmeta, pos2, amount)
 			end
 		end
 
-		for i = 1, a.amount, 1 do
-			local idx = math.random(1, #place_positions)
+		if place_positions and #place_positions > 1 then
+			for i = 1, a.amount, 1 do
+				local idx = math.random(1, #place_positions)
 
-			data[place_positions[idx]] = chest_node
+				data[place_positions[idx]] = chest_node
 
-			table.remove(place_positions, idx)
+				table.remove(place_positions, idx)
+			end
+		else
+			minetest.log("error", "Something went wrong with chest placement")
 		end
 	end
 

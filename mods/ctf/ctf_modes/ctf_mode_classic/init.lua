@@ -1,10 +1,12 @@
+mode_classic = {}
+
 local flag_huds, rankings, build_timer = ctf_core.include_files(
 	"flag_huds.lua",
 	"rankings.lua",
 	"build_timer.lua"
 )
 
-local function tp_player_near_flag(player)
+function mode_classic.tp_player_near_flag(player)
 	local pname = PlayerName(player)
 
 	if not ctf_teams.player_team[pname] then
@@ -24,7 +26,7 @@ local function tp_player_near_flag(player)
 	return true
 end
 
-local function celebrate_team(teamname)
+function mode_classic.celebrate_team(teamname)
 	for _, player in pairs(minetest.get_connected_players()) do
 		local pname = player:get_player_name()
 		local pteam = ctf_teams.player_team[pname].name
@@ -69,7 +71,7 @@ ctf_modebase.register_mode("classic", {
 			textures = {"character.png^(ctf_mode_classic_shirt.png^[colorize:"..ctf_teams.team[teamname].color..":180)"}
 		})
 
-		tp_player_near_flag(player)
+		mode_classic.tp_player_near_flag(player)
 
 		flag_huds.on_allocplayer(player)
 	end,
@@ -79,15 +81,15 @@ ctf_modebase.register_mode("classic", {
 			rankings.give(player, {deaths = 1})
 		end
 	end,
-	on_respawnplayer = tp_player_near_flag,
+	on_respawnplayer = mode_classic.tp_player_near_flag,
 	on_flag_take = function(player, teamname)
 		if build_timer.in_progress() then
-			tp_player_near_flag(player)
+			mode_classic.tp_player_near_flag(player)
 
 			return "You can't take the enemy flag during build time!"
 		end
 
-		celebrate_team(ctf_teams.get_team(player))
+		mode_classic.celebrate_team(ctf_teams.get_team(player))
 
 		rankings.give(player, {score = 20})
 
@@ -97,7 +99,7 @@ ctf_modebase.register_mode("classic", {
 		flag_huds.update()
 	end,
 	on_flag_capture = function(player, captured_team)
-		celebrate_team(ctf_teams.get_team(player))
+		mode_classic.celebrate_team(ctf_teams.get_team(player))
 
 		flag_huds.update()
 

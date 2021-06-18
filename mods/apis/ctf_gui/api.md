@@ -26,7 +26,7 @@ ctf_gui.show_formspec(player, "modname:formname", {
 	elem = {
 		type = "label",
 		label = "Label",  -- Label text
-		centered = false, -- default: false
+		centered = false, -- Center the text in the gui. default: false
 		pos = {x, y},     -- x can be a number or "center" to center in the formspec
 		size = {x, y},    -- Only applied if centered = true. Bounds of the area the label is centered in. default: ctf_gui.ELEM_SIZE
 	}

@@ -4,6 +4,8 @@ globals = {
 	"ctf_core", "ctf_map", "ctf_teams", "ctf_modebase", "ctf_gui",
 	"ctf_rankings",
 
+	"mode_classic",
+
 	"PlayerObj", "PlayerName", "HumanReadable", "RunCallbacks",
 
 	"ChatCmdBuilder", "mhud",

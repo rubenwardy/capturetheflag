@@ -45,6 +45,7 @@ minetest.register_globalstep(function(dtime)
 
 		for _, player in pairs(minetest.get_connected_players()) do
 			local time_str = string.format("%dm %ds until match begins!", math.floor(timer / 60), math.floor(timer % 60))
+			local pteam = ctf_teams.get_team(player)
 
 			if not hud:exists(player, "build_timer") then
 				hud:add(player, "build_timer", {
@@ -59,6 +60,11 @@ minetest.register_globalstep(function(dtime)
 				hud:change(player, "build_timer", {
 					text = time_str
 				})
+			end
+
+			if not ctf_core.area_contains(target_map.teams[pteam].pos1, target_map.teams[pteam].pos2, player:get_pos()) then
+				minetest.chat_send_player(player:get_player_name(), "You can't cross the barrier until build time is over!")
+				mode_classic.tp_player_near_flag(player)
 			end
 		end
 	end

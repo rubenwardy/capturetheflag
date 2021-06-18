@@ -1,7 +1,7 @@
 ctf_gui = {
 	ELEM_SIZE = {3, 0.7},
 	SCROLLBAR_WIDTH = 0.6,
-	FORM_SIZE = {10, 8},
+	FORM_SIZE = {18, 12},
 }
 
 local context = {}
@@ -47,9 +47,9 @@ function ctf_gui.show_formspec(player, formname, formdef)
 	local maxyscroll = 0
 	local formspec = "formspec_version[4]" ..
 			string.format("size[%f,%f]", ctf_gui.FORM_SIZE[1], ctf_gui.FORM_SIZE[2]) ..
-			"hypertext[0,0.2;"..10-ctf_gui.SCROLLBAR_WIDTH..",1.6;title;<center><big>"..formdef.title.."</big>\n" ..
+			"hypertext[0,0.2;"..ctf_gui.FORM_SIZE[1]-ctf_gui.SCROLLBAR_WIDTH..",1.6;title;<center><big>"..formdef.title.."</big>\n" ..
 					formdef.description.."</center>]" ..
-			"scroll_container[0.1,1.8;9.4,8;formcontent;vertical]"
+			"scroll_container[0.1,1.8;"..ctf_gui.FORM_SIZE[1]-ctf_gui.SCROLLBAR_WIDTH..","..ctf_gui.FORM_SIZE[2]..";formcontent;vertical]"
 
 	if formdef.elements then
 		for id, def in pairs(formdef.elements) do
@@ -70,7 +70,7 @@ function ctf_gui.show_formspec(player, formname, formdef)
 
 
 			if def.pos[1] == "center" then
-				def.pos[1] = (ctf_gui.FORM_SIZE[1] - def.size[1] - ctf_gui.SCROLLBAR_WIDTH)/2
+				def.pos[1] = ( (ctf_gui.FORM_SIZE[1]-ctf_gui.SCROLLBAR_WIDTH) - def.size[1] )/2
 			end
 
 			if def.type == "label" then
@@ -154,7 +154,7 @@ function ctf_gui.show_formspec(player, formname, formdef)
 		end
 
 		formspec = formspec .. "scrollbaroptions[max=" .. (formdef.scrollheight or 500) ..";]" ..
-				"scrollbar[9.5,0;"..(ctf_gui.SCROLLBAR_WIDTH - 0.1)..",8;vertical;formcontent;" .. formdef.scroll_pos .. "]"
+				"scrollbar["..ctf_gui.FORM_SIZE[1]-(ctf_gui.SCROLLBAR_WIDTH - 0.1)..",0;"..(ctf_gui.SCROLLBAR_WIDTH - 0.1)..","..ctf_gui.FORM_SIZE[2]..";vertical;formcontent;" .. formdef.scroll_pos .. "]"
 	end
 
 	context[player] = formdef

@@ -27,6 +27,7 @@ ctf_modebase = {
 ctf_gui.init()
 
 ctf_core.include_files(
+	"give_initial_stuff.lua",
 	"treasure.lua",
 	"register.lua",
 	"flag_nodes.lua",
@@ -45,6 +46,8 @@ if ctf_core.settings.server_mode == "play" then
 			ctf_modebase.start_new_match(true)
 			match_started = true
 		end
+
+		player:set_hp(player:get_properties().hp_max)
 	end)
 end
 

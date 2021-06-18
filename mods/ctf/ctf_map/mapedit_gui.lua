@@ -401,6 +401,10 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 		label = "Finish Editing",
 		func = function(pname)
 			minetest.after(0.1, function()
+				if context[pname].initial_stuff[1] == "none" then
+					table.remove(context[player].initial_stuff, 1)
+				end
+
 				ctf_map.save_map(context[pname])
 				context[pname] = nil
 			end)

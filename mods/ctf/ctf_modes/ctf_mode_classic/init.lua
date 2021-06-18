@@ -48,7 +48,7 @@ function mode_classic.celebrate_team(teamname)
 end
 
 ctf_modebase.register_mode("classic", {
-	map_whitelist = {--[[ "bridge", "caverns", "coast", "iceage", "two_hills",  ]]"plains"},
+	map_whitelist = {--[[ "bridge", "caverns", "coast", "iceage", "two_hills", ]] "plains"},
 	treasures = {
 		["default:ladder_wood"] = {                max_count = 20, rarity = 0.3, max_stacks = 5},
 		["default:torch" ] = {                max_count = 20, rarity = 0.3, max_stacks = 5},
@@ -66,12 +66,25 @@ ctf_modebase.register_mode("classic", {
 		["default:apple"] = {min_count = 5, max_count = 30, rarity = 0.1, max_stacks = 2},
 	},
 	physics = {sneak_glitch = true, new_move = false},
+	on_new_match = function(mapdef)
+		rankings.reset_recent()
+
+		build_timer.start(mapdef)
+
+		give_initial_stuff.register_stuff_provider(function()
+			return {"default:sword_stone", "default:pick_stone", "default:torch 15", "default:stick 5"}
+		end)
+
+		ctf_map.place_chests(mapdef)
+	end,
 	on_allocplayer = function(player, teamname)
 		player:set_properties({
 			textures = {"character.png^(ctf_mode_classic_shirt.png^[colorize:"..ctf_teams.team[teamname].color..":180)"}
 		})
 
 		mode_classic.tp_player_near_flag(player)
+
+		give_initial_stuff(player)
 
 		flag_huds.on_allocplayer(player)
 	end,
@@ -81,7 +94,11 @@ ctf_modebase.register_mode("classic", {
 			rankings.give(player, {deaths = 1})
 		end
 	end,
-	on_respawnplayer = mode_classic.tp_player_near_flag,
+	on_respawnplayer = function(player)
+		give_initial_stuff(player)
+
+		return mode_classic.tp_player_near_flag(player)
+	end,
 	on_flag_take = function(player, teamname)
 		if build_timer.in_progress() then
 			mode_classic.tp_player_near_flag(player)
@@ -106,12 +123,5 @@ ctf_modebase.register_mode("classic", {
 		rankings.give(player, {score = 30})
 
 		minetest.after(3, ctf_modebase.start_new_match)
-	end,
-	on_new_match = function(mapdef)
-		rankings.reset_recent()
-
-		build_timer.start(mapdef)
-
-		ctf_map.place_chests(mapdef)
 	end,
 })

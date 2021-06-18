@@ -24,7 +24,7 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 		local node = minetest.get_node(p)
 
 		if node.name ~= "ctf_modebase:flag" then
-			minetest.log("error", name.."'s flag was set incorrectly")
+			minetest.log("error", name.."'s flag was set incorrectly, or there is no flag node placed")
 		else
 			minetest.set_node(vector.offset(p, 0, 1, 0), {name="ctf_modebase:flag_top_"..name, param2 = node.param2})
 

@@ -1,7 +1,7 @@
 give_initial_stuff = {}
 
-local tools = {"default:sword_", "default:pick_", "default:axe_", "default:shovel_"}
-local tool_materials = {"stone", "steel", "bronze", "mese", "diamond"}
+local tools = {"ctf_melee:sword_", "default:pick_", "default:axe_", "default:shovel_"}
+local tool_materials = {"steel", "mese", "diamond"}
 
 -- Add item to inv. Split item if count > stack_max using recursion
 function give_initial_stuff.give_item(inv, item)
@@ -92,12 +92,17 @@ function give_initial_stuff.register_stuff_provider(func, priority)
 		func)
 end
 
+function give_initial_stuff.reset_stuff_providers()
+	registered_stuff_providers = {}
+end
+
 function give_initial_stuff.get_stuff(player)
 	local seen_stuff = {}
 
 	local stuff = {}
 	for i=1, #registered_stuff_providers do
 		local new_stuff = registered_stuff_providers[i](player)
+		minetest.log(dump(new_stuff))
 		assert(new_stuff)
 
 		for j=1, #new_stuff do
@@ -110,9 +115,3 @@ function give_initial_stuff.get_stuff(player)
 	end
 	return stuff
 end
-
-minetest.register_on_joinplayer(function(player)
-	player:set_hp(player:get_properties().hp_max)
-	give_initial_stuff(player)
-end)
-minetest.register_on_respawnplayer(give_initial_stuff)

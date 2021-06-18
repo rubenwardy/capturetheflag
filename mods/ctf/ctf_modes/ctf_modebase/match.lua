@@ -4,12 +4,14 @@ local voting = false
 function ctf_modebase.start_new_match(show_form)
 	local old_map = ctf_map.current_map
 
+	give_initial_stuff.reset_stuff_providers()
+
 	local function start_new_match()
 		local map = ctf_modebase.place_map(ctf_modebase.current_mode)
 
-		ctf_teams.allocate_teams(map.teams)
-
 		RunCallbacks(ctf_modebase.registered_on_new_match, map, old_map)
+
+		ctf_teams.allocate_teams(map.teams)
 
 		ctf_modebase.current_mode_matches = ctf_modebase.current_mode_matches + 1
 	end

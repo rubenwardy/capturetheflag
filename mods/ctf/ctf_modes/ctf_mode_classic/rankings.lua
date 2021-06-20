@@ -70,7 +70,7 @@ local function queue_ranking_update(player, text)
 end
 
 return {
-	give = function(player, amounts)
+	add = function(player, amounts)
 		local hud_text = ""
 
 		for name, val in pairs(amounts) do

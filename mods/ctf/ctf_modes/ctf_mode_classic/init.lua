@@ -90,8 +90,8 @@ ctf_modebase.register_mode("classic", {
 	end,
 	on_dieplayer = function(player, reason)
 		if reason.type == "punch" and reason.object:is_player() then
-			rankings.give(reason.object, {kills = 1, score = rankings.calculate_killscore(player)})
-			rankings.give(player, {deaths = 1})
+			rankings.add(reason.object, {kills = 1, score = rankings.calculate_killscore(player)})
+			rankings.add(player, {deaths = 1})
 		end
 	end,
 	on_respawnplayer = function(player)
@@ -108,7 +108,7 @@ ctf_modebase.register_mode("classic", {
 
 		mode_classic.celebrate_team(ctf_teams.get_team(player))
 
-		rankings.give(player, {score = 20})
+		rankings.add(player, {score = 20})
 
 		flag_huds.update()
 	end,
@@ -120,7 +120,7 @@ ctf_modebase.register_mode("classic", {
 
 		flag_huds.update()
 
-		rankings.give(player, {score = 30})
+		rankings.add(player, {score = 30})
 
 		minetest.after(3, ctf_modebase.start_new_match)
 	end,

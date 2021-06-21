@@ -87,3 +87,9 @@ function ctf_core.area_contains(pos1, pos2, pos)
 	   and pos.y >= pos1.y and pos.y <= pos2.y
 	   and pos.z >= pos1.z and pos.z <= pos2.z
 end
+
+if not math.round then
+	function math.round(x)
+		return math.floor(x + 0.5)
+	end
+end

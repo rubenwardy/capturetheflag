@@ -34,7 +34,8 @@ ctf_core.include_files(
 	"match.lua",
 	"flag_taking.lua",
 	"mode_functions.lua",
-	"commands.lua"
+	"commands.lua",
+	"crafting.lua"
 )
 
 if ctf_core.settings.server_mode == "play" then

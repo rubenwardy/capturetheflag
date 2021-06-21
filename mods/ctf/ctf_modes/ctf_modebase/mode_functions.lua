@@ -22,6 +22,7 @@ add_mode_func(minetest .register_on_dieplayer    , "on_dieplayer"    )
 add_mode_func(minetest .register_on_respawnplayer, "on_respawnplayer")
 
 add_mode_func(ctf_modebase.register_on_new_match, "on_new_match", true)
+add_mode_func(ctf_modebase.register_on_new_mode, "on_mode_start", true)
 
 add_mode_func(ctf_modebase.register_on_flag_take    , "on_flag_take"    )
 add_mode_func(ctf_modebase.register_on_flag_drop    , "on_flag_drop"    )

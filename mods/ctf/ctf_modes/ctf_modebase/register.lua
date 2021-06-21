@@ -62,3 +62,12 @@ function ctf_modebase.register_on_treasurefy_node(func, load_first)
 		table.insert(ctf_modebase.registered_on_treasurefy_node, func)
 	end
 end
+
+ctf_modebase.registered_on_new_mode = {}
+function ctf_modebase.register_on_new_mode(func, load_first)
+	if load_first then
+		table.insert(ctf_modebase.registered_on_new_mode, 1, func)
+	else
+		table.insert(ctf_modebase.registered_on_new_mode, func)
+	end
+end

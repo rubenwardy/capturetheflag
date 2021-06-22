@@ -11,7 +11,7 @@ function mode_classic.tp_player_near_flag(player)
 
 	if not tname then return end
 
-	player:set_pos(
+	PlayerObj(player):set_pos(
 		vector.offset(ctf_map.current_map.teams[tname].flag_pos,
 			math.random(-2, 2),
 			0.5,

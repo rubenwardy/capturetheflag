@@ -7,13 +7,9 @@ local flag_huds, rankings, build_timer = ctf_core.include_files(
 )
 
 function mode_classic.tp_player_near_flag(player)
-	local pname = PlayerName(player)
+	local tname = ctf_teams.get_team(player)
 
-	if not ctf_teams.player_team[pname] then
-		return
-	end
-
-	local tname = ctf_teams.player_team[pname].name
+	if not tname then return end
 
 	player:set_pos(
 		vector.offset(ctf_map.current_map.teams[tname].flag_pos,

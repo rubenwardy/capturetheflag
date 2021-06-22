@@ -83,7 +83,7 @@ return {
 	get = function(player, specific)
 		local rank = rankings:get(player)
 
-		return specific and rank[specific] or rank
+		return (specific and rank[specific]) or rank
 	end,
 	calculate_killscore = function(player)
 		local match_rank = rankings.recent[PlayerName(player)] or {}

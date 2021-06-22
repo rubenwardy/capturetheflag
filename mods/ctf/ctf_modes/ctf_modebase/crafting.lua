@@ -1,7 +1,12 @@
 function ctf_modebase.update_crafts(name)
 	crafting.lock_all(name)
-	for i=1, #(ctf_modebase.modes[ctf_modebase.current_mode].crafts or {}) do
-		crafting.unlock(name, ctf_modebase.modes[ctf_modebase.current_mode].crafts[i])
+
+	local current_mode = ctf_modebase:get_current_mode()
+
+	if current_mode.crafts then
+		for _, craft in pairs(current_mode.crafts) do
+			crafting.unlock(name, craft)
+		end
 	end
 end
 
@@ -131,8 +136,8 @@ for ore, ore_item in pairs(full_ores) do
 		items  = { "default:stick 2", ore_item },
 		always_known = show,
 		level  = 1,
-	}),
-	
+	})
+
 	crafting.register_recipe({
 		type   = "inv",
 		output = "default:axe_" .. ore,

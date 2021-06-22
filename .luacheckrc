@@ -12,7 +12,7 @@ globals = {
 
 	"physics", "give_initial_stuff", "medkits", "grenades", "dropondie",
 	"vote", "random_messages", "sfinv", "email", "hb", "wield3d", "irc",
-	"default", "skybox",
+	"default", "skybox", "crafting",
 
 	"vector",
 	math = {

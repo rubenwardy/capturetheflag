@@ -23,6 +23,7 @@ function ctf_teams.set_team(player, teamname)
 end
 
 ---@param player string | ObjectRef
+---@return boolean | string
 function ctf_teams.get_team(player)
 	player = PlayerName(player)
 

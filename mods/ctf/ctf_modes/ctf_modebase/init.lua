@@ -14,6 +14,11 @@ ctf_modebase = {
 	-- Name of the mode currently being played. On server start this will be false
 	current_mode         = false, ---@type string
 
+	-- Get the mode def of the current mode. On server start this will return false
+	get_current_mode = function(self)
+		return self.current_mode and self.modes[self.current_mode]
+	end,
+
 	-- Amount of matches played since this mode won the last vote
 	current_mode_matches = 0,     ---@type integer
 
@@ -27,6 +32,7 @@ ctf_modebase = {
 ctf_gui.init()
 
 ctf_core.include_files(
+	"summary_gui.lua",
 	"give_initial_stuff.lua",
 	"treasure.lua",
 	"register.lua",

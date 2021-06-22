@@ -7,7 +7,7 @@ ctf_map.treasurefy_node = function(pos, node, clicker)
 		if not func(pos) then -- return true to disable default treasures
 			local inv = meta:get_inventory()
 
-			for item, def in pairs(ctf_modebase.modes[ctf_modebase.current_mode].treasures or {}) do
+			for item, def in pairs(ctf_modebase:get_current_mode().treasures or {}) do
 				local treasure = ItemStack(item)
 
 				for c = 1, def.max_stacks or 1, 1 do

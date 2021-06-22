@@ -1,17 +1,19 @@
 -- add_mode_func(minetest.register_on_dieplayer, "on_dieplayer", true) is the same as calling
 --[[
 	minetest.register_on_dieplayer(function(...)
-		if ctf_modebase.modes[current_mode].on_dieplayer then
-			return ctf_modebase.modes[current_mode].on_dieplayer(...)
+		if current_mode.on_dieplayer then
+			return current_mode.on_dieplayer(...)
 		end
 	end, true)
 ]]--
 local function add_mode_func(minetest_func, mode_func_name, ...)
 	minetest_func(function(...)
-		if not ctf_modebase.current_mode then return end
+		local current_mode = ctf_modebase:get_current_mode()
 
-		if ctf_modebase.modes[ctf_modebase.current_mode][mode_func_name] then
-			return ctf_modebase.modes[ctf_modebase.current_mode][mode_func_name](...)
+		if not current_mode then return end
+
+		if current_mode[mode_func_name] then
+			return current_mode[mode_func_name](...)
 		end
 	end, ...)
 end

@@ -5,8 +5,6 @@ function ctf_modebase.start_new_match(show_form)
 	local old_map = ctf_map.current_map
 	local old_mode = ctf_modebase.current_mode
 
-	give_initial_stuff.reset_stuff_providers()
-
 	local function start_new_match()
 		local map = ctf_modebase.place_map(ctf_modebase.current_mode)
 
@@ -53,8 +51,10 @@ function ctf_modebase.start_new_match(show_form)
 			choices = {}
 			voting = false
 
+			give_initial_stuff.reset_stuff_providers()
+
 			start_new_match()
-				
+
 			RunCallbacks(ctf_modebase.registered_on_new_mode, most.n, old_mode)
 		end)
 	else

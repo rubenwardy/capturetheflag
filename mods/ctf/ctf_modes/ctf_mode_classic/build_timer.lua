@@ -60,7 +60,8 @@ minetest.register_globalstep(function(dtime)
 				})
 			end
 
-			-- if not ctf_core.area_contains(ctf_teams.get_team_territory(pteam), player:get_pos()) then
+			-- local pos1, pos2 = ctf_teams.get_team_territory(pteam)
+			-- if not ctf_core.area_contains(pos1, pos2, player:get_pos()) then
 			-- 	minetest.chat_send_player(player:get_player_name(), "You can't cross the barrier until build time is over!")
 			-- 	mode_classic.tp_player_near_flag(player)
 			-- end

@@ -17,17 +17,19 @@ function ctf_teams.is_allowed_in_team_chest(listname, stack, player)
 	return true
 end
 
-local colors = {"red", "blue"}
+local colors = ctf_teams.teamlist
 for _, chest_color in pairs(colors) do
+	local chestcolor = ctf_teams.team[chest_color].color
 	local def = {
-		description = "Chest",
+		description = HumanReadable(chest_color).." Team's Chest",
 		tiles = {
-			"team_chest_top_" .. chest_color .. ".png",
-			"team_chest_top_" .. chest_color .. ".png",
-			"team_chest_side_" .. chest_color .. ".png",
-			"team_chest_side_" .. chest_color .. ".png",
-			"team_chest_side_" .. chest_color .. ".png",
-			"team_chest_front_" .. chest_color .. ".png"},
+			string.format("default_chest_top.png^[colorize:%s:142", chestcolor),
+			string.format("default_chest_top.png^[colorize:%s:142", chestcolor),
+			string.format("default_chest_side.png^[colorize:%s:142", chestcolor),
+			string.format("default_chest_side.png^[colorize:%s:142", chestcolor),
+			string.format("default_chest_side.png^[colorize:%s:142", chestcolor),
+			string.format("default_chest_lock.png^[colorize:%s:142", chestcolor),
+		},
 		paramtype2 = "facedir",
 		groups = {immortal = 1, team_chest=1},
 		legacy_facedir_simple = true,
@@ -37,7 +39,7 @@ for _, chest_color in pairs(colors) do
 
 	function def.on_construct(pos)
 		local meta = minetest.get_meta(pos)
-		meta:set_string("infotext", "Chest")
+		meta:set_string("infotext", string.format("%s Team's Chest", HumanReadable(chest_color)))
 		local inv = meta:get_inventory()
 		inv:set_size("main", 4 * 7)
 		inv:set_size("pro", 4 * 7)
@@ -49,25 +51,22 @@ for _, chest_color in pairs(colors) do
 	end
 
 	function def.on_rightclick(pos, node, player)
+		local current_mode = ctf_modebase:get_current_mode()
+
+		if not current_mode then return end
+
+		local meta = minetest.get_meta(pos)
 		local name = player:get_player_name()
 		local pteam = ctf_teams.get_team(name)
 
-		if chest_color ~= pteam then
-			minetest.chat_send_player(name, "You're not on team " .. chest_color)
-			return
+		if meta:get_string("infotext") == "" then
+			def.on_construct(pos)
 		end
 
-	--	local territory_owner = ctf_core.area_contains(ctf_teams.get_team_territory(pteam), player:get_pos())
-	--	if chest_color ~= territory_owner then
-	--		if not territory_owner then
-	--			ctf_core.warning("ctf_map", "Unowned team chest")
-	--			minetest.set_node(pos, { name = "air" })
-	--			return
-	--		end
-	--		ctf_core.warning("ctf_map", "Wrong chest, changing to " ..
-	--				territory_owner .. " from " .. chest_color)
-	--		minetest.set_node(pos, "ctf_map_core:chest_" .. territory_owner)
-	--	end
+		if chest_color ~= pteam then
+			minetest.chat_send_player(name, string.format("You're not on team %s", chest_color))
+			return
+		end
 
 		local formspec = table.concat({
 			"size[8,12]",
@@ -90,7 +89,7 @@ for _, chest_color in pairs(colors) do
 		formspec = formspec .. "list[" .. chestinv .. ";main;0,0.3;4,7;]" ..
 			"background[4,-0.2;4.15,7.7;ctf_map_pro_section.png;false]"
 
-		if ctf_modebase:get_current_mode().get_chest_access(name) == "pro" then
+		if current_mode.get_chest_access(name) == "pro" then
 			formspec = formspec .. "list[" .. chestinv .. ";pro;4,0.3;4,7;]" ..
 				"listring[" .. chestinv ..";pro]" ..
 				"listring[" .. chestinv .. ";helper]" ..

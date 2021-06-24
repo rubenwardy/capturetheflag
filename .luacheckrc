@@ -28,7 +28,7 @@ globals = {
 
 exclude_files = {
 	"mods/other/crafting",
-	"mods/mtg/"
+	"mods/mtg/mtg_*"
 }
 
 read_globals = {

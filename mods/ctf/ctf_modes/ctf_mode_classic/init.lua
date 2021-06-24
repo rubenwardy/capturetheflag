@@ -6,6 +6,10 @@ local flag_huds, rankings, build_timer = ctf_core.include_files(
 	"build_timer.lua"
 )
 
+local function summary_func(name)
+	return name, rankings.get_recent(), {"flag_captures", "flag_attempts", _sort = "score", "kills", "deaths"}
+end
+
 function mode_classic.tp_player_near_flag(player)
 	local tname = ctf_teams.get_team(player)
 
@@ -62,6 +66,7 @@ ctf_modebase.register_mode("classic", {
 		["default:apple"] = {min_count = 5, max_count = 30, rarity = 0.1, max_stacks = 2},
 	},
 	physics = {sneak_glitch = true, new_move = false},
+	commands = {"start", "rank", "r"},
 	on_new_match = function(mapdef)
 		rankings.reset_recent()
 
@@ -87,8 +92,9 @@ ctf_modebase.register_mode("classic", {
 	on_dieplayer = function(player, reason)
 		if reason.type == "punch" and reason.object:is_player() then
 			rankings.add(reason.object, {kills = 1, score = rankings.calculate_killscore(player)})
-			rankings.add(player, {deaths = 1})
 		end
+
+		rankings.add(player, {deaths = 1})
 	end,
 	on_respawnplayer = function(player)
 		give_initial_stuff(player)
@@ -104,7 +110,7 @@ ctf_modebase.register_mode("classic", {
 
 		mode_classic.celebrate_team(ctf_teams.get_team(player))
 
-		rankings.add(player, {score = 20})
+		rankings.add(player, {score = 20, flag_attempts = 1})
 
 		flag_huds.update()
 	end,
@@ -116,8 +122,15 @@ ctf_modebase.register_mode("classic", {
 
 		flag_huds.update()
 
-		rankings.add(player, {score = 30})
+		rankings.add(player, {score = 30, flag_captures = 1})
+
+		for _, pname in pairs(minetest.get_connected_players()) do
+			pname = pname:get_player_name()
+
+			ctf_modebase.show_summary_gui(summary_func(pname))
+		end
 
 		minetest.after(3, ctf_modebase.start_new_match)
 	end,
+	summary_func = summary_func,
 })

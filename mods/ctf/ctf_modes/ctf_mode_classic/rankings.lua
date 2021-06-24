@@ -1,8 +1,11 @@
 local rankings = ctf_rankings.init()
 local hud = mhud.init()
 
-local hud_queues = {}
+----
+------ HUD HANDLING
+----
 
+local hud_queues = {}
 minetest.register_on_leaveplayer(function(player)
 	hud:clear(player)
 	hud_queues[player] = nil
@@ -68,6 +71,33 @@ local function queue_ranking_update(player, text)
 		handle_stat_huds(pname)
 	end
 end
+
+----
+------ COMMANDS
+----
+
+local rank_def = {
+	description = "Get the rank of yourself or a player",
+	params = "[playername]",
+	func = function(name, param)
+		local target = name
+
+		if param and param ~= "" then
+			target = param
+		end
+
+		local prank = rankings:get(target) -- [p]layer [rank]
+
+		if not prank then
+			return false, string.format("Player %s has no rankings!", target)
+		end
+
+		return true, string.format("Rankings of player %s: %s", target, HumanReadable(dump(prank)))
+	end
+}
+
+ctf_modebase.register_chatcommand("classic", "rank", rank_def)
+ctf_modebase.register_chatcommand("classic", "r"   , rank_def)
 
 return {
 	add = function(player, amounts)

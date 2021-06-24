@@ -46,8 +46,11 @@ end)
 --
 
 -- Credit to https://stackoverflow.com/q/20284515/11433667 for capitalization
+local gsub = string.gsub
 function HumanReadable(string)
-	return string:gsub("(%l)(%w*)", function(a,b) return string.upper(a)..b end)
+	local out = gsub(string, "(%l)(%w*)", function(a,b) return string.upper(a)..b end)
+
+	return gsub(out, "_", " ")
 end
 
 --

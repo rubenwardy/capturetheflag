@@ -48,18 +48,23 @@ function ctf_gui.show_formspec(player, formname, formdef)
 	local formspec = "formspec_version[4]" ..
 			string.format("size[%f,%f]", ctf_gui.FORM_SIZE[1], ctf_gui.FORM_SIZE[2]) ..
 			"hypertext[0,0.2;"..ctf_gui.FORM_SIZE[1]-ctf_gui.SCROLLBAR_WIDTH..",1.6;title;<center><big>"..formdef.title.."</big>\n" ..
-					formdef.description.."</center>]" ..
+					(formdef.description or "\b") .."</center>]" ..
 			"scroll_container[0.1,1.8;"..ctf_gui.FORM_SIZE[1]-ctf_gui.SCROLLBAR_WIDTH..","..ctf_gui.FORM_SIZE[2]..";formcontent;vertical]"
 
+	local using_scrollbar = false
 	if formdef.elements then
-		for id, def in pairs(formdef.elements) do
-			id = minetest.formspec_escape(id)
-
+		for _, def in pairs(formdef.elements) do
 			if def.pos then
 				if def.pos[2] > maxyscroll then
 					maxyscroll = def.pos[2]
 				end
 			end
+		end
+
+		using_scrollbar = maxyscroll > 9
+
+		for id, def in pairs(formdef.elements) do
+			id = minetest.formspec_escape(id)
 
 			if not def.size then
 				def.size = ctf_gui.ELEM_SIZE
@@ -70,7 +75,7 @@ function ctf_gui.show_formspec(player, formname, formdef)
 
 
 			if def.pos[1] == "center" then
-				def.pos[1] = ( (ctf_gui.FORM_SIZE[1]-ctf_gui.SCROLLBAR_WIDTH) - def.size[1] )/2
+				def.pos[1] = ( (ctf_gui.FORM_SIZE[1]-(using_scrollbar and ctf_gui.SCROLLBAR_WIDTH or 0)) - def.size[1] )/2
 			end
 
 			if def.type == "label" then
@@ -142,6 +147,7 @@ function ctf_gui.show_formspec(player, formname, formdef)
 				)
 			elseif def.type == "table" then
 				local tablecolumns = {}
+				local tableoptions = {}
 
 				for _, column in ipairs(def.columns) do
 					if type(column) == "table" then
@@ -159,7 +165,19 @@ function ctf_gui.show_formspec(player, formname, formdef)
 					end
 				end
 
+				for name, option in pairs(def.options) do
+					if type(tonumber(name)) ~= "number" then
+						table.insert(tableoptions, string.format("%s=%s", name, option))
+					else
+						table.insert(tableoptions, option)
+					end
+				end
+
 				formspec = formspec ..
+						string.format(
+							"tableoptions[%s]",
+							table.concat(tableoptions, ";")
+						) ..
 						string.format(
 							"tablecolumns[%s]",
 							table.concat(tablecolumns, ";")
@@ -180,7 +198,7 @@ function ctf_gui.show_formspec(player, formname, formdef)
 	formspec = formspec .. "scroll_container_end[]"
 
 	-- Add scrollbar if needed
-	if maxyscroll > 9 then
+	if using_scrollbar then
 		if not formdef.scroll_pos then
 			formdef.scroll_pos = 0
 		elseif formdef.scroll_pos == "max" then

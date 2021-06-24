@@ -8,6 +8,12 @@ function ctf_modebase.start_new_match(show_form)
 	local function start_new_match()
 		local map = ctf_modebase.place_map(ctf_modebase.current_mode)
 
+		give_initial_stuff.reset_stuff_providers()
+
+		give_initial_stuff.register_stuff_provider(function()
+			return map.initial_stuff or {}
+		end)
+
 		RunCallbacks(ctf_modebase.registered_on_new_match, map, old_map)
 
 		ctf_teams.allocate_teams(map.teams)
@@ -50,8 +56,6 @@ function ctf_modebase.start_new_match(show_form)
 
 			choices = {}
 			voting = false
-
-			give_initial_stuff.reset_stuff_providers()
 
 			start_new_match()
 

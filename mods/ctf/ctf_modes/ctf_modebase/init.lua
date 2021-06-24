@@ -36,11 +36,11 @@ ctf_core.include_files(
 	"give_initial_stuff.lua",
 	"treasure.lua",
 	"register.lua",
+	"commands.lua",
 	"flag_nodes.lua",
 	"match.lua",
 	"flag_taking.lua",
 	"mode_functions.lua",
-	"commands.lua",
 	"crafting.lua"
 )
 

@@ -19,7 +19,11 @@ local build_timer = {
 
 		if target_map then
 			ctf_map.remove_barrier(target_map)
+			hud:remove_all()
+
 			target_map = nil
+			timer = nil
+			second_timer = 0
 		end
 	end
 }
@@ -31,13 +35,7 @@ minetest.register_globalstep(function(dtime)
 	second_timer = second_timer + dtime
 
 	if timer <= 0 then
-		timer = nil
-		second_timer = 0
-
-		hud:remove_all()
-
-		build_timer.finish()
-		return
+		return build_timer.finish()
 	end
 
 	if second_timer >= 1 then
@@ -62,12 +60,22 @@ minetest.register_globalstep(function(dtime)
 				})
 			end
 
-			-- if not ctf_core.area_contains(target_map.teams[pteam].pos1, target_map.teams[pteam].pos2, player:get_pos()) then
+			-- if not ctf_core.area_contains(ctf_teams.get_team_territory(pteam), player:get_pos()) then
 			-- 	minetest.chat_send_player(player:get_player_name(), "You can't cross the barrier until build time is over!")
 			-- 	mode_classic.tp_player_near_flag(player)
 			-- end
 		end
 	end
 end)
+
+ctf_modebase.register_chatcommand("classic", "start", {
+	description = "Skip build time",
+	privs = {ctf_admin = true},
+	func = function(name, param)
+		build_timer.finish()
+
+		return true, "Build time ended"
+	end,
+})
 
 return build_timer

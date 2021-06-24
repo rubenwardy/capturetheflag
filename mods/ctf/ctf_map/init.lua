@@ -13,7 +13,7 @@ ctf_map = {
 	CHAT_COLOR = "orange",
 	maps_dir = minetest.get_modpath("ctf_map").."/maps/",
 	skyboxes = {"none"},
-	current_map = nil,
+	current_map = false,
 	barrier_nodes = {}, -- populated in nodes.lua
 	treasurefy_node = function(pos) end, -- See ctf_modebase for function
 }

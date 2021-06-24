@@ -1,21 +1,25 @@
 give_initial_stuff = {}
 
-local tools = {"ctf_melee:sword_", "default:pick_", "default:axe_", "default:shovel_"}
-local tool_materials = {"steel", "mese", "diamond"}
-
 -- Add item to inv. Split item if count > stack_max using recursion
 function give_initial_stuff.give_item(inv, item)
 	-- Remove any lower tier tools of the same type as the item
-	for _, tool in pairs(tools) do
-		if item:get_name():find(tool) then -- Find what tool the new item is
-			-- Get the 'tier' of the new item
-			local newtier = table.indexof(tool_materials, item:get_name():sub(tool:len() + 1))
 
-			for tier, mat in ipairs(tool_materials) do
-				if tier < newtier then
-					inv:remove_item("main", tool..mat) -- Will do nothing if tool doesn't exist
-				elseif inv:contains_item("main", tool..mat) then
-					return -- A higher tier tool is already in inventory
+	-- Get the 'tier' of the new item
+	local newdef = item:get_definition()
+
+	-- Only do tier checks if the new item has a category
+	if newdef._g_category then
+		for idx, i in ipairs(inv:get_list("main")) do
+			local idef = i:get_definition()
+
+			-- Only compare items in the same category
+			if idef._g_category == newdef._g_category then
+				local tier = idef.groups.tier or 1
+
+				if tier < (newdef.groups.tier or 1) then
+					inv:remove_item("main", i) -- Will do nothing if item doesn't exist
+				elseif tier >= (newdef.groups.tier or 1) then
+					return -- A higher tier item is already in inventory
 				end
 			end
 		end
@@ -102,7 +106,6 @@ function give_initial_stuff.get_stuff(player)
 	local stuff = {}
 	for i=1, #registered_stuff_providers do
 		local new_stuff = registered_stuff_providers[i](player)
-		minetest.log(dump(new_stuff))
 		assert(new_stuff)
 
 		for j=1, #new_stuff do

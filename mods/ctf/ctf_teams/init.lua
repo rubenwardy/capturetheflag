@@ -35,7 +35,8 @@ minetest.register_privilege("ctf_team_admin", {
 ctf_core.include_files(
 	"functions.lua",
 	"commands.lua",
-	"register.lua"
+	"register.lua",
+	"nodes.lua"
 )
 
 minetest.register_on_joinplayer(function(player)

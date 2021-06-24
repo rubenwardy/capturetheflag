@@ -20,15 +20,27 @@ end
 local colors = ctf_teams.teamlist
 for _, chest_color in pairs(colors) do
 	local chestcolor = ctf_teams.team[chest_color].color
+	local function get_chest_texture(chest_side, color, mask, extra)
+		return string.format(
+			"(default_chest_%s.png^[colorize:%s:130)^(default_chest_%s.png^[mask:ctf_teams_chest_%s_mask.png^[colorize:%s:60)%s",
+			chest_side,
+			color,
+			chest_side,
+			mask,
+			color,
+			extra or ""
+		)
+	end
+
 	local def = {
 		description = HumanReadable(chest_color).." Team's Chest",
 		tiles = {
-			string.format("default_chest_top.png^[colorize:%s:142", chestcolor),
-			string.format("default_chest_top.png^[colorize:%s:142", chestcolor),
-			string.format("default_chest_side.png^[colorize:%s:142", chestcolor),
-			string.format("default_chest_side.png^[colorize:%s:142", chestcolor),
-			string.format("default_chest_side.png^[colorize:%s:142", chestcolor),
-			string.format("default_chest_lock.png^[colorize:%s:142", chestcolor),
+			get_chest_texture("top", chestcolor, "top"),
+			get_chest_texture("top", chestcolor, "top"),
+			get_chest_texture("side", chestcolor, "side"),
+			get_chest_texture("side", chestcolor, "side"),
+			get_chest_texture("side", chestcolor, "side"),
+			get_chest_texture("front", chestcolor, "side", "^ctf_teams_lock.png"),
 		},
 		paramtype2 = "facedir",
 		groups = {immortal = 1, team_chest=1},

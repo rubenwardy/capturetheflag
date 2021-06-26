@@ -66,7 +66,7 @@ ctf_modebase.register_mode("classic", {
 		["default:apple"] = {min_count = 5, max_count = 30, rarity = 0.1, max_stacks = 2},
 	},
 	physics = {sneak_glitch = true, new_move = false},
-	commands = {"start", "rank", "r"},
+	commands = {"ctf_start", "rank", "r"},
 	on_new_match = function(mapdef)
 		rankings.reset_recent()
 

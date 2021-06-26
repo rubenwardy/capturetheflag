@@ -12,7 +12,7 @@ globals = {
 
 	"physics", "give_initial_stuff", "medkits", "grenades", "dropondie",
 	"vote", "random_messages", "sfinv", "email", "hb", "wield3d", "irc",
-	"default", "skybox", "crafting",
+	"default", "skybox", "crafting", "doors",
 
 	"vector",
 	math = {
@@ -24,16 +24,17 @@ globals = {
 			"ceil",
 		}
 	},
+
+	"minetest", "core",
 }
 
 exclude_files = {
 	"mods/other/crafting",
-	"mods/mtg/mtg_*"
+	"mods/mtg/"
 }
 
 read_globals = {
 	"DIR_DELIM",
-	"minetest", "core",
 	"dump", "dump2",
 	"VoxelManip", "VoxelArea",
 	"PseudoRandom", "PcgRandom",

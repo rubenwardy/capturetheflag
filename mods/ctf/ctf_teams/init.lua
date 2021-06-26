@@ -41,7 +41,8 @@ ctf_core.include_files(
 	"functions.lua",
 	"commands.lua",
 	"register.lua",
-	"nodes.lua"
+	"team_chest.lua",
+	"team_door.lua"
 )
 
 minetest.register_on_joinplayer(function(player)

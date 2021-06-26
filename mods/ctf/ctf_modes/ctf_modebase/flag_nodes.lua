@@ -1,3 +1,13 @@
+local old_protected = minetest.is_protected
+minetest.is_protected = function(pos, ...)
+	local foundpos = minetest.find_node_near(pos, 2, "ctf_modebase:flag", true)
+	if foundpos and pos.y >= foundpos.y-1 then
+		return true
+	else
+		return old_protected(pos, ...)
+	end
+end
+
 local function flag_taken(puncher)
 	minetest.chat_send_player(PlayerName(puncher), "This flag was taken!")
 end

@@ -1,7 +1,77 @@
-local choices = {}
 local voting = false
+local voters = {}
+local timer = 0
 
-function ctf_modebase.start_new_match(show_form)
+local check_interval = 0
+minetest.register_globalstep(function(dtime)
+	if not voting then return end
+
+	check_interval = check_interval + dtime
+
+	if check_interval >= 3 then
+		timer = timer - check_interval
+		check_interval = 0
+	else
+		return
+	end
+
+	local votes = {_most = {c = 0}}
+
+	for _, mode in pairs(ctf_modebase.modelist) do
+		votes[mode] = 0
+	end
+
+	for pname, info in pairs(voters) do
+		if not info.choice and timer > 0 then
+			return
+		else
+			votes[info.choice] = (votes[info.choice] or 0) + 1
+
+			if votes[info.choice] > votes._most.c then
+				votes._most.c = votes[info.choice]
+				votes._most.n = info.choice
+			end
+		end
+	end
+
+	voting = false
+	voters = {}
+
+	ctf_modebase.current_mode = votes._most.n or ctf_modebase.modelist[math.random(1, #ctf_modebase.modelist)]
+
+	minetest.chat_send_all(string.format("Voting is over, '%s' won with %d votes!",
+		HumanReadable(ctf_modebase.current_mode),
+		votes._most.c or 0
+	))
+
+	ctf_modebase.start_new_match(nil, true)
+end)
+
+minetest.register_on_joinplayer(function(player)
+	if voting then
+		voters[player:get_player_name()] = {choice = false, formname = ctf_modebase.show_modechoose_form(player)}
+	end
+end)
+
+minetest.register_on_leaveplayer(function(player)
+	if voting then
+		voters[player:get_player_name()] = nil
+	end
+end)
+
+function ctf_modebase.start_mode_vote()
+	voters = {}
+
+	for _, player in pairs(minetest.get_connected_players()) do
+		voters[player:get_player_name()] = {choice = false, formname = ctf_modebase.show_modechoose_form(player)}
+	end
+
+	timer = ctf_modebase.VOTING_TIME
+	voting = true
+end
+
+
+function ctf_modebase.start_new_match(show_form, new_mode)
 	local old_map = ctf_map.current_map
 	local old_mode = ctf_modebase.current_mode
 
@@ -16,6 +86,10 @@ function ctf_modebase.start_new_match(show_form)
 
 		RunCallbacks(ctf_modebase.registered_on_new_match, map, old_map)
 
+		if new_mode then
+			RunCallbacks(ctf_modebase.registered_on_new_mode, ctf_modebase.current_mode, old_mode)
+		end
+
 		ctf_teams.allocate_teams(map.teams)
 
 		ctf_modebase.current_mode_matches = ctf_modebase.current_mode_matches + 1
@@ -25,42 +99,7 @@ function ctf_modebase.start_new_match(show_form)
 	if ctf_modebase.current_mode_matches >= ctf_modebase.MAPS_PER_MODE or show_form then
 		ctf_modebase.current_mode_matches = 0
 
-		choices = {}
-		voting = true
-
-		for _, player in pairs(minetest.get_connected_players()) do
-			local pname = player:get_player_name()
-
-			local formname = ctf_modebase.show_modechoose_form(player)
-
-			minetest.after(ctf_modebase.VOTING_TIME, minetest.close_formspec, pname, formname)
-		end
-
-		minetest.after(ctf_modebase.VOTING_TIME, function()
-			local mode_votes = {}
-			local most = {c = 0}
-			for pname, mode in pairs(choices) do
-				mode_votes[mode] = (mode_votes[mode] or 0) + 1
-
-				if mode_votes[mode] > most.c then
-					most.n = mode
-					most.c = mode_votes[mode]
-				end
-			end
-
-			if not most.n then
-				most.n = ctf_modebase.modelist[math.random(1, #ctf_modebase.modelist)]
-			end
-
-			ctf_modebase.current_mode = most.n
-
-			choices = {}
-			voting = false
-
-			start_new_match()
-
-			RunCallbacks(ctf_modebase.registered_on_new_mode, most.n, old_mode)
-		end)
+		ctf_modebase.start_mode_vote()
 	else
 		start_new_match()
 	end
@@ -78,7 +117,12 @@ function ctf_modebase.show_modechoose_form(player)
 			pos = {"center", idx},
 			func = function(playername, fields, field_name)
 				if voting then
-					choices[playername] = modename
+					if ctf_modebase.modes[modename] then
+						voters[playername].choice = modename
+						minetest.chat_send_all(string.format("%s voted for the mode '%s'", playername, HumanReadable(modename)))
+					else
+						ctf_gui.show_modechoose_form(player)
+					end
 				end
 			end,
 		}

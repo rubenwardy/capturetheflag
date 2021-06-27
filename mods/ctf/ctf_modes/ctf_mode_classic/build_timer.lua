@@ -69,7 +69,7 @@ minetest.register_globalstep(function(dtime)
 	end
 end)
 
-ctf_modebase.register_chatcommand("classic", "start", {
+ctf_modebase.register_chatcommand("classic", "ctf_start", {
 	description = "Skip build time",
 	privs = {ctf_admin = true},
 	func = function(name, param)

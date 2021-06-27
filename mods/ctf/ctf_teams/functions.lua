@@ -43,7 +43,7 @@ end
 ---@param teamname string
 ---@return boolean | table
 --- Returns a list of all players in the team 'teamname', or false if there is no such team
-function ctf_teams.get(teamname)
+function ctf_teams.get_team(teamname)
 	if table.indexof(ctf_teams.teamlist, teamname) == -1 then return false end
 
 	local out = {}

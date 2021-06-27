@@ -67,4 +67,14 @@ minetest.register_on_mods_loaded(function()
 
 		minetest.override_item(name, {groups = def.groups, _g_category = new_category})
 	end
+
+	local drop_self = {
+		"default:leaves", "default:jungleleaves", "default:acacia_leaves",
+		"default:aspen_leaves", "default:bush_leaves", "default:blueberry_bush_leaves",
+		"default:acacia_bush_leaves"
+	}
+
+	for _, name in pairs(drop_self) do
+		minetest.override_item(name, {drop = name})
+	end
 end)

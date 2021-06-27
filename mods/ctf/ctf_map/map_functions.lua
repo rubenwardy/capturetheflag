@@ -39,6 +39,15 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 		end
 	end
 
+	for _, object_drop in pairs(minetest.get_objects_in_area(mapmeta.pos1, mapmeta.pos2)) do
+		if object_drop:is_player() then return end
+
+		local drop = object_drop:get_luaentity()
+		if drop and drop.name == "__builtin:item" then
+			object_drop:remove()
+		end
+	end
+
 	assert(res, "Unable to place schematic, does the MTS file exist? Path: " .. schempath)
 
 	ctf_map.current_map = mapmeta

@@ -111,29 +111,62 @@ function ctf_reports.send_report(report)
 	end
 end
 
+local report_reasons = {
+	"abusing chat",
+	"swearing",
+	"asking for personal info",
+	"spawn killing",
+	"hacking",
+	"cross teaming",
+	"base griefing",
+	"being inappropriate"
+}
+
 minetest.register_chatcommand("report", {
 	func = function(name, param)
-		param = param:trim()
-		if param == "" then
-			return false, "Please add a message to your report. " ..
-				"If it's about (a) particular player(s), please also include their name(s)."
+		local connected_players = {}
+		for index, player in ipairs(minetest.get_connected_players()) do
+			table.insert(connected_players,player:get_player_name())
 		end
-
-		-- Count the number of words, by counting for replaced spaces
-		-- Number of spaces = Number of words - 1
-		local _, count = string.gsub(param, " ", "")
-		if count == 0 then
-			return false, "If you're reporting a player, you should" ..
-				" also include a reason why (e.g. swearing, griefing, spawnkilling, etc.)."
-		end
-
-		param = name .. " reported: " .. param
-
-		ctf_reports.send_report(param)
-
-		return true, "Report has been sent."
+		local report_formspec =
+		"formspec_version[4]"..
+		"size[6,2,false]"..
+		"label[0.1,0.15;Username]"..
+		"dropdown[0.1,0.3;2.1,0.5;username_dropdown;"..table.concat(connected_players,",")..";0]"..
+		"label[2.2,0.15;Reason]"..
+		"dropdown[2.2,0.3;2.1,0.5;reason_dropdown;"..table.concat(report_reasons,",")..";0]"..
+		"button_exit[4.4,0.3;1.5,0.5;report_btn;Report]"..
+		"button_exit[4.4,1;1.5,0.5;close_btn;Cancel]"..
+		"field[0.1,1.2;4,0.5;info_field;Message;]"
+		minetest.show_formspec(name, "ctf_report", report_formspec)
+		return true
 	end
 })
+
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+	if formname == "ctf_report" and fields.quit then
+		if not fields.report_btn then
+			return
+		end
+		if fields.username_dropdown and fields.reason_dropdown then
+			if string.gsub(fields.info_field, "%s+", "") == "" then
+				ctf_reports.send_report(player:get_player_name().." reports "..fields.username_dropdown .." for "..fields.reason_dropdown..".")
+			else
+				ctf_reports.send_report(player:get_player_name().." reports "..
+				fields.username_dropdown .." for "..fields.reason_dropdown..". Message: "..fields.info_field)
+			end
+			minetest.chat_send_player(player:get_player_name(),"Report has been sent." )
+		elseif string.gsub(fields.info_field, "%s+", "") ~= "" then
+			if fields.username_dropdown then
+				ctf_reports.send_report(player:get_player_name().." reports "..fields.username_dropdown .." Message: "..fields.info_field)
+			else
+				ctf_reports.send_report(player:get_player_name().." reports: "..fields.info_field)
+			end
+		else
+			minetest.chat_send_player(player:get_player_name(),"Missing argument(s)!" )
+		end
+	end
+end)
 
 minetest.register_chatcommand("report_sub", {
 	privs = { kick = true },

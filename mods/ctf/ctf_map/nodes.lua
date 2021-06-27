@@ -162,7 +162,7 @@ minetest.register_node("ctf_map:chest", {
 		special_form = special_form:gsub("current_player", "player:"..pname)
 		special_form = special_form:gsub("current_name", string.format("nodemeta:%d,%d,%d", pos.x, pos.y, pos.z))
 
-		minetest.show_formspec(pname, "ctf_map:chest_formspec", special_form)
+		minetest.after(0, function() minetest.show_formspec(pname, "ctf_map:chest_formspec", special_form) end)
 	end,
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)

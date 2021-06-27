@@ -11,7 +11,7 @@ local function summary_func(name)
 end
 
 function mode_classic.tp_player_near_flag(player)
-	local tname = ctf_teams.get_team(player)
+	local tname = ctf_teams.get(player)
 
 	if not tname then return end
 
@@ -117,7 +117,7 @@ ctf_modebase.register_mode("classic", {
 		ctf_playertag.set(minetest.get_player_by_name(player),
 				ctf_playertag.TYPE_BUILTIN, tcolor)
 
-		mode_classic.celebrate_team(ctf_teams.get_team(player))
+		mode_classic.celebrate_team(ctf_teams.get(player))
 
 		rankings.add(player, {score = 20, flag_attempts = 1})
 
@@ -130,7 +130,7 @@ ctf_modebase.register_mode("classic", {
 			ctf_playertag.TYPE_ENTITY)
 	end,
 	on_flag_capture = function(player, captured_team)
-		mode_classic.celebrate_team(ctf_teams.get_team(player))
+		mode_classic.celebrate_team(ctf_teams.get(player))
 
 		minetest.after(0, flag_huds.update)
 
@@ -161,7 +161,7 @@ ctf_modebase.register_mode("classic", {
 	summary_func = summary_func,
 	on_punchplayer = function(player, hitter)
 		local pname, hname = player:get_player_name(), hitter:get_player_name()
-		local pteam, hteam = ctf_teams.get_team(player), ctf_teams.get_team(hitter)
+		local pteam, hteam = ctf_teams.get(player), ctf_teams.get(hitter)
 
 		if not pteam then
 			minetest.chat_send_player(hname, pname .. " is not in a team!")

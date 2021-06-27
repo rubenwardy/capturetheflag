@@ -13,7 +13,7 @@ doors.register("ctf_teams:door_steel", {
 local old_on_place = minetest.registered_craftitems["ctf_teams:door_steel"].on_place
 minetest.override_item("ctf_teams:door_steel", {
 	on_place = function(itemstack, placer, pointed_thing)
-		local pteam = ctf_teams.get_team(placer)
+		local pteam = ctf_teams.get(placer)
 
 		if pteam then
 			local pos1, pos2 = ctf_teams.get_team_territory(pteam)
@@ -63,7 +63,7 @@ end
 
 local old_func = default.can_interact_with_node
 default.can_interact_with_node = function(player, pos)
-	local pteam = ctf_teams.get_team(player)
+	local pteam = ctf_teams.get(player)
 
 	if pteam then
 		minetest.log(minetest.get_node(pos).name:match("ctf_teams:door_steel_(.-)[_$]").." vs "..pteam)

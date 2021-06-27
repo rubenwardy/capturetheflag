@@ -43,7 +43,7 @@ minetest.register_globalstep(function(dtime)
 
 		for _, player in pairs(minetest.get_connected_players()) do
 			local time_str = string.format("%dm %ds until match begins!", math.floor(timer / 60), math.floor(timer % 60))
-			local pteam = ctf_teams.get_team(player)
+			local pteam = ctf_teams.get(player)
 
 			if not hud:exists(player, "build_timer") then
 				hud:add(player, "build_timer", {

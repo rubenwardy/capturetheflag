@@ -16,7 +16,7 @@ local function other(team)
 end
 
 local function get_status(you)
-	local teamname = ctf_teams.get_team(you)
+	local teamname = ctf_teams.get(you)
 
 	if not teamname then return end
 

@@ -1,6 +1,9 @@
-local get_team = ctf_teams.get_team
+local get_team = ctf_teams.get
 local teams = ctf_teams.team
 local format = string.format
+local insert = table.insert
+local sort = table.sort
+local concat = table.concat
 
 ---@param name string Player name
 ---@param rankings table Recent rankings to show in the gui
@@ -11,7 +14,7 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, extra_rank_v
 	local sort_by
 
 	if rank_values._sort then
-		table.insert(rank_values, 1, rank_values._sort)
+		insert(rank_values, 1, rank_values._sort)
 	end
 
 	sort_by = rank_values[1]
@@ -31,10 +34,10 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, extra_rank_v
 			row = format("%s,%s", row, ranks[rank] or 0)
 		end
 
-		table.insert(rows, {row = row, sort = ranks[sort_by] or 0})
+		insert(rows, {row = row, sort = ranks[sort_by] or 0})
 	end
 
-	table.sort(rows, function(a, b) return a.sort > b.sort end)
+	sort(rows, function(a, b) return a.sort > b.sort end)
 
 	for i, c in pairs(rows) do
 		rows[i] = format("%s,%s", i, c.row)
@@ -57,8 +60,8 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, extra_rank_v
 					("text;"):rep(#rank_values):sub(1, -2),
 				},
 				rows = {
-					"", "white", "Player Name", HumanReadable(table.concat(rank_values, "  ,")),
-					table.concat(rows, ",")
+					"", "white", "Player Name", HumanReadable(concat(rank_values, "  ,")),
+					concat(rows, ",")
 				}
 			}
 		}

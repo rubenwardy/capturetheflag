@@ -69,7 +69,7 @@ for _, chest_color in pairs(colors) do
 
 		local meta = minetest.get_meta(pos)
 		local name = player:get_player_name()
-		local pteam = ctf_teams.get_team(name)
+		local pteam = ctf_teams.get(name)
 
 		if meta:get_string("infotext") == "" then
 			def.on_construct(pos)
@@ -123,7 +123,7 @@ for _, chest_color in pairs(colors) do
 	function def.allow_metadata_inventory_move(pos, from_list, from_index,
 			to_list, to_index, count, player)
 		local name = player:get_player_name()
-		if chest_color ~= ctf_teams.get_team(name) then
+		if chest_color ~= ctf_teams.get(name) then
 			minetest.chat_send_player(name, "You're not on team " .. chest_color)
 			return 0
 		end
@@ -156,7 +156,7 @@ for _, chest_color in pairs(colors) do
 
 	function def.allow_metadata_inventory_put(pos, listname, index, stack, player)
 		local name = player:get_player_name()
-		if chest_color ~= ctf_teams.get_team(name) then
+		if chest_color ~= ctf_teams.get(name) then
 			minetest.chat_send_player(name, "You're not on team " .. chest_color)
 			return 0
 		end
@@ -194,7 +194,7 @@ for _, chest_color in pairs(colors) do
 		end
 
 		local name = player:get_player_name()
-		if chest_color ~= ctf_teams.get_team(name) then
+		if chest_color ~= ctf_teams.get(name) then
 			minetest.chat_send_player(name, "You're not on team " .. chest_color)
 			return 0
 		end

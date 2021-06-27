@@ -29,7 +29,7 @@ end
 
 ---@param player string | ObjectRef
 ---@return boolean | string
-function ctf_teams.get_team(player)
+function ctf_teams.get(player)
 	player = PlayerName(player)
 
 	if ctf_teams.player_team[player] then
@@ -37,6 +37,27 @@ function ctf_teams.get_team(player)
 	end
 
 	return false
+end
+
+
+---@param teamname string
+---@return boolean | table
+--- Returns a list of all players in the team 'teamname', or false if there is no such team
+function ctf_teams.get_team(teamname)
+	if table.indexof(ctf_teams.teamlist, teamname) == -1 then return false end
+
+	local out = {}
+
+	for _, player in pairs(minetest.get_connected_players()) do
+		local pname = player:get_player_name()
+		local team = ctf_teams.player_team[pname]
+
+		if team and team == teamname then
+			table.insert(out, pname)
+		end
+	end
+
+	return out
 end
 
 --
@@ -63,7 +84,7 @@ function ctf_teams.allocate_player(player)
 end
 
 function ctf_teams.dealloc_player(player)
-	RunCallbacks(ctf_teams.registered_on_deallocplayer, PlayerObj(player), ctf_teams.get_team(player))
+	RunCallbacks(ctf_teams.registered_on_deallocplayer, PlayerObj(player), ctf_teams.get(player))
 
 	ctf_teams.set_team(player, nil)
 end

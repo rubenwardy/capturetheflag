@@ -10,7 +10,7 @@ minetest.override_chatcommand("msg", {
 
 		-- Message color
 		local color = minetest.settings:get("ctf_chat.message_color") or "#E043FF"
-		local pteam = ctf_teams.get_team(name)
+		local pteam = ctf_teams.get(name)
 		local tcolor = pteam and ctf_teams.team[pteam].color or "#FFF"
 
 		-- Colorized sender name and message
@@ -28,7 +28,7 @@ local function me_func() end
 
 if minetest.global_exists("irc") then
 	function irc.playerMessage(name, message)
-		local pteam = ctf_teams.get_team(player)
+		local pteam = ctf_teams.get(player)
 		local color = pteam and ctf_teams.team[pteam].color or "#FFF"
 		local clear = "\x0F"
 		if color then
@@ -53,7 +53,7 @@ end
 
 local handler
 handler = function(name, message)
-	local pteam = ctf_teams.get_team(name)
+	local pteam = ctf_teams.get(name)
 	if pteam then
 		for i = 1, #minetest.registered_on_chat_messages do
 			local func = minetest.registered_on_chat_messages[i]
@@ -79,7 +79,7 @@ table.insert(minetest.registered_on_chat_messages, 1, handler)
 minetest.registered_chatcommands["me"].func = function(name, param)
 	me_func(name, param)
 
-	local pteam = ctf_teams.get_team(name)
+	local pteam = ctf_teams.get(name)
 	if pteam then
 		local tcolor = ctf_teams.team[pteam].color
 		name = minetest.colorize(tcolor, "* " .. name)

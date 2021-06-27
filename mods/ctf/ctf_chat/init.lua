@@ -10,7 +10,7 @@ minetest.override_chatcommand("msg", {
 
 		-- Message color
 		local color = minetest.settings:get("ctf_chat.message_color") or "#E043FF"
-        local pteam = ctf_teams.get_team(name)
+		local pteam = ctf_teams.get_team(name)
 		local tcolor = pteam and ctf_teams.team[pteam].color or "#FFF"
 
 		-- Colorized sender name and message

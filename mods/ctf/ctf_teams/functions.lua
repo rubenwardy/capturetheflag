@@ -1,3 +1,5 @@
+local remembered_players = {} -- Used to assign player to the same team on rejoin
+
 --
 --- Team set/get
 --
@@ -8,6 +10,7 @@ function ctf_teams.set_team(player, teamname)
 	player = PlayerName(player)
 
 	if not teamname then
+		remembered_players[player] = nil
 		ctf_teams.player_team[player] = nil
 		return
 	end
@@ -17,6 +20,8 @@ function ctf_teams.set_team(player, teamname)
 		ctf_teams.player_team[player] = {
 			name = teamname,
 		}
+
+		remembered_players[player] = teamname
 
 		RunCallbacks(ctf_teams.registered_on_allocplayer, PlayerObj(player), teamname)
 	end
@@ -42,13 +47,18 @@ local team_list = {}
 local tpos = 1
 function ctf_teams.allocate_player(player)
 	if #team_list <= 0 then return end -- No teams initialized yet
+	player = PlayerName(player)
 
-	ctf_teams.set_team(player, team_list[tpos])
+	if not remembered_players[player] then
+		ctf_teams.set_team(player, team_list[tpos])
 
-	if tpos >= #team_list then
-		tpos = 1
+		if tpos >= #team_list then
+			tpos = 1
+		else
+			tpos = tpos + 1
+		end
 	else
-		tpos = tpos + 1
+		ctf_teams.set_team(player, remembered_players[player])
 	end
 end
 
@@ -59,10 +69,11 @@ function ctf_teams.dealloc_player(player)
 end
 
 ---@param teams table
--- Should only be called at match start
-function ctf_teams.allocate_teams(teams, on_alloc_callback)
+-- Should be called at match start
+function ctf_teams.allocate_teams(teams)
 	local players = minetest.get_connected_players()
 	team_list = {}
+	remembered_players = {}
 	tpos = 1
 
 	for teamname, def in pairs(teams) do
@@ -90,7 +101,3 @@ function ctf_teams.get_team_territory(teamname)
 
 	return current_map.teams[teamname].pos1, current_map.teams[teamname].pos2
 end
-
-minetest.register_on_leaveplayer(function(player)
-	ctf_teams.dealloc_player(player)
-end)

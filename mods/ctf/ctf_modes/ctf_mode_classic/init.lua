@@ -82,6 +82,8 @@ ctf_modebase.register_mode("classic", {
 		player:set_properties({
 			textures = {"character.png^(ctf_mode_classic_shirt.png^[colorize:"..ctf_teams.team[teamname].color..":180)"}
 		})
+			
+		ctf_playertag.set(player, ctf_playertag.TYPE_ENTITY)
 
 		player:set_hp(player:get_properties().hp_max)
 
@@ -109,6 +111,11 @@ ctf_modebase.register_mode("classic", {
 
 			return "You can't take the enemy flag during build time!"
 		end
+			
+		local pteam = ctf_teams.get_team(player)
+		local tcolor = pteam and ctf_teams.team[pteam].color or "#FFF"
+		ctf_playertag.set(minetest.get_player_by_name(player),
+				ctf_playertag.TYPE_BUILTIN, tcolor)
 
 		mode_classic.celebrate_team(ctf_teams.get_team(player))
 
@@ -118,6 +125,9 @@ ctf_modebase.register_mode("classic", {
 	end,
 	on_flag_drop = function(player, teamname)
 		minetest.after(0, flag_huds.update)
+			
+		ctf_playertag.set(minetest.get_player_by_name(player),
+			ctf_playertag.TYPE_ENTITY)
 	end,
 	on_flag_capture = function(player, captured_team)
 		mode_classic.celebrate_team(ctf_teams.get_team(player))
@@ -131,6 +141,9 @@ ctf_modebase.register_mode("classic", {
 
 			ctf_modebase.show_summary_gui(summary_func(pname))
 		end
+			
+		ctf_playertag.set(minetest.get_player_by_name(attname),
+			ctf_playertag.TYPE_ENTITY)
 
 		minetest.after(3, ctf_modebase.start_new_match)
 	end,

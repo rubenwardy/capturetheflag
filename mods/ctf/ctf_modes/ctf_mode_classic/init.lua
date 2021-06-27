@@ -77,15 +77,13 @@ ctf_modebase.register_mode("classic", {
 		end)
 
 		ctf_map.place_chests(mapdef)
-			
-		for _, player in pairs(minetest.get_connected_players()) do
-			player:set_hp(player:get_properties().hp_max)
-		end
 	end,
 	on_allocplayer = function(player, teamname)
 		player:set_properties({
 			textures = {"character.png^(ctf_mode_classic_shirt.png^[colorize:"..ctf_teams.team[teamname].color..":180)"}
 		})
+
+		player:set_hp(player:get_properties().hp_max)
 
 		mode_classic.tp_player_near_flag(player)
 
@@ -149,19 +147,23 @@ ctf_modebase.register_mode("classic", {
 	end,
 	summary_func = summary_func,
 	on_punchplayer = function(player, hitter)
-		local player = player:get_player_name()
-		local hitter = hitter:get_player_name()
-		
-		if ctf_teams.get_team(player) == ctf_teams.get_team(hitter) and ctf_teams.get_team(player) ~= nil and player ~= hitter then
-			if build_timer.in_progress() then
-				minetest.chat_send_player(hitter, "match hasn't started")
-				return true
-			else
-				minetest.chat_send_player(hitter, player .. " is on your team")
-				return true
-			end
+		local pname, hname = player:get_player_name(), hitter:get_player_name()
+		local pteam, hteam = ctf_teams.get_team(player), ctf_teams.get_team(hitter)
+
+		if not pteam then
+			minetest.chat_send_player(hname, pname .. " is not in a team!")
+			return true
+		elseif not hteam then
+			minetest.chat_send_player(hname, "You are not in a team!")
+			return true
+		end
+
+		if pteam == hteam then
+			minetest.chat_send_player(hname, pname .. " is on your team!")
+
+			return true
 		elseif build_timer.in_progress() then
-			minetest.chat_send_player(hitter, "match hasn't started")
+			minetest.chat_send_player(hname, "The match hasn't started yet!")
 			return true
 		end
 	end,

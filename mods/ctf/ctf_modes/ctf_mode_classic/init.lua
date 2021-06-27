@@ -114,15 +114,15 @@ ctf_modebase.register_mode("classic", {
 
 		rankings.add(player, {score = 20, flag_attempts = 1})
 
-		flag_huds.update()
+		minetest.after(0, flag_huds.update)
 	end,
 	on_flag_drop = function(player, teamname)
-		flag_huds.update()
+		minetest.after(0, flag_huds.update)
 	end,
 	on_flag_capture = function(player, captured_team)
 		mode_classic.celebrate_team(ctf_teams.get_team(player))
 
-		flag_huds.update()
+		minetest.after(0, flag_huds.update)
 
 		rankings.add(player, {score = 30, flag_captures = 1})
 

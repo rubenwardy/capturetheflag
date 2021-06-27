@@ -3,84 +3,74 @@
 minetest.register_alias("ctf_map:ind_stone", "ctf_map:stone")
 
 -- Special nodes
-do
-	minetest.register_node("ctf_map:ignore", {
-		description = "Artificial Ignore", -- this may need to be given a more appropriate name
-		drawtype = "airlike",
-		paramtype = "light",
-		sunlight_propagates = true,
-		walkable     = true,
-		pointable    = false,
-		diggable     = false,
-		buildable_to = false,
-		air_equivalent = true,
+minetest.register_node("ctf_map:ignore", {
+	description = "Artificial Ignore", -- this may need to be given a more appropriate name
+	drawtype = "airlike",
+	paramtype = "light",
+	sunlight_propagates = true,
+	walkable     = true,
+	pointable    = false,
+	diggable     = false,
+	buildable_to = false,
+	air_equivalent = true,
 
-		groups = {immortal = 1},
-	})
+	groups = {immortal = 1},
+})
 
-	minetest.register_node("ctf_map:ind_glass", {
-		description = "Indestructible Barrier Glass",
-		drawtype = "glasslike_framed",
-		tiles = {"default_glass.png", "default_glass_detail.png"},
-		inventory_image = minetest.inventorycube("default_glass.png"),
-		paramtype = "light",
-		sunlight_propagates = true,
-		is_ground_content = false,
-		walkable = true,
-		buildable_to = false,
-		pointable = ctf_core.settings.server_mode == "mapedit",
-		groups = {immortal = 1, not_in_creative_inventory = 1},
-		sounds = default.node_sound_glass_defaults()
-	})
+minetest.register_node("ctf_map:ind_glass", {
+	description = "Indestructible Barrier Glass",
+	drawtype = "glasslike_framed",
+	tiles = {"default_glass.png", "default_glass_detail.png"},
+	inventory_image = minetest.inventorycube("default_glass.png"),
+	paramtype = "light",
+	sunlight_propagates = true,
+	is_ground_content = false,
+	walkable = true,
+	buildable_to = false,
+	pointable = ctf_core.settings.server_mode == "mapedit",
+	groups = {immortal = 1, not_in_creative_inventory = 1},
+	sounds = default.node_sound_glass_defaults()
+})
 
-	minetest.register_node("ctf_map:ind_glass_red", {
-		description = "Indestructible Red Barrier Glass",
-		drawtype = "glasslike",
-		tiles = {"ctf_map_glass_red.png"},
-		inventory_image = minetest.inventorycube("ctf_map_glass_red.png"),
-		paramtype = "light",
-		sunlight_propagates = true,
-		is_ground_content = false,
-		walkable = true,
-		buildable_to = false,
-		use_texture_alpha = false,
-		alpha = 0,
-		pointable = ctf_core.settings.server_mode == "mapedit",
-		groups = {immortal = 1, not_in_creative_inventory = 1},
-		sounds = default.node_sound_glass_defaults()
-	})
-	ctf_map.barrier_nodes[minetest.get_content_id("ctf_map:ind_glass_red")] = minetest.CONTENT_AIR
+minetest.register_node("ctf_map:ind_glass_red", {
+	description = "Indestructible Red Barrier Glass",
+	drawtype = "glasslike",
+	tiles = {"ctf_map_glass_red.png"},
+	inventory_image = minetest.inventorycube("ctf_map_glass_red.png"),
+	paramtype = "light",
+	sunlight_propagates = true,
+	is_ground_content = false,
+	walkable = true,
+	buildable_to = false,
+	use_texture_alpha = false,
+	alpha = 0,
+	pointable = ctf_core.settings.server_mode == "mapedit",
+	groups = {immortal = 1, not_in_creative_inventory = 1},
+	sounds = default.node_sound_glass_defaults()
+})
+ctf_map.barrier_nodes[minetest.get_content_id("ctf_map:ind_glass_red")] = minetest.CONTENT_AIR
 
-	minetest.register_node("ctf_map:ind_stone_red", {
-		description = "Indestructible Red Barrier Stone",
-		groups = {immortal = 1, not_in_creative_inventory = 1},
-		tiles = {"ctf_map_stone_red.png"},
-		is_ground_content = false
-	})
-	ctf_map.barrier_nodes[minetest.get_content_id("ctf_map:ind_stone_red")] = "default:stone"
+minetest.register_node("ctf_map:ind_stone_red", {
+	description = "Indestructible Red Barrier Stone",
+	groups = {immortal = 1, not_in_creative_inventory = 1},
+	tiles = {"ctf_map_stone_red.png"},
+	is_ground_content = false
+})
+ctf_map.barrier_nodes[minetest.get_content_id("ctf_map:ind_stone_red")] = "default:stone"
 
-	minetest.register_node("ctf_map:killnode", {
-		description = "Kill Node",
-		drawtype = "glasslike",
-		tiles = {"ctf_map_killnode.png"},
-		paramtype = "light",
-		sunlight_propogates = true,
-		walkable = false,
-		pointable = ctf_core.settings.server_mode == "mapedit",
-		damage_per_second = 20,
-		is_ground_content = false,
-		groups = {immortal = 1},
-		sounds = default.node_sound_glass_defaults(),
-	})
-
-	minetest.register_node("ctf_map:reinforced_cobble", {
-		description = "Reinforced Cobblestone",
-		tiles = {"ctf_map_reinforced_cobble.png"},
-		is_ground_content = false,
-		groups = {cracky = 1, stone = 2},
-		sounds = default.node_sound_stone_defaults(),
-	})
-end
+minetest.register_node("ctf_map:killnode", {
+	description = "Kill Node",
+	drawtype = "glasslike",
+	tiles = {"ctf_map_killnode.png"},
+	paramtype = "light",
+	sunlight_propogates = true,
+	walkable = false,
+	pointable = ctf_core.settings.server_mode == "mapedit",
+	damage_per_second = 20,
+	is_ground_content = false,
+	groups = {immortal = 1},
+	sounds = default.node_sound_glass_defaults(),
+})
 
 local mod_prefixes = {
 	default = "";

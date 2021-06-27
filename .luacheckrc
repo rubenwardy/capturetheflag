@@ -2,7 +2,7 @@ unused_args = false
 
 globals = {
 	"ctf_core", "ctf_map", "ctf_teams", "ctf_modebase", "ctf_gui",
-	"ctf_rankings",
+	"ctf_rankings", "ctf_playertag",
 
 	"mode_classic",
 
@@ -30,7 +30,11 @@ globals = {
 
 exclude_files = {
 	"mods/other/crafting",
-	"mods/mtg/"
+	"mods/mtg/mtg_*",
+	"mods/other/skybox",
+	"mods/other/real_suffocation",
+	"mods/other/lib_chatcmdbuilder",
+	"mods/other/email",
 }
 
 read_globals = {

@@ -66,7 +66,6 @@ default.can_interact_with_node = function(player, pos)
 	local pteam = ctf_teams.get(player)
 
 	if pteam then
-		minetest.log(minetest.get_node(pos).name:match("ctf_teams:door_steel_(.-)[_$]").." vs "..pteam)
 		if pteam == minetest.get_node(pos).name:match("ctf_teams:door_steel_(.-)[_$]") then
 			return true
 		else

@@ -49,6 +49,10 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 		end
 	end
 
+	minetest.after(10, function()
+		minetest.fix_light(mapmeta.pos1, mapmeta.pos2)
+	end)
+
 	assert(res, "Unable to place schematic, does the MTS file exist? Path: " .. schempath)
 
 	ctf_map.current_map = mapmeta

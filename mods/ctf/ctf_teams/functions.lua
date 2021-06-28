@@ -41,16 +41,14 @@ end
 
 
 ---@param teamname string
----@return boolean | table
---- Returns a list of all players in the team 'teamname', or false if there is no such team
+---@return table
+--- Returns a list of all players in the team 'teamname'
 function ctf_teams.get_team(teamname)
-	if table.indexof(ctf_teams.teamlist, teamname) == -1 then return false end
-
 	local out = {}
 
 	for _, player in pairs(minetest.get_connected_players()) do
 		local pname = player:get_player_name()
-		local team = ctf_teams.player_team[pname]
+		local team = ctf_teams.get(pname)
 
 		if team and team == teamname then
 			table.insert(out, pname)

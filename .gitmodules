@@ -13,9 +13,6 @@
 [submodule "mods/other/skybox"]
 	path = mods/other/skybox
 	url = git@github.com:minetest-mods/skybox.git
-[submodule "mods/apis/mhud"]
-	path = mods/apis/mhud
-	url = git@github.com:LoneWolfHT/mhud.git
 [submodule "mods/apis/rawf"]
 	path = mods/apis/rawf
 	url = https://github.com/LoneWolfHT/rawf.git

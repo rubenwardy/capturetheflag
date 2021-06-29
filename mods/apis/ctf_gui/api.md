@@ -9,6 +9,9 @@ ctf_gui.show_formspec(player, "modname:formname", {
 	title = "Formspec Title",
 	description = "Text below the title",
 	privs = {server = true},
+	on_quit = function(playername, fields)
+		-- Called when player ESCs out of formspec
+	end,
 	elements = { ... }
 })
 ```

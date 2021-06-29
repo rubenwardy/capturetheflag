@@ -17,6 +17,10 @@ function ctf_gui.init()
 	ctf_core.register_on_formspec_input(modname..":", function(pname, formname, fields)
 		if not context[pname] then return end
 
+		if fields.quit and context[pname].on_quit then
+			context[pname].on_quit(pname, fields)
+		end
+
 		if context[pname].formname == formname then
 			for name, info in pairs(fields) do
 				if context[pname].elements[name] and context[pname].elements[name].func then

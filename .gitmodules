@@ -16,3 +16,6 @@
 [submodule "mods/apis/rawf"]
 	path = mods/apis/rawf
 	url = https://github.com/LoneWolfHT/rawf.git
+[submodule "mods/apis/mhud"]
+	path = mods/apis/mhud
+	url = git@github.com:LoneWolfHT/mhud.git

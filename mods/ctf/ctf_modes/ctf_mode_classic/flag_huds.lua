@@ -43,10 +43,8 @@ local function get_status(you)
 			if your_thief == you then
 				status = FLAG_STOLEN_YOU
 			else
-				minetest.log("error", dump(your_thief))
 				status = table.copy(FLAG_STOLEN_TEAMMATE)
 				status.text = status.text:format(your_thief)
-				minetest.log(dump(status.text))
 			end
 		else
 			status = FLAG_SAFE

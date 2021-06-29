@@ -27,7 +27,7 @@ function ctf_ranged.register_simple_weapon(name, def)
 		end,
 	},
 	function(loaded_def)
-		loaded_def.description = "Pistol (Loaded)"
+		loaded_def.description = def.description.." (Loaded)"
 		loaded_def.inventory_image = def.texture
 		loaded_def.groups.not_in_creative_inventory = nil
 		loaded_def.on_use = function(itemstack, user)
@@ -48,7 +48,7 @@ function ctf_ranged.register_simple_weapon(name, def)
 			if type(def.bullet) == "table" then
 				def.bullet.texture = "ctf_ranged_bullet.png"
 			else
-				def.bullet = "ctf_ranged_bullet.png"
+				def.bullet = {texture = "ctf_ranged_bullet.png"}
 			end
 
 			if not def.bullet.spread then
@@ -84,7 +84,10 @@ function ctf_ranged.register_simple_weapon(name, def)
 							texture = "ctf_ranged_bullethole.png",
 						})
 					elseif hitpoint.type == "object" then
-						hitpoint.ref:punch(user, 1, {damage_groups = {ranged = 1, [def.type] = 1, fleshy = def.damage}}, look_dir)
+						hitpoint.ref:punch(user, 1, {
+							full_punch_interval = 1,
+							damage_groups = {ranged = 1, [def.type] = 1, fleshy = def.damage}
+						}, look_dir)
 					end
 				end
 			end
@@ -125,8 +128,8 @@ ctf_ranged.register_simple_weapon("ctf_ranged:shotgun", {
 	texture = "ctf_ranged_shotgun.png",
 	fire_sound = "ctf_ranged_shotgun",
 	bullet = {
-		amount = 25,
-		spread = 4,
+		amount = 30,
+		spread = 3,
 	},
 	rounds = 10,
 	range = 15,

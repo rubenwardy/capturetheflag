@@ -48,8 +48,29 @@ minetest.register_globalstep(function(dtime)
 end)
 
 minetest.register_on_joinplayer(function(player)
+	local name = player:get_player_name()
+
 	if voting then
-		voters[player:get_player_name()] = {choice = false, formname = ctf_modebase.show_modechoose_form(player)}
+		voters[name] = {choice = false, formname = ctf_modebase.show_modechoose_form(player)}
+	end
+
+	if ctf_modebase.current_mode then
+		local map = ctf_map.current_map
+		local mode_def = ctf_modebase:get_current_mode()
+		skybox.set(player, table.indexof(ctf_map.skyboxes, map.skybox)-1)
+
+		physics.set(name, "ctf_modebase:map_physics", {
+			speed = map.phys_speed,
+			jump = map.phys_jump,
+			gravity = map.phys_gravity,
+		})
+
+		if mode_def.physics then
+			player:set_physics_override({
+				sneak_glitch = mode_def.physics.sneak_glitch or false,
+				new_move = mode_def.physics.new_move or true
+			})
+		end
 	end
 end)
 
@@ -121,7 +142,7 @@ function ctf_modebase.show_modechoose_form(player)
 						voters[playername].choice = modename
 						minetest.chat_send_all(string.format("%s voted for the mode '%s'", playername, HumanReadable(modename)))
 					else
-						ctf_gui.show_modechoose_form(player)
+						ctf_modebase.show_modechoose_form(player)
 					end
 				end
 			end,
@@ -133,6 +154,15 @@ function ctf_modebase.show_modechoose_form(player)
 	ctf_gui.show_formspec(player, "ctf_modebase:mode_select", {
 		title = "Mode Selection",
 		description = "Please vote on what gamemode you would like to play",
+		on_quit = function(pname)
+			if voting then
+				minetest.after(0.1, function()
+					if not voters[pname].choice then
+						ctf_modebase.show_modechoose_form(pname)
+					end
+				end)
+			end
+		end,
 		elements = elements,
 	})
 
@@ -166,13 +196,6 @@ function ctf_modebase.place_map(mode_def, mapidx)
 
 	for _, player in pairs(minetest.get_connected_players()) do
 		local name = PlayerName(player)
-		local pinv = player:get_inventory()
-
-		if map.initial_stuff ~= nil then
-			for _, item in pairs(map.initial_stuff) do
-				pinv:add_item("main", ItemStack(item))
-			end
-		end
 
 		skybox.set(player, table.indexof(ctf_map.skyboxes, map.skybox)-1)
 

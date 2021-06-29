@@ -45,30 +45,32 @@ function ctf_modebase.flag_on_punch(puncher, nodepos, node)
 	local target_team = node.name:sub(node.name:find("top_") + 4)
 
 	if pteam ~= target_team then
+		if not ctf_modebase.taken_flags[pname] then
+			ctf_modebase.taken_flags[pname] = {}
+		end
+
+		table.insert(ctf_modebase.taken_flags[pname], target_team)
+		ctf_modebase.flag_taken[target_team] = pname
+
 		local result = RunCallbacks(ctf_modebase.registered_on_flag_take, pname, target_team)
 
 		if not result then
-			if not ctf_modebase.taken_flags[pname] then
-				ctf_modebase.taken_flags[pname] = {}
-			end
-
-			table.insert(ctf_modebase.taken_flags[pname], target_team)
-			ctf_modebase.flag_taken[target_team] = pname
-
 			minetest.set_node(nodepos, {name = "ctf_modebase:flag_captured_top", param2 = node.param2})
 		elseif type(result) == "string" then
+			table.remove(ctf_modebase.taken_flags[pname])
+			ctf_modebase.flag_taken[target_team][pname] = nil
 			minetest.chat_send_player(pname, "You can't take that flag. Reason: "..result)
 		end
 	else
 		if not ctf_modebase.taken_flags[pname] then
 			minetest.chat_send_player(pname, "That's your flag!")
 		else
-			drop_flags(pname, true)
-
 			local result = RunCallbacks(ctf_modebase.registered_on_flag_capture, pname, ctf_modebase.taken_flags[pname])
 
 			if type(result) == "string" then
 				minetest.chat_send_player(pname, "You can't capture. Reason: "..result)
+			else
+				drop_flags(pname, true)
 			end
 		end
 	end

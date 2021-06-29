@@ -128,17 +128,17 @@ ctf_modebase.register_mode("classic", {
 
 		rankings.add(player, {score = 20, flag_attempts = 1})
 
-		minetest.after(0, flag_huds.update)
+		flag_huds.update()
 	end,
 	on_flag_drop = function(player, teamname)
-		minetest.after(0, flag_huds.update)
+		flag_huds.update()
 
 		ctf_playertag.set(minetest.get_player_by_name(player), ctf_playertag.TYPE_ENTITY)
 	end,
 	on_flag_capture = function(player, captured_team)
 		mode_classic.celebrate_team(ctf_teams.get(player))
 
-		minetest.after(0, flag_huds.update)
+		flag_huds.update()
 
 		rankings.add(player, {score = 30, flag_captures = 1})
 

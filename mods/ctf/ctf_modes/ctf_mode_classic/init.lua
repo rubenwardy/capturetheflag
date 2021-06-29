@@ -1,9 +1,10 @@
 mode_classic = {}
 
-local flag_huds, rankings, build_timer = ctf_core.include_files(
+local flag_huds, rankings, build_timer, crafts = ctf_core.include_files(
 	"flag_huds.lua",
 	"rankings.lua",
-	"build_timer.lua"
+	"build_timer.lua",
+	"crafts.lua"
 )
 
 local function summary_func(name)
@@ -61,10 +62,17 @@ ctf_modebase.register_mode("classic", {
 
 		["ctf_melee:sword_steel"  ] = {rarity = 0.2  , max_stacks = 2},
 		["ctf_melee:sword_mese"   ] = {rarity = 0.05 , max_stacks = 1},
-		["ctf_melee:sword_diamond"] = {rarity = 0.001, max_stacks = 1},
+		["ctf_melee:sword_diamond"] = {rarity = 0.002, max_stacks = 1},
 
-		["default:apple"] = {min_count = 5, max_count = 30, rarity = 0.1, max_stacks = 2},
+		["ctf_ranged:pistol_loaded" ] = {rarity = 0.2 , max_stacks = 2},
+		["ctf_ranged:rifle_loaded"  ] = {rarity = 0.2                 },
+		["ctf_ranged:shotgun_loaded"] = {rarity = 0.05                },
+		["ctf_ranged:smg_loaded"    ] = {rarity = 0.05                },
+
+		["ctf_ranged:ammo"] = {min_count = 3, max_count = 10, rarity = 0.3, max_stacks = 2},
+		["default:apple"  ] = {min_count = 5, max_count = 30, rarity = 0.1, max_stacks = 2},
 	},
+	crafts = crafts,
 	physics = {sneak_glitch = true, new_move = false},
 	commands = {"ctf_start", "rank", "r"},
 	on_new_match = function(mapdef)

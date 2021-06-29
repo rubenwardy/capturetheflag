@@ -23,5 +23,6 @@ end
 
 ctf_core.include_files(
 	"helpers.lua",
-	"privileges.lua"
+	"privileges.lua",
+	"cooldowns.lua"
 )

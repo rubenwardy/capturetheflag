@@ -57,7 +57,7 @@ function ctf_ranged.register_simple_weapon(name, def)
 					spawnpos, endpos, true, true
 				)}
 			else
-				rays = rawf.bulletspreadcast(def.bullet, spawnpos, endpos, true, true)
+				rays = rawf.spread_bulletcast(def.bullet, spawnpos, endpos, true, true)
 			end
 
 			minetest.sound_play(def.fire_sound, {pos = user:get_pos()}, true)

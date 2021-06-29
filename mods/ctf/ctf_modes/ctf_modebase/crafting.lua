@@ -4,9 +4,7 @@ function ctf_modebase.update_crafts(name)
 	local current_mode = ctf_modebase:get_current_mode()
 
 	if current_mode.crafts then
-		for _, craft in pairs(current_mode.crafts) do
-			crafting.unlock(name, craft)
-		end
+		crafting.unlock(name, current_mode.crafts)
 	end
 end
 

@@ -35,7 +35,7 @@ local function get_status(you)
 				status.text = status.text:format(enemy_thief, your_thief)
 			end
 		else
-			status = FLAG_STOLEN
+			status = table.copy(FLAG_STOLEN)
 			status.text = status.text:format(enemy_thief)
 		end
 	else

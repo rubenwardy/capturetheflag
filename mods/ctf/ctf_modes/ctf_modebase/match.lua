@@ -157,7 +157,7 @@ function ctf_modebase.show_modechoose_form(player)
 		on_quit = function(pname)
 			if voting then
 				minetest.after(0.1, function()
-					if not voters[pname].choice then
+					if voting and not voters[pname].choice then
 						ctf_modebase.show_modechoose_form(pname)
 					end
 				end)

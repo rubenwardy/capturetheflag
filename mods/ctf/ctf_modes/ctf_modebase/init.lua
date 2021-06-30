@@ -1,6 +1,6 @@
 ctf_modebase = {
 	-- Time until voting ends
-	VOTING_TIME          = 30,    ---@type integer
+	VOTING_TIME          = 25,    ---@type integer
 
 	-- Amount of maps that need to be played before a mode vote starts
 	MAPS_PER_MODE        = 3,     ---@type integer
@@ -41,7 +41,8 @@ ctf_core.include_files(
 	"match.lua",
 	"flag_taking.lua",
 	"mode_functions.lua",
-	"crafting.lua"
+	"crafting.lua",
+	"kill_list.lua"
 )
 
 if ctf_core.settings.server_mode == "play" then
@@ -57,13 +58,3 @@ if ctf_core.settings.server_mode == "play" then
 		player:set_hp(player:get_properties().hp_max)
 	end)
 end
-
-minetest.register_chatcommand("ctf_next", {
-	description = "Skip to a new match.",
-	privs = {ctf_admin = true},
-	func = function(name, param)
-		ctf_modebase.start_new_match()
-
-		return true
-	end,
-})

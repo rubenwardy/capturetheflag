@@ -58,7 +58,7 @@ function ctf_modebase.flag_on_punch(puncher, nodepos, node)
 			minetest.set_node(nodepos, {name = "ctf_modebase:flag_captured_top", param2 = node.param2})
 		elseif type(result) == "string" then
 			table.remove(ctf_modebase.taken_flags[pname])
-			ctf_modebase.flag_taken[target_team][pname] = nil
+			ctf_modebase.flag_taken[target_team] = nil
 			minetest.chat_send_player(pname, "You can't take that flag. Reason: "..result)
 		end
 	else
@@ -77,13 +77,9 @@ function ctf_modebase.flag_on_punch(puncher, nodepos, node)
 end
 
 minetest.register_on_dieplayer(function(player)
-	local pname = player:get_player_name()
-
-	drop_flags(pname)
+	drop_flags(player:get_player_name())
 end)
 
 minetest.register_on_leaveplayer(function(player)
-	local pname = player:get_player_name()
-
-	drop_flags(pname)
+	drop_flags(player:get_player_name())
 end)

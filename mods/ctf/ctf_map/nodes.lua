@@ -14,7 +14,7 @@ minetest.register_node("ctf_map:ignore", {
 	buildable_to = false,
 	air_equivalent = true,
 
-	groups = {immortal = 1},
+	groups = {immortal = 1, disable_suffocation = 1},
 })
 
 minetest.register_node("ctf_map:ind_glass", {

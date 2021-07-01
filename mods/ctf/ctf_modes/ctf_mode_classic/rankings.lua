@@ -130,10 +130,18 @@ return {
 
 		return math.round(kd * 5)
 	end,
-	reset_recent = function()
-		rankings.recent = {}
+	reset_recent = function(specific_player)
+		if not specific_player then
+			rankings.previous_recent = table.copy(rankings.recent)
+			rankings.recent = {}
+		else
+			rankings.recent[specific_player] = nil
+		end
 	end,
-	get_recent = function()
-		return rankings.recent
+	get_previous_recent = function()
+		return rankings.previous_recent or false
+	end,
+	get_recent = function(specific_player)
+		return specific_player and rankings.recent[specific_player] or rankings.recent
 	end
 }

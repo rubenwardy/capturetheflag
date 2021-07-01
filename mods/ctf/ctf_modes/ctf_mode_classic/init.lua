@@ -7,9 +7,7 @@ local flag_huds, rankings, build_timer, crafts = ctf_core.include_files(
 	"crafts.lua"
 )
 
-local function summary_func(name)
-	return name, rankings.get_recent(), {"flag_captures", "flag_attempts", _sort = "score", "kills", "deaths"}
-end
+local SUMMARY_RANKS = {"flag_captures", "flag_attempts", _sort = "score", "kills", "deaths"}
 
 function mode_classic.tp_player_near_flag(player)
 	local tname = ctf_teams.get(player)
@@ -108,6 +106,14 @@ ctf_modebase.register_mode("classic", {
 
 		flag_huds.on_allocplayer(player)
 	end,
+	on_leaveplayer = function(player)
+		local pname = player:get_player_name()
+		local recent = rankings.get_recent(pname)
+
+		if not recent or #recent <= 1 then
+			rankings.reset_recent(pname)
+		end
+	end,
 	on_dieplayer = function(player, reason)
 		if reason.type == "punch" and reason.object:is_player() then
 			rankings.add(reason.object, {kills = 1, score = rankings.calculate_killscore(player)})
@@ -152,7 +158,7 @@ ctf_modebase.register_mode("classic", {
 		for _, pname in pairs(minetest.get_connected_players()) do
 			pname = pname:get_player_name()
 
-			ctf_modebase.show_summary_gui(summary_func(pname))
+			ctf_modebase.show_summary_gui(pname, rankings.get_recent(), table.copy(SUMMARY_RANKS), {previous = true})
 		end
 
 		ctf_playertag.set(minetest.get_player_by_name(player), ctf_playertag.TYPE_ENTITY)
@@ -170,7 +176,15 @@ ctf_modebase.register_mode("classic", {
 			return true
 		end
 	end,
-	summary_func = summary_func,
+	summary_func = function(name, param)
+		if not param or param == "" then
+			return true, rankings.get_recent() or {}, table.copy(SUMMARY_RANKS), {previous = true}
+		elseif param:match("p") then
+			return true, rankings.get_previous_recent() or {}, table.copy(SUMMARY_RANKS), {next = true}
+		else
+			return false, "Don't understand param "..dump(param)
+		end
+	end,
 	on_punchplayer = function(player, hitter)
 		local pname, hname = player:get_player_name(), hitter:get_player_name()
 		local pteam, hteam = ctf_teams.get(player), ctf_teams.get(hitter)

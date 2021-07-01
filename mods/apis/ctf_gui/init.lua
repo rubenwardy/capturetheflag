@@ -215,6 +215,5 @@ function ctf_gui.show_formspec(player, formname, formdef)
 
 	context[player] = formdef
 
-	minetest.close_formspec(player, formdef.formname)
 	minetest.show_formspec(player, formdef.formname, formspec)
 end

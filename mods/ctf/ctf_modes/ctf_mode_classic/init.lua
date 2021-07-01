@@ -109,8 +109,13 @@ ctf_modebase.register_mode("classic", {
 	on_leaveplayer = function(player)
 		local pname = player:get_player_name()
 		local recent = rankings.get_recent(pname)
+		local count = 0
 
-		if not recent or #recent <= 1 then
+		for _ in pairs(recent or {}) do
+			count = count + 1
+		end
+
+		if not recent or count <= 1 then
 			rankings.reset_recent(pname)
 		end
 	end,

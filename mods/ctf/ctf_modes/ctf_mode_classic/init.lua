@@ -182,9 +182,9 @@ ctf_modebase.register_mode("classic", {
 	get_chest_access = function(pname)
 		local rank = rankings.get(pname)
 
-		if not rank then return end
+		if not rank or not rank.score then return end
 
-		if rank.score >= 100 then
+		if rank.score >= 1000 then
 			return "pro"
 		elseif rank.score >= 10 then
 			return true

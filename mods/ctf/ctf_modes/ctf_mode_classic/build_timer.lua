@@ -30,8 +30,8 @@ local build_timer = {
 
 local old_protected = minetest.is_protected
 minetest.is_protected = function(pos, pname, ...)
-	if not timer then
-		old_protected(pos, pname, ...)
+	if timer == nil then
+		return old_protected(pos, pname, ...)
 	end
 
 	local pteam = ctf_teams.get(pname)

@@ -20,11 +20,16 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, extra_rank_v
 	sort_by = rank_values[1]
 
 	for pname, ranks in pairs(rankings) do
-		local team = get_team(pname)
 		local color = "grey"
 
-		if team then
-			color = teams[team].color
+		if not ranks._row_color then
+			local team = get_team(pname)
+
+			if team then
+				color = teams[team].color
+			end
+		else
+			color = ranks._row_color
 		end
 
 		local row = format("%s,%s", color, pname)

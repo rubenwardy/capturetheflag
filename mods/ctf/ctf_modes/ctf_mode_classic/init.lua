@@ -90,9 +90,13 @@ ctf_modebase.register_mode("classic", {
 		ctf_map.place_chests(mapdef)
 	end,
 	on_allocplayer = function(player, teamname)
+		local tcolor = ctf_teams.team[teamname].color
+
 		player:set_properties({
-			textures = {"character.png^(ctf_mode_classic_shirt.png^[colorize:"..ctf_teams.team[teamname].color..":180)"}
+			textures = {"character.png^(ctf_mode_classic_shirt.png^[colorize:"..tcolor..":180)"}
 		})
+
+		rankings.set_summary_row_color(player, tcolor)
 
 		ctf_playertag.set(player, ctf_playertag.TYPE_ENTITY)
 

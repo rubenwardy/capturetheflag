@@ -110,6 +110,15 @@ return {
 		queue_ranking_update(player, hud_text:sub(1, -4))
 		rankings:add(player, amounts)
 	end,
+	set_summary_row_color = function(player, color)
+		local pname = PlayerName(player)
+
+		if not rankings.recent[pname] then
+			rankings.recent[pname] = {_row_color = color}
+		else
+			rankings.recent[pname]._row_color = color
+		end
+	end,
 	get = function(player, specific)
 		local rank = rankings:get(player)
 

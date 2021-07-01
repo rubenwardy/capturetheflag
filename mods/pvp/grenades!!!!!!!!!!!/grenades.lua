@@ -95,7 +95,8 @@ grenades.register_grenade("grenades:smoke", {
 		local player = minetest.get_player_by_name(pname)
 		if not player or not pos then return end
 
-		local fpos = ctf_classes.get_flag_pos(player)
+		local pteam = ctf_teams.get(pname)
+		local fpos = ctf_map.current_map.teams[pteam].flag_pos
 
 		if not fpos then return end
 

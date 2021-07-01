@@ -154,7 +154,7 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 	-- FOLDER NAME, MAP NAME, MAP AUTHOR(S), MAP HINT, MAP LICENSE, OTHER INFO
 	local ypos = 3
 	for name, label in pairs({
-			dirname = "Folder Name", mapname = "Map Name"   , author = "Map Author(s)",
+			dirname = "Folder Name", name = "Map Name"   , author = "Map Author(s)",
 			hint    = "Map Hint"   , license = "Map License", others = "Other Info"
 		}) do
 		elements[name] = {

@@ -52,8 +52,10 @@ minetest.register_privilege("ctf_map_editor", {
 })
 
 local registered_commands = {}
+local command_params = {}
 function ctf_map.register_map_command(match, func)
 	registered_commands[match] = func
+	table.insert(command_params, "["..match.."]")
 end
 
 ctf_core.include_files(
@@ -68,19 +70,24 @@ ctf_core.include_files(
 minetest.register_chatcommand("ctf_map", {
 	description = "Run map related commands",
 	privs = {ctf_map_editor = true},
-	params = "[editor | e]",
+	params = "[editor | e] | "..table.concat(command_params, " | "),
 	func = function(name, params)
-		params = string.split(params, " ")
-
-		if not params then
-			return false, "/ctf_map [editor | e]"
+		if not params or params == "" then
+			return false, "/ctf_map [editor | e] | "..table.concat(command_params, " | ")
 		end
+
+		params = string.split(params, " ")
 
 		if params[1] == "e" or params[1] == "editor" then
 			local inv = PlayerObj(name):get_inventory()
 
 			if not inv:contains_item("main", "ctf_map:adminpick") then
 				inv:add_item("main", "ctf_map:adminpick")
+			end
+
+			if not ctf_core.settings.server_mode == "mapedit" then
+				minetest.chat_send_player(name,
+						minetest.colorize("red", "It is not recommended to edit maps unless the server is in mapedit mode"))
 			end
 
 			ctf_map.show_map_editor(name)

@@ -49,7 +49,7 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 		end
 	end
 
-	minetest.after(10, function()
+	minetest.after(5, function()
 		minetest.fix_light(mapmeta.pos1, mapmeta.pos2)
 	end)
 
@@ -122,7 +122,6 @@ function ctf_map.place_chests(mapmeta, pos2, amount)
 	local vm = VoxelManip()
 	pos1, pos2 = vm:read_from_map(pos1, pos2)
 
-	local area = VoxelArea:new{MinEdge = pos1, MaxEdge = pos2}
 	local data = vm:get_data()
 	local Nx = pos2.x - pos1.x + 1
 	local Ny = pos2.y - pos1.y + 1
@@ -140,7 +139,7 @@ function ctf_map.place_chests(mapmeta, pos2, amount)
 					if (data[vi] == ID_AIR or data[vi] == ID_WATER) and
 					id_below ~= ID_AIR and id_below ~= ID_IGNORE and id_below ~= ID_WATER and
 					(id_above == ID_AIR or id_above == ID_WATER) then
-						table.insert(place_positions, vi)
+						insert(place_positions, vi)
 					end
 				end
 			end

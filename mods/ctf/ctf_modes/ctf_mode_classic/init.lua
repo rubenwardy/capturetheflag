@@ -47,7 +47,7 @@ function mode_classic.celebrate_team(teamname)
 end
 
 ctf_modebase.register_mode("classic", {
-	map_whitelist = {"bridge", "caverns", "coast", "iceage", "two_hills", "plains"},
+	map_whitelist = {"bridge", "caverns", "coast", "iceage", "two_hills", "plains", "desert_spikes"},
 	treasures = {
 		["default:ladder_wood"] = {                max_count = 20, rarity = 0.3, max_stacks = 5},
 		["default:torch" ] = {                max_count = 20, rarity = 0.3, max_stacks = 5},

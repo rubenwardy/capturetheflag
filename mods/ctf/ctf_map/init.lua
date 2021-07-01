@@ -8,7 +8,7 @@ end
 minetest.register_alias("mapgen_singlenode", "ctf_map:ignore")
 
 ctf_map = {
-	DEFAULT_CHEST_AMOUNT = 46,
+	DEFAULT_CHEST_AMOUNT = 42,
 	DEFAULT_START_TIME = 5900,
 	CHAT_COLOR = "orange",
 	maps_dir = minetest.get_modpath("ctf_map").."/maps/",

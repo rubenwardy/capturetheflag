@@ -60,7 +60,7 @@ ctf_modebase.register_mode("classic", {
 
 		["ctf_melee:sword_steel"  ] = {rarity = 0.2  , max_stacks = 2},
 		["ctf_melee:sword_mese"   ] = {rarity = 0.05 , max_stacks = 1},
-		["ctf_melee:sword_diamond"] = {rarity = 0.002, max_stacks = 1},
+		["ctf_melee:sword_diamond"] = {rarity = 0.001, max_stacks = 1},
 
 		["ctf_ranged:pistol_loaded" ] = {rarity = 0.2 , max_stacks = 2},
 		["ctf_ranged:rifle_loaded"  ] = {rarity = 0.2                 },
@@ -69,9 +69,9 @@ ctf_modebase.register_mode("classic", {
 
 		["ctf_ranged:ammo"] = {min_count = 3, max_count = 10, rarity = 0.3, max_stacks = 2},
 		["default:apple"  ] = {min_count = 5, max_count = 30, rarity = 0.1, max_stacks = 2},
-			
-		["grenades:frag" ] = {rarity = 0.2, max_stacks = 2},
-		["grenades:smoke"] = {rarity = 0.3, max_stacks = 3},
+
+		["grenades:frag" ] = {rarity = 0.1, max_stacks = 2},
+		["grenades:smoke"] = {rarity = 0.2, max_stacks = 2},
 	},
 	crafts = crafts,
 	physics = {sneak_glitch = true, new_move = false},

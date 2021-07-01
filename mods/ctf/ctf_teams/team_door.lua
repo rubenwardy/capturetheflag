@@ -16,9 +16,7 @@ minetest.override_item("ctf_teams:door_steel", {
 		local pteam = ctf_teams.get(placer)
 
 		if pteam then
-			local pos1, pos2 = ctf_teams.get_team_territory(pteam)
-
-			if not ctf_core.area_contains(pos1, pos2, pointed_thing.above) then
+			if not ctf_core.pos_inside(pointed_thing.above, ctf_teams.get_team_territory(pteam)) then
 				minetest.chat_send_player(placer:get_player_name(), "You can only place team doors in your own territory!")
 				return itemstack
 			end

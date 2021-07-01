@@ -84,7 +84,7 @@ function vector.sign(a)
 end
 
 local vsort = vector.sort
-function ctf_core.area_contains(pos1, pos2, pos)
+function ctf_core.pos_inside(pos, pos1, pos2)
 	pos1, pos2 = vsort(pos1, pos2)
 
 	return pos.x >= pos1.x and pos.x <= pos2.x

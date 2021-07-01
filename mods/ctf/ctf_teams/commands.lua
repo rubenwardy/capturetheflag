@@ -1,5 +1,5 @@
 ChatCmdBuilder.new("ctf_teams", function(cmd)
-	cmd:sub("set_team :player :team", function(name, player, team)
+	cmd:sub("set :player :team", function(name, player, team)
 		if minetest.get_player_by_name(player) then
 			if not ctf_teams.team[team] then
 				return false, "Unable to find team " .. dump(team)
@@ -14,7 +14,7 @@ ChatCmdBuilder.new("ctf_teams", function(cmd)
 	end)
 end, {
 	description = "\n" ..
-			"set_team <player> <team>",
+			"set <player> <team>",
 	privs = {
 		ctf_team_admin = true,
 	}

@@ -28,6 +28,23 @@ local build_timer = {
 	end
 }
 
+local old_protected = minetest.is_protected
+minetest.is_protected = function(pos, pname, ...)
+	if not timer then
+		old_protected(pos, pname, ...)
+	end
+
+	local pteam = ctf_teams.get(pname)
+
+	if pteam and not ctf_core.pos_inside(pos, ctf_teams.get_team_territory(pteam)) then
+		minetest.chat_send_player(pname, "You can't interact with the other side of the barrier!")
+
+		return true
+	else
+		return old_protected(pos, pname, ...)
+	end
+end
+
 minetest.register_globalstep(function(dtime)
 	if not timer then return end
 

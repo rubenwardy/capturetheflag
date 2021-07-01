@@ -7,7 +7,7 @@ ctf_modebase.register_on_new_match(function(mapdef, old_mapdef)
 	end
 end)
 
-local function drop_flags(pname, dont_return)
+function ctf_modebase.drop_flags(pname, dont_return)
 	local flagteams = ctf_modebase.taken_flags[pname]
 
 	if flagteams then
@@ -16,9 +16,11 @@ local function drop_flags(pname, dont_return)
 
 			if not dont_return then
 				local fpos = vector.offset(ctf_map.current_map.teams[flagteam].flag_pos, 0, 1, 0)
+				local flag = minetest.get_node(fpos)
 
-				if minetest.get_node(fpos).name == "ctf_modebase:flag_captured_top" then
-					minetest.set_node(fpos, {name = "ctf_modebase:flag_top_"..flagteam})
+				if flag.name == "ctf_modebase:flag_captured_top" then
+					flag.name = "ctf_modebase:flag_top_"..flagteam
+					minetest.set_node(fpos, flag)
 				else
 					ctf_core.error("ctf_modebase:flag_taking", "Failed to return flag to its position")
 				end
@@ -70,16 +72,16 @@ function ctf_modebase.flag_on_punch(puncher, nodepos, node)
 			if type(result) == "string" then
 				minetest.chat_send_player(pname, "You can't capture. Reason: "..result)
 			else
-				drop_flags(pname, true)
+				ctf_modebase.drop_flags(pname, true)
 			end
 		end
 	end
 end
 
 minetest.register_on_dieplayer(function(player)
-	drop_flags(player:get_player_name())
+	ctf_modebase.drop_flags(player:get_player_name())
 end)
 
 minetest.register_on_leaveplayer(function(player)
-	drop_flags(player:get_player_name())
+	ctf_modebase.drop_flags(player:get_player_name())
 end)

@@ -54,7 +54,73 @@ local function get_status(you)
 	return status
 end
 
+local player_timers
+local player_timer_count = 0
+local function untrack_capturer(player)
+	player = PlayerName(player)
+
+	if hud:get(player, "flag_timer") then
+		hud:remove(player, "flag_timer")
+	end
+
+	if player_timers and player_timers[player] then
+		player_timers[player] = nil
+		player_timer_count = player_timer_count - 1
+	end
+
+	if player_timer_count == 0 then
+		player_timers = nil
+	end
+end
+
+local timer = 0
+minetest.register_globalstep(function(dtime)
+	if not player_timers then return end
+
+	timer = timer + dtime
+	if timer < 1 then return end
+
+	for pname, timeleft in pairs(player_timers) do
+		if timeleft - timer <= 0 then
+			ctf_modebase.drop_flags(pname)
+			return
+		end
+
+		player_timers[pname] = timeleft - timer
+
+		hud:change(pname, "flag_timer", {
+			text = string.format("%dm %ds left to capture", math.floor(timeleft / 60), math.floor(timeleft % 60))
+		})
+	end
+
+	timer = 0
+end)
+
 return {
+	track_capturer = function(player, time)
+		player = PlayerName(player)
+
+		if not player_timers then player_timers = {} end
+
+		player_timers[player] = time
+		player_timer_count = player_timer_count + 1
+
+		hud:add(player, "flag_timer", {
+			hud_elem_type = "text",
+			position = {x = 0.5, y = 0},
+			alignment = {x = "center", y = "down"},
+			color = 0xFF0000,
+			text_scale = 2
+		})
+	end,
+	untrack_capturer = untrack_capturer,
+	clear_capturers = function()
+		for pname in pairs(player_timers) do
+			untrack_capturer(pname)
+		end
+
+		player_timers = nil
+	end,
 	on_allocplayer = function(player)
 		local status = get_status(player:get_player_name())
 

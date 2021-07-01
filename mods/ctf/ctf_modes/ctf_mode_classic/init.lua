@@ -8,6 +8,7 @@ local flag_huds, rankings, build_timer, crafts = ctf_core.include_files(
 )
 
 local SUMMARY_RANKS = {"flag_captures", "flag_attempts", _sort = "score", "kills", "deaths"}
+local FLAG_CAPTURE_TIMER = 60 * 2.5
 
 function mode_classic.tp_player_near_flag(player)
 	local tname = ctf_teams.get(player)
@@ -118,6 +119,8 @@ ctf_modebase.register_mode("classic", {
 		if not recent or count <= 1 then
 			rankings.reset_recent(pname)
 		end
+
+		flag_huds.untrack_capturer(pname)
 	end,
 	on_dieplayer = function(player, reason)
 		if reason.type == "punch" and reason.object:is_player() then
@@ -147,9 +150,13 @@ ctf_modebase.register_mode("classic", {
 		rankings.add(player, {score = 20, flag_attempts = 1})
 
 		flag_huds.update()
+
+		flag_huds.track_capturer(player, FLAG_CAPTURE_TIMER)
 	end,
 	on_flag_drop = function(player, teamname)
 		flag_huds.update()
+
+		flag_huds.untrack_capturer(player)
 
 		ctf_playertag.set(minetest.get_player_by_name(player), ctf_playertag.TYPE_ENTITY)
 	end,
@@ -157,6 +164,8 @@ ctf_modebase.register_mode("classic", {
 		mode_classic.celebrate_team(ctf_teams.get(player))
 
 		flag_huds.update()
+
+		flag_huds.clear_capturers()
 
 		rankings.add(player, {score = 30, flag_captures = 1})
 

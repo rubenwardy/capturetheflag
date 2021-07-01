@@ -60,6 +60,13 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 	return mapmeta
 end
 
+--
+--- VOXELMANIP FUNCTIONS
+--
+
+local BARRIER_NODES
+minetest.after(0, function() BARRIER_NODES = ctf_map.barrier_nodes end)
+
 -- Takes [mapmeta] or [pos1, pos2] arguments
 function ctf_map.remove_barrier(mapmeta, pos2)
 	local pos1 = mapmeta
@@ -71,15 +78,16 @@ function ctf_map.remove_barrier(mapmeta, pos2)
 	local vm = VoxelManip()
 	pos1, pos2 = vm:read_from_map(pos1, pos2)
 
-	local area = VoxelArea:new{MinEdge = pos1, MaxEdge = pos2}
 	local data = vm:get_data()
+	local Nx = pos2.x - pos1.x + 1
+	local Ny = pos2.y - pos1.y + 1
 
 	for z = pos1.z, pos2.z do
 		for y = pos1.y, pos2.y do
 			for x = pos1.x, pos2.x do
-				local vi = area:index(x, y, z)
+				local vi = (z - pos1.z) * Ny * Nx + (y - pos1.y) * Nx + (x - pos1.x) + 1
 
-				for barriernode_id, replacement_id in pairs(ctf_map.barrier_nodes) do
+				for barriernode_id, replacement_id in pairs(BARRIER_NODES) do
 					if data[vi] == barriernode_id then
 						data[vi] = replacement_id
 						break
@@ -94,15 +102,21 @@ function ctf_map.remove_barrier(mapmeta, pos2)
 	vm:write_to_map(false)
 end
 
+local ID_AIR = minetest.CONTENT_AIR
+local ID_IGNORE = minetest.CONTENT_IGNORE
+local DEFAULT_CHEST_AMOUNT = ctf_map.DEFAULT_CHEST_AMOUNT
+local CHEST_ID = minetest.get_content_id("ctf_map:chest")
+local ID_WATER = minetest.get_content_id("default:water_source")
+local insert = table.insert
 function ctf_map.place_chests(mapmeta, pos2, amount)
 	local pos1 = mapmeta
 	local pos_list
 
-	if not pos2 then
+	if not pos2 then -- place_chests(mapmeta) was called
 		pos_list = mapmeta.chests
 		pos1, pos2 = mapmeta.pos1, mapmeta.pos2
-	else
-		pos_list = {{pos1 = pos1, pos2 = pos2, amount = amount or ctf_map.DEFAULT_CHEST_AMOUNT}}
+	else -- place_chests(pos1, pos2, amount?) was called
+		pos_list = {{pos1 = pos1, pos2 = pos2, amount = amount or DEFAULT_CHEST_AMOUNT}}
 	end
 
 	local vm = VoxelManip()
@@ -110,20 +124,22 @@ function ctf_map.place_chests(mapmeta, pos2, amount)
 
 	local area = VoxelArea:new{MinEdge = pos1, MaxEdge = pos2}
 	local data = vm:get_data()
+	local Nx = pos2.x - pos1.x + 1
+	local Ny = pos2.y - pos1.y + 1
 
 	for _, a in pairs(pos_list) do
 		local place_positions = {}
-		local chest_node = minetest.get_content_id("ctf_map:chest")
 
 		for z = a.pos1.z, a.pos2.z, (a.pos1.z <= a.pos2.z) and 1 or -1 do
 			for y = a.pos1.y, a.pos2.y, (a.pos1.y <= a.pos2.y) and 1 or -1 do
 				for x = a.pos1.x, a.pos2.x, (a.pos1.x <= a.pos2.x) and 1 or -1 do
-					local vi = area:index(x, y, z)
-					local id_below = data[area:index(x, y-1, z)]
+					local vi = (z - pos1.z) * Ny * Nx + (y - pos1.y) * Nx + (x - pos1.x) + 1
+					local id_below = data[(z - pos1.z) * Ny * Nx + (y-1 - pos1.y) * Nx + (x - pos1.x) + 1]
+					local id_above = data[(z - pos1.z) * Ny * Nx + (y+1 - pos1.y) * Nx + (x - pos1.x) + 1]
 
-					if data[vi] == minetest.CONTENT_AIR and
-					id_below ~= minetest.CONTENT_AIR and id_below ~= minetest.CONTENT_IGNORE and
-					data[area:index(x, y+1, z)] == minetest.CONTENT_AIR then
+					if (data[vi] == ID_AIR or data[vi] == ID_WATER) and
+					id_below ~= ID_AIR and id_below ~= ID_IGNORE and id_below ~= ID_WATER and
+					(id_above == ID_AIR or id_above == ID_WATER) then
 						table.insert(place_positions, vi)
 					end
 				end
@@ -134,7 +150,7 @@ function ctf_map.place_chests(mapmeta, pos2, amount)
 			for i = 1, a.amount, 1 do
 				local idx = math.random(1, #place_positions)
 
-				data[place_positions[idx]] = chest_node
+				data[place_positions[idx]] = CHEST_ID
 
 				table.remove(place_positions, idx)
 			end

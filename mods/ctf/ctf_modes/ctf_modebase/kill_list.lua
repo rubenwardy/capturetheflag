@@ -85,19 +85,32 @@ minetest.register_on_joinplayer(function(player)
 	update_kill_list_hud(player)
 end)
 
-minetest.register_on_dieplayer(function(player, reason)
-	local v_teamcolor = ctf_teams.get(player)
+local damage_group_textures = {grenade = "grenades_frag.png"}
+minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
+	local hp = player:get_hp()
 
-	if v_teamcolor then
-		v_teamcolor = ctf_teams.team[v_teamcolor].color_hex
-	end
+	if hp > 0 and hitter and hitter:is_player() and hp - damage <= 0 then
+		local k_teamcolor = ctf_teams.get(hitter)
+		local v_teamcolor = ctf_teams.get(player)
 
-	if reason.type == "punch" and reason.object and reason.object:is_player() then
-		local k_teamcolor = ctf_teams.get(reason.object)
-		local killwep_invimage = reason.object:get_wielded_item():get_definition().inventory_image
+		local killwep_invimage
+
+		for group, texture in pairs(damage_group_textures) do
+			if tool_capabilities.damage_groups[group] then
+				killwep_invimage = texture
+				break
+			end
+		end
+
+		if not killwep_invimage then
+			killwep_invimage = hitter:get_wielded_item():get_definition().inventory_image or "default_tool_steelsword.png"
+		end
 
 		if k_teamcolor then
 			k_teamcolor = ctf_teams.team[k_teamcolor].color_hex
+		end
+		if v_teamcolor then
+			v_teamcolor = ctf_teams.team[v_teamcolor].color_hex
 		end
 
 		if killwep_invimage == "" then
@@ -105,11 +118,21 @@ minetest.register_on_dieplayer(function(player, reason)
 		end
 
 		add_kill(
-			{text = reason.object:get_player_name(), color = k_teamcolor or nil},
-			killwep_invimage or "default_tool_steelsword.png",
+			{text = hitter:get_player_name(), color = k_teamcolor or nil},
+			killwep_invimage,
 			{text = player:get_player_name(), color = v_teamcolor or nil}
 		)
-	else
+	end
+end)
+
+minetest.register_on_dieplayer(function(player, reason)
+	local v_teamcolor = ctf_teams.get(player)
+
+	if v_teamcolor then
+		v_teamcolor = ctf_teams.team[v_teamcolor].color_hex
+	end
+
+	if reason.type ~= "punch" then
 		add_kill("", "ctf_modebase_skull.png", {text = player:get_player_name(), color = v_teamcolor or nil})
 	end
 

@@ -211,7 +211,7 @@ ctf_modebase.register_mode("classic", {
 			return true
 		end
 
-		if pteam == hteam then
+		if pteam == hteam and pname ~= hname then
 			minetest.chat_send_player(hname, pname .. " is on your team!")
 
 			return true

@@ -67,7 +67,10 @@ local fragdef = {
 
 			if hit and player and v:is_player() and v:get_hp() > 0 and hit.type == "object" and hit.ref:is_player() and
 			hit.ref:get_player_name() == v:get_player_name() then
-				v:punch(player, 2, {damage_groups = {grenade = 1, fleshy = 30 - ((radius/3) * vector.distance(pos, v:get_pos()))}}, nil)
+				v:punch(player, 2, {damage_groups = {
+					grenade = 1,
+					fleshy = 30 - ((radius/3) * vector.distance(pos, v:get_pos()))
+				}}, nil)
 			end
 		end
 	end,

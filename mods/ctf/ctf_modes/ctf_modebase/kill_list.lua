@@ -86,7 +86,7 @@ minetest.register_on_joinplayer(function(player)
 end)
 
 local damage_group_textures = {grenade = "grenades_frag.png"}
-minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, dir, damage)
+function ctf_modebase.add_kill(player, hitter, time_from_last_punch, tool_capabilities)
 	local hp = player:get_hp()
 
 	if hp > 0 and hitter and hitter:is_player() and hp - damage <= 0 then
@@ -123,7 +123,7 @@ minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, 
 			{text = player:get_player_name(), color = v_teamcolor or nil}
 		)
 	end
-end)
+end
 
 minetest.register_on_dieplayer(function(player, reason)
 	local v_teamcolor = ctf_teams.get(player)

@@ -130,6 +130,16 @@ ctf_modebase.register_mode("classic", {
 		rankings.add(player, {deaths = 1})
 	end,
 	on_respawnplayer = function(player)
+		if not build_timer.in_progress() then
+			local waitpos = player:get_pos()
+
+			waitpos.y = ctf_map.current_map.pos2.y + 5
+
+			if ctf_modebase.delay_respawn(player, 7, waitpos) then
+				return true
+			end
+		end
+
 		give_initial_stuff(player)
 
 		return mode_classic.tp_player_near_flag(player)
@@ -184,7 +194,7 @@ ctf_modebase.register_mode("classic", {
 
 		if not rank or not rank.score then return end
 
-		if rank.score >= 1000 then
+		if rank.score >= 10000 then
 			return "pro"
 		elseif rank.score >= 10 then
 			return true
@@ -199,7 +209,7 @@ ctf_modebase.register_mode("classic", {
 			return false, "Don't understand param "..dump(param)
 		end
 	end,
-	on_punchplayer = function(player, hitter)
+	on_punchplayer = function(player, hitter, ...)
 		local pname, hname = player:get_player_name(), hitter:get_player_name()
 		local pteam, hteam = ctf_teams.get(player), ctf_teams.get(hitter)
 
@@ -219,5 +229,7 @@ ctf_modebase.register_mode("classic", {
 			minetest.chat_send_player(hname, "The match hasn't started yet!")
 			return true
 		end
+
+		ctf_modebase.add_kill(player, hitter, ...)
 	end,
 })

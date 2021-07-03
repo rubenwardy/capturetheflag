@@ -210,6 +210,8 @@ ctf_modebase.register_mode("classic", {
 		end
 	end,
 	on_punchplayer = function(player, hitter, ...)
+		if not hitter:is_player() or player:get_hp() <= 0 then return end
+
 		local pname, hname = player:get_player_name(), hitter:get_player_name()
 		local pteam, hteam = ctf_teams.get(player), ctf_teams.get(hitter)
 
@@ -230,6 +232,6 @@ ctf_modebase.register_mode("classic", {
 			return true
 		end
 
-		ctf_modebase.add_kill(player, hitter, ...)
+		ctf_modebase.check_kill(player, hitter, ...)
 	end,
 })

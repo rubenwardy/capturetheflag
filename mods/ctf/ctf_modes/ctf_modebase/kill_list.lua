@@ -86,7 +86,7 @@ minetest.register_on_joinplayer(function(player)
 end)
 
 local damage_group_textures = {grenade = "grenades_frag.png"}
-function ctf_modebase.add_kill(player, hitter, time_from_last_punch, tool_capabilities)
+function ctf_modebase.check_kill(player, hitter, time_from_last_punch, tool_capabilities, _, damage)
 	local hp = player:get_hp()
 
 	if hp > 0 and hitter and hitter:is_player() and hp - damage <= 0 then

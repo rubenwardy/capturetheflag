@@ -44,7 +44,8 @@ ctf_core.include_files(
 	"crafting.lua",
 	"hpregen.lua",
 	"kill_list.lua",
-	"respawn_delay.lua"
+	"respawn_delay.lua",
+	"markers.lua"
 )
 
 if ctf_core.settings.server_mode == "play" then

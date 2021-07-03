@@ -55,7 +55,7 @@ function give_initial_stuff.give_item(inv, item)
 end
 
 setmetatable(give_initial_stuff, {
-	__call = function(self, player, mode)
+	__call = function(self, player, replace)
 		if ctf_core.settings.server_mode == "mapedit" then
 			return
 		end
@@ -64,7 +64,7 @@ setmetatable(give_initial_stuff, {
 				.. player:get_player_name())
 		local inv = player:get_inventory()
 
-		if mode ~= "replace_tools" then
+		if not replace then
 			inv:set_list("main",  {})
 			inv:set_list("craft", {})
 
@@ -76,15 +76,7 @@ setmetatable(give_initial_stuff, {
 		local items = give_initial_stuff.get_stuff(player)
 
 		for _, item in pairs(items) do
-			if mode == "replace_tools" then
-				for _, tool in pairs(tools) do
-					if item:find(tool) then
-						give_initial_stuff.give_item(inv, ItemStack(item))
-					end
-				end
-			else
-				give_initial_stuff.give_item(inv, ItemStack(item))
-			end
+			give_initial_stuff.give_item(inv, ItemStack(item))
 		end
 	end
 })

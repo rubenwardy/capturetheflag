@@ -35,3 +35,15 @@ add_mode_func(ctf_modebase.register_on_flag_drop    , "on_flag_drop"    )
 add_mode_func(ctf_modebase.register_on_flag_capture , "on_flag_capture" )
 
 add_mode_func(ctf_modebase.register_on_treasurefy_node, "on_treasurefy_node")
+
+ctf_teams.allocate_player = function(...)
+	local current_mode = ctf_modebase:get_current_mode()
+
+	if not current_mode or #ctf_teams.current_team_list <= 0 then return end
+
+	if current_mode.allocate_player then
+		return current_mode.allocate_player(...)
+	else
+		return ctf_teams.default_allocate_player
+	end
+end

@@ -1,5 +1,3 @@
-local remembered_players = {} -- Used to assign player to the same team on rejoin
-
 --
 --- Team set/get
 --
@@ -10,7 +8,7 @@ function ctf_teams.set_team(player, teamname)
 	player = PlayerName(player)
 
 	if not teamname then
-		remembered_players[player] = nil
+		ctf_teams.remembered_player[player] = nil
 		ctf_teams.player_team[player] = nil
 		return
 	end
@@ -21,7 +19,7 @@ function ctf_teams.set_team(player, teamname)
 			name = teamname,
 		}
 
-		remembered_players[player] = teamname
+		ctf_teams.remembered_player[player] = teamname
 
 		RunCallbacks(ctf_teams.registered_on_allocplayer, PlayerObj(player), teamname)
 	end
@@ -62,24 +60,24 @@ end
 --- Allocation
 --
 
-local team_list = {}
 local tpos = 1
-function ctf_teams.allocate_player(player)
-	if #team_list <= 0 then return end -- No teams initialized yet
+function ctf_teams.default_allocate_player(player)
+	if #ctf_teams.current_team_list <= 0 then return end -- No teams initialized yet
 	player = PlayerName(player)
 
-	if not remembered_players[player] then
-		ctf_teams.set_team(player, team_list[tpos])
+	if not ctf_teams.remembered_player[player] then
+		ctf_teams.set_team(player, ctf_teams.current_team_list[tpos])
 
-		if tpos >= #team_list then
+		if tpos >= #ctf_teams.current_team_list then
 			tpos = 1
 		else
 			tpos = tpos + 1
 		end
 	else
-		ctf_teams.set_team(player, remembered_players[player])
+		ctf_teams.set_team(player, ctf_teams.remembered_player[player])
 	end
 end
+ctf_teams.allocate_player = ctf_teams.default_allocate_player
 
 function ctf_teams.dealloc_player(player)
 	RunCallbacks(ctf_teams.registered_on_deallocplayer, PlayerObj(player), ctf_teams.get(player))
@@ -91,12 +89,12 @@ end
 -- Should be called at match start
 function ctf_teams.allocate_teams(teams)
 	local players = minetest.get_connected_players()
-	team_list = {}
-	remembered_players = {}
+	ctf_teams.current_team_list = {}
+	ctf_teams.remembered_player = {}
 	tpos = 1
 
 	for teamname, def in pairs(teams) do
-		table.insert(team_list, teamname)
+		table.insert(ctf_teams.current_team_list, teamname)
 	end
 
 	table.shuffle(players)

@@ -47,6 +47,7 @@ function mode_classic.celebrate_team(teamname)
 	end
 end
 
+local next_team = "red"
 ctf_modebase.register_mode("classic", {
 	map_whitelist = {"bridge", "caverns", "coast", "iceage", "two_hills", "plains", "desert_spikes"},
 	treasures = {
@@ -87,6 +88,33 @@ ctf_modebase.register_mode("classic", {
 		end)
 
 		ctf_map.place_chests(mapdef)
+	end,
+	allocate_player = function(player)
+		player = player:get_player_name()
+
+		local total = rankings.get_total()
+		local bscore = (total.blue and total.blue.score) or 0
+		local rscore = (total.red and total.red.score) or 0
+
+		if bscore == rscore then
+			ctf_teams.set_team(player, next_team)
+
+			next_team = next_team == "red" and "blue" or "red"
+		elseif bscore > rscore then
+			-- Only allocate player to remembered team if they aren't desperately needed in the other
+			if ctf_teams.remembered_player[player] and bscore - rscore < 1000 then
+				ctf_teams.set_team(player, ctf_teams.remembered_player[player])
+			else
+				ctf_teams.set_team(player, "red")
+			end
+		else
+			-- Only allocate player to remembered team if they aren't desperately needed in the other
+			if ctf_teams.remembered_player[player] and rscore - bscore < 1000 then
+				ctf_teams.set_team(player, ctf_teams.remembered_player[player])
+			else
+				ctf_teams.set_team(player, "blue")
+			end
+		end
 	end,
 	on_allocplayer = function(player, teamname)
 		local tcolor = ctf_teams.team[teamname].color

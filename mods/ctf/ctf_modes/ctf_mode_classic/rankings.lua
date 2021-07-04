@@ -1,6 +1,8 @@
 local rankings = ctf_rankings.init()
 local hud = mhud.init()
 
+rankings.total = {}
+
 ----
 ------ HUD HANDLING
 ----
@@ -102,9 +104,20 @@ ctf_modebase.register_chatcommand("classic", "r"   , rank_def)
 return {
 	add = function(player, amounts)
 		local hud_text = ""
+		local pteam = ctf_teams.get(player)
 
 		for name, val in pairs(amounts) do
 			hud_text = string.format("%s+%d %s | ", hud_text, val, HumanReadable(name))
+		end
+
+		if pteam then
+			if not rankings.total[pteam] then
+				rankings.total[pteam] = {}
+			end
+
+			for stat, amount in pairs(amounts) do
+				rankings.total[pteam][stat] = (rankings.total[pteam][stat] or 0) + amount
+			end
 		end
 
 		queue_ranking_update(player, hud_text:sub(1, -4))
@@ -136,6 +149,14 @@ return {
 			rankings.recent = {}
 		else
 			rankings.recent[specific_player] = nil
+			rankings.total = {}
+		end
+	end,
+	get_total = function(specific_team)
+		if specific_team then
+			return rankings.total[specific_team]
+		else
+			return rankings.total
 		end
 	end,
 	get_previous_recent = function()

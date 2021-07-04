@@ -3,7 +3,7 @@ ctf_modebase = {
 	VOTING_TIME          = 25,    ---@type integer
 
 	-- Amount of maps that need to be played before a mode vote starts
-	MAPS_PER_MODE        = 3,     ---@type integer
+	MAPS_PER_MODE        = 5,     ---@type integer
 
 	-- Table containing all registered modes and their definitions
 	modes                = {},    ---@type table

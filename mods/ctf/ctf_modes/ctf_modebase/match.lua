@@ -2,6 +2,9 @@ local voting = false
 local voters = {}
 local timer = 0
 
+-- List of all maps placed during the current mode
+local maps_placed = {}
+
 local check_interval = 0
 minetest.register_globalstep(function(dtime)
 	if not voting then return end
@@ -120,6 +123,8 @@ function ctf_modebase.start_new_match(show_form, new_mode)
 	if ctf_modebase.current_mode_matches >= ctf_modebase.MAPS_PER_MODE or show_form then
 		ctf_modebase.current_mode_matches = 0
 
+		maps_placed = {}
+
 		ctf_modebase.start_mode_vote()
 	else
 		start_new_match()
@@ -179,16 +184,23 @@ function ctf_modebase.place_map(mode_def, mapidx)
 	local dirlist = minetest.get_dir_list(ctf_map.maps_dir, true)
 
 	if not mapidx then
-		if mode_def.map_whitelist then
-			mapidx = table.indexof(dirlist, mode_def.map_whitelist[math.random(1, #mode_def.map_whitelist)])
-		else
-			mapidx = math.random(1, #dirlist)
+		local map_pool = mode_def.map_whitelist or dirlist
+		local new_pool = {}
+
+		for _, name in pairs(map_pool) do
+			if table.indexof(maps_placed, name) == -1 then
+				table.insert(new_pool, name)
+			end
 		end
+
+		mapidx = table.indexof(dirlist, new_pool[math.random(1, #new_pool)])
 	elseif type(mapidx) ~= "number" then
 		mapidx = table.indexof(dirlist, mapidx)
 	end
 
 	local map = ctf_map.place_map(mapidx, dirlist[mapidx])
+
+	table.insert(maps_placed, dirlist[mapidx])
 
 	-- Set time, time_speed, skyboxes, and physics
 

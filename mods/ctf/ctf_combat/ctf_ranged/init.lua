@@ -76,15 +76,23 @@ function ctf_ranged.register_simple_weapon(name, def)
 
 				if hitpoint then
 					if hitpoint.type == "node" then
-						minetest.add_particle({
-							pos = vector.subtract(hitpoint.intersection_point, vector.multiply(look_dir, 0.04)),
-							velocity = vector.new(),
-							acceleration = {x=0, y=0, z=0},
-							expirationtime = def.bullethole_lifetime or 3,
-							size = 1,
-							collisiondetection = false,
-							texture = "ctf_ranged_bullethole.png",
-						})
+						local nodedef = minetest.registered_nodes[minetest.get_node(hitpoint.under).name]
+
+						if nodedef.groups.snappy or (nodedef.groups.oddly_breakable_by_hand or 0) >= 3 then
+							if not minetest.is_protected(hitpoint.under, user:get_player_name()) then
+								minetest.dig_node(hitpoint.under)
+							end
+						else
+							minetest.add_particle({
+								pos = vector.subtract(hitpoint.intersection_point, vector.multiply(look_dir, 0.04)),
+								velocity = vector.new(),
+								acceleration = {x=0, y=0, z=0},
+								expirationtime = def.bullethole_lifetime or 3,
+								size = 1,
+								collisiondetection = false,
+								texture = "ctf_ranged_bullethole.png",
+							})
+						end
 					elseif hitpoint.type == "object" then
 						hitpoint.ref:punch(user, 1, {
 							full_punch_interval = 1,
@@ -106,7 +114,7 @@ ctf_ranged.register_simple_weapon("ctf_ranged:pistol", {
 	fire_sound = "ctf_ranged_pistol",
 	rounds = 30,
 	range = 75,
-	damage = 4,
+	damage = 1,
 	automatic = true,
 	fire_interval = 0.4,
 })

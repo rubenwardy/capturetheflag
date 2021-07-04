@@ -7,7 +7,7 @@ local flag_huds, rankings, build_timer, crafts = ctf_core.include_files(
 	"crafts.lua"
 )
 
-local SUMMARY_RANKS = {"flag_captures", "flag_attempts", _sort = "score", "kills", "deaths"}
+local SUMMARY_RANKS = {"flag_captures", _sort = "score", "flag_attempts", "kills", "deaths", "hp_healed"}
 local FLAG_CAPTURE_TIMER = 60 * 2.5
 
 function mode_classic.tp_player_near_flag(player)
@@ -69,8 +69,9 @@ ctf_modebase.register_mode("classic", {
 		["ctf_ranged:shotgun_loaded"] = {rarity = 0.05                },
 		["ctf_ranged:smg_loaded"    ] = {rarity = 0.05                },
 
-		["ctf_ranged:ammo"] = {min_count = 3, max_count = 10, rarity = 0.3, max_stacks = 2},
-		["default:apple"  ] = {min_count = 5, max_count = 30, rarity = 0.1, max_stacks = 2},
+		["ctf_ranged:ammo"     ] = {min_count = 3, max_count = 10, rarity = 0.3 , max_stacks = 2},
+		["default:apple"       ] = {min_count = 5, max_count = 30, rarity = 0.1 , max_stacks = 2},
+		["ctf_healing:bandage" ] = {                               rarity = 0.2 , max_stacks = 1},
 
 		["grenades:frag" ] = {rarity = 0.1, max_stacks = 2},
 		["grenades:smoke"] = {rarity = 0.2, max_stacks = 2},
@@ -151,13 +152,35 @@ ctf_modebase.register_mode("classic", {
 		flag_huds.untrack_capturer(pname)
 	end,
 	on_dieplayer = function(player, reason)
+		local killscore = rankings.calculate_killscore(player)
+
+		local function award_healers(hitter, score)
+			local hteam = ctf_teams.get_team(hitter)
+
+			if hteam then
+				for _, p in pairs(ctf_teams.get_team(hteam)) do
+					local combat = ctf_combat_mode.get(p)
+
+					if combat.extra["_!patients"] and combat.extra["_!patients"][hitter] then
+						rankings.add(p, {score = score})
+					end
+				end
+			end
+
+		end
+
 		if reason.type == "punch" and reason.object:is_player() then
-			rankings.add(reason.object, {kills = 1, score = rankings.calculate_killscore(player)})
+			rankings.add(reason.object, {kills = 1, score = killscore})
+
+			award_healers(reason.object:get_player_name(), killscore/3)
 		else
 			local combat_mode = ctf_combat_mode.get(player)
 
 			if combat_mode and combat_mode.extra.hitter then
-				rankings.add(combat_mode.extra.hitter, {kills = 1, score = rankings.calculate_killscore(player)})
+				rankings.add(combat_mode.extra.hitter, {kills = 1, score = killscore})
+
+				award_healers(combat_mode.extra.hitter, killscore/3)
+
 				ctf_kill_list.add_kill(combat_mode.extra.hitter, nil, player)
 			else
 				ctf_kill_list.add_kill("", "ctf_modebase_skull.png", player)
@@ -275,4 +298,18 @@ ctf_modebase.register_mode("classic", {
 
 		ctf_kill_list.on_punchplayer(player, hitter, ...)
 	end,
+	on_healplayer = function(player, patient, amount)
+		local patientlist = ctf_combat_mode.get(player)
+
+		if patientlist then
+			patientlist = patientlist.extra["_!patients"] -- '!' should be an illegal playername char
+		else
+			patientlist = {}
+		end
+
+		patientlist[patient:get_player_name()] = true
+		ctf_combat_mode.set(player, 10, {["_!patients"] = patientlist})
+
+		rankings.add(player, {hp_healed = amount})
+	end
 })

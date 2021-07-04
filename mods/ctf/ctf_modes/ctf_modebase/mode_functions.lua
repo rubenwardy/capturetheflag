@@ -36,6 +36,8 @@ add_mode_func(ctf_modebase.register_on_flag_capture , "on_flag_capture" )
 
 add_mode_func(ctf_modebase.register_on_treasurefy_node, "on_treasurefy_node")
 
+add_mode_func(ctf_healing.register_on_heal, "on_healplayer")
+
 ctf_teams.allocate_player = function(...)
 	local current_mode = ctf_modebase:get_current_mode()
 

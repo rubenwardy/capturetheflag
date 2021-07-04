@@ -44,6 +44,10 @@ function ctf_combat_mode.set(player, time, extra)
 		update_hud(player, time)
 	else
 		in_combat[player].time = time
+
+		for k, v in pairs(extra) do
+			in_combat[player].extra[k] = v
+		end
 	end
 end
 

@@ -49,3 +49,14 @@ ctf_teams.allocate_player = function(...)
 		return ctf_teams.default_allocate_player
 	end
 end
+
+local default_calc_knockback = minetest.calculate_knockback
+minetest.calculate_knockback = function(...)
+	local current_mode = ctf_modebase:get_current_mode()
+
+	if current_mode.calculate_knockback then
+		return current_mode.calculate_knockback(...)
+	else
+		return default_calc_knockback(...)
+	end
+end

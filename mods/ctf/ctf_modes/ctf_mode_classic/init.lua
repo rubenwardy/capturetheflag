@@ -154,32 +154,25 @@ ctf_modebase.register_mode("classic", {
 	on_dieplayer = function(player, reason)
 		local killscore = rankings.calculate_killscore(player)
 
-		local function award_healers(hitter, score)
-			local hteam = ctf_teams.get_team(hitter)
-
-			if hteam then
-				for _, p in pairs(ctf_teams.get_team(hteam)) do
-					local combat = ctf_combat_mode.get(p)
-
-					if combat.extra["_!patients"] and combat.extra["_!patients"][hitter] then
-						rankings.add(p, {score = score})
-					end
-				end
-			end
-
-		end
-
 		if reason.type == "punch" and reason.object:is_player() then
+			local combat = ctf_combat_mode.get(reason.object)
+
 			rankings.add(reason.object, {kills = 1, score = killscore})
 
-			award_healers(reason.object:get_player_name(), killscore/3)
+			if combat and combat.extra.healer then
+				rankings.add(combat.extra.healer, {score = math.ceil(killscore/2)})
+			end
 		else
 			local combat_mode = ctf_combat_mode.get(player)
 
 			if combat_mode and combat_mode.extra.hitter then
+				local hitter_combat = ctf_combat_mode.get(combat_mode.extra.hitter)
+
 				rankings.add(combat_mode.extra.hitter, {kills = 1, score = killscore})
 
-				award_healers(combat_mode.extra.hitter, killscore/3)
+				if hitter_combat and hitter_combat.extra.healer then
+					rankings.add(hitter_combat.extra.healer, {score = math.ceil(killscore/2)})
+				end
 
 				ctf_kill_list.add_kill(combat_mode.extra.hitter, nil, player)
 			else
@@ -299,17 +292,11 @@ ctf_modebase.register_mode("classic", {
 		ctf_kill_list.on_punchplayer(player, hitter, ...)
 	end,
 	on_healplayer = function(player, patient, amount)
-		local patientlist = ctf_combat_mode.get(player)
+		ctf_combat_mode.set(patient, 15, {healer = player:get_player_name()})
 
-		if patientlist then
-			patientlist = patientlist.extra["_!patients"] -- '!' should be an illegal playername char
-		else
-			patientlist = {}
-		end
-
-		patientlist[patient:get_player_name()] = true
-		ctf_combat_mode.set(player, 10, {["_!patients"] = patientlist})
-
-		rankings.add(player, {hp_healed = amount})
-	end
+		rankings.add(player, {hp_healed = amount}, true)
+	end,
+	calculate_knockback = function()
+		return 0
+	end,
 })

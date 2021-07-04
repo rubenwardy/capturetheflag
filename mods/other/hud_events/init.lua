@@ -2,7 +2,8 @@ hud_events = {}
 
 local hud = mhud.init()
 
-local HUD_SHOWN_TIME = 5
+local HUD_SHOW_TIME = 4
+local HUD_SHOW_QUICK_TIME = 2
 local HUD_SHOW_NEXT_TIME = 1
 
 local HUD_COLORS = {
@@ -49,13 +50,44 @@ local function show_hud_event(player, huddef)
 	end
 end
 
+local quick_event_timer = {}
+local function show_quick_hud_event(player, huddef)
+
+	if not hud:exists(player, "hud_event_quick") then
+		hud:add(player, "hud_event_quick", {
+			hud_elem_type = "text",
+			position = {x = 0.5, y = 0.5},
+			offset = {x = 0, y = 45},
+			alignment = {x = "center", y = "down"},
+			text = huddef.text,
+			color = huddef.color,
+		})
+	else
+		hud:change(player, "hud_event_quick", {text = huddef.text, color = huddef.color})
+		quick_event_timer[player] = 0
+	end
+end
+
+minetest.register_globalstep(function(dtime)
+	for player, time in pairs(quick_event_timer) do
+		time = time + dtime
+
+		if time >= HUD_SHOW_QUICK_TIME then
+			quick_event_timer[player] = nil
+			hud:remove(player, "hud_event_quick")
+		else
+			quick_event_timer[player] = time
+		end
+	end
+end)
+
 local function handle_hud_events(pname)
 	local player = minetest.get_player_by_name(pname)
 	if not player or not hud_queues[pname] then return end
 
 	show_hud_event(player, table.remove(hud_queues[pname], 1))
 
-	minetest.after(HUD_SHOWN_TIME, function()
+	minetest.after(HUD_SHOW_TIME, function()
 		player = minetest.get_player_by_name(pname)
 		if not player or not hud_queues[pname] then return end
 
@@ -68,7 +100,7 @@ local function handle_hud_events(pname)
 	end)
 end
 
-function hud_events.new(player, text, color)
+function hud_events.new(player, def)
 	player = PlayerObj(player)
 	local pname = player:get_player_name()
 
@@ -76,18 +108,26 @@ function hud_events.new(player, text, color)
 		hud_queues[pname] = {_started = false}
 	end
 
-	if color then
-		if type(color) == "string" then
-			color = HUD_COLORS[color]
-		end
-	else
-		color = 0x00D1FF
+	if type(def) == "string" then
+		def = {text = def}
 	end
 
-	table.insert(hud_queues[pname], {text = text, color = color})
+	if def.color then
+		if type(def.color) == "string" then
+			def.color = HUD_COLORS[def.color]
+		end
+	else
+		def.color = 0x00D1FF
+	end
 
-	if not hud_queues[pname]._started then
-		hud_queues[pname]._started = true
-		handle_hud_events(pname)
+	if not def.quick then
+		table.insert(hud_queues[pname], {text = def.text, color = def.color})
+
+		if not hud_queues[pname]._started then
+			hud_queues[pname]._started = true
+			handle_hud_events(pname)
+		end
+	else
+		show_quick_hud_event(pname, def)
 	end
 end

@@ -22,9 +22,17 @@ minetest.register_craftitem("ctf_healing:bandage", {
 			local limit = HEAL_PERCENT * object:get_properties().hp_max
 
 			if hp <= 0 then
-				hud_events.new(name, pname .. " is dead!", "warning")
+				hud_events.new(name, {
+					quick = true,
+					text = pname .. " is dead!",
+					color = "warning",
+				})
 			elseif hp >= limit then
-				hud_events.new(name, pname .. " already has " .. limit .. " HP!", "warning")
+				hud_events.new(name, {
+					quick = true,
+					text = pname .. " already has " .. limit .. " HP!",
+					color = "warning",
+				})
 			else
 				local hp_add = math.random(3,4)
 
@@ -39,13 +47,25 @@ minetest.register_craftitem("ctf_healing:bandage", {
 
 				if not result then
 					object:set_hp(hp)
-					hud_events.new(pname, name .. " healed you!", 0xC1FF44)
+					hud_events.new(pname, {
+						quick = true,
+						text = name .. " healed you!",
+						color = 0xC1FF44,
+					})
 				elseif type(result) == "string" then
-					hud_events.new(name, result, "warning")
+					hud_events.new(name, {
+						quick = true,
+						text = result,
+						color = "warning",
+					})
 				end
 			end
 		else
-			hud_events.new(name, pname .. " isn't in your team!", "warning")
+			hud_events.new(name, {
+				quick = true,
+				text = pname .. " isn't in your team!",
+				color = "warning",
+			})
 		end
 	end,
 })

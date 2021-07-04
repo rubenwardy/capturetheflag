@@ -30,7 +30,7 @@ ctf_modebase.register_chatcommand("classic", "rank", rank_def)
 ctf_modebase.register_chatcommand("classic", "r"   , rank_def)
 
 return {
-	add = function(player, amounts)
+	add = function(player, amounts, no_hud)
 		local hud_text = ""
 		local pteam = ctf_teams.get(player)
 
@@ -48,7 +48,10 @@ return {
 			end
 		end
 
-		hud_events.new(player, hud_text:sub(1, -4))
+		if not no_hud then
+			hud_events.new(player, {text = hud_text:sub(1, -4)})
+		end
+
 		rankings:add(player, amounts)
 	end,
 	set_summary_row_color = function(player, color)

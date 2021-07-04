@@ -35,7 +35,7 @@ minetest.register_craftitem("ctf_healing:bandage", {
 					hp = hp + hp_add
 				end
 
-				local result = RunCallbacks(ctf_healing.register_on_heal, player, object, hp_add)
+				local result = RunCallbacks(ctf_healing.registered_on_heal, player, object, hp_add)
 
 				if not result then
 					object:set_hp(hp)

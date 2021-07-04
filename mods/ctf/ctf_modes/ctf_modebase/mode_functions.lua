@@ -54,7 +54,7 @@ local default_calc_knockback = minetest.calculate_knockback
 minetest.calculate_knockback = function(...)
 	local current_mode = ctf_modebase:get_current_mode()
 
-	if current_mode.calculate_knockback then
+	if current_mode and current_mode.calculate_knockback then
 		return current_mode.calculate_knockback(...)
 	else
 		return default_calc_knockback(...)

@@ -48,7 +48,9 @@ minetest.register_node("ctf_map:ind_glass_red", {
 	groups = {immortal = 1, not_in_creative_inventory = 1},
 	sounds = default.node_sound_glass_defaults()
 })
-ctf_map.barrier_nodes[minetest.get_content_id("ctf_map:ind_glass_red")] = minetest.CONTENT_AIR
+minetest.after(0, function()
+	ctf_map.barrier_nodes[minetest.get_content_id("ctf_map:ind_glass_red")] = minetest.CONTENT_AIR
+end)
 
 minetest.register_node("ctf_map:ind_stone_red", {
 	description = "Indestructible Red Barrier Stone",
@@ -56,7 +58,9 @@ minetest.register_node("ctf_map:ind_stone_red", {
 	tiles = {"ctf_map_stone_red.png"},
 	is_ground_content = false
 })
-ctf_map.barrier_nodes[minetest.get_content_id("ctf_map:ind_stone_red")] = "default:stone"
+minetest.after(0, function()
+	ctf_map.barrier_nodes[minetest.get_content_id("ctf_map:ind_stone_red")] = "default:stone"
+end)
 
 minetest.register_node("ctf_map:killnode", {
 	description = "Kill Node",

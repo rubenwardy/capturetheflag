@@ -1,8 +1,13 @@
+ctf_kill_list = {}
+
 local hud = mhud.init()
+
+local KILLSTAT_REMOVAL_TIME = 30
 
 local MAX_NAME_LENGTH = 19
 local HUD_LINES = 6
 local HUD_LINE_HEIGHT = 36
+
 local HUD_DEFINITIONS = {
 	{
 		hud_elem_type = "text",
@@ -28,13 +33,6 @@ local HUD_DEFINITIONS = {
 }
 
 local kill_list = {}
-local function add_kill(x, y, z)
-	table.insert(kill_list, 1, {x, y, z})
-
-	if #kill_list == HUD_LINES then
-		table.remove(kill_list)
-	end
-end
 
 local function update_hud_line(player, idx, new)
 	idx = HUD_LINES - (idx-1)
@@ -69,11 +67,34 @@ local function update_kill_list_hud(player)
 	end
 end
 
-local function update_all_kill_list_huds()
-	for _, player in pairs(minetest.get_connected_players()) do
-		update_kill_list_hud(player)
+local globalstep_timer = 0
+local function add_kill(x, y, z)
+	table.insert(kill_list, 1, {x, y, z})
+
+	if #kill_list == HUD_LINES then
+		table.remove(kill_list)
 	end
+
+	for _, p in pairs(minetest.get_connected_players()) do
+		update_kill_list_hud(p)
+	end
+
+	globalstep_timer = 0
 end
+
+minetest.register_globalstep(function(dtime)
+	globalstep_timer = globalstep_timer + dtime
+
+	if globalstep_timer >= KILLSTAT_REMOVAL_TIME then
+		globalstep_timer = 0
+
+		table.remove(kill_list)
+
+		for _, p in pairs(minetest.get_connected_players()) do
+			update_kill_list_hud(p)
+		end
+	end
+end)
 
 ctf_modebase.register_on_new_match(function()
 	kill_list = {}
@@ -86,13 +107,10 @@ minetest.register_on_joinplayer(function(player)
 end)
 
 local damage_group_textures = {grenade = "grenades_frag.png"}
-function ctf_modebase.check_kill(player, hitter, time_from_last_punch, tool_capabilities, _, damage)
+function ctf_kill_list.on_punchplayer(player, hitter, time_from_last_punch, tool_capabilities, _, damage)
 	local hp = player:get_hp()
 
 	if hp > 0 and hitter and hitter:is_player() and hp - damage <= 0 then
-		local k_teamcolor = ctf_teams.get(hitter)
-		local v_teamcolor = ctf_teams.get(player)
-
 		local killwep_invimage
 
 		for group, texture in pairs(damage_group_textures) do
@@ -102,40 +120,31 @@ function ctf_modebase.check_kill(player, hitter, time_from_last_punch, tool_capa
 			end
 		end
 
-		if not killwep_invimage then
-			killwep_invimage = hitter:get_wielded_item():get_definition().inventory_image or "default_tool_steelsword.png"
+		if not killwep_invimage or killwep_invimage == "" then
+			killwep_invimage = hitter:get_wielded_item():get_definition().inventory_image
 		end
 
-		if k_teamcolor then
-			k_teamcolor = ctf_teams.team[k_teamcolor].color_hex
-		end
-		if v_teamcolor then
-			v_teamcolor = ctf_teams.team[v_teamcolor].color_hex
-		end
-
-		if killwep_invimage == "" then
-			killwep_invimage = nil
-		end
-
-		add_kill(
-			{text = hitter:get_player_name(), color = k_teamcolor or nil},
-			killwep_invimage,
-			{text = player:get_player_name(), color = v_teamcolor or nil}
-		)
+		ctf_kill_list.add_kill(hitter, killwep_invimage, player)
 	end
 end
 
-minetest.register_on_dieplayer(function(player, reason)
+function ctf_kill_list.add_kill(hitter, weapon_image, player)
+	hitter = PlayerName(hitter)
+	player = PlayerName(player)
+
+	local k_teamcolor = ctf_teams.get(hitter)
 	local v_teamcolor = ctf_teams.get(player)
 
+	if k_teamcolor then
+		k_teamcolor = ctf_teams.team[k_teamcolor].color_hex
+	end
 	if v_teamcolor then
 		v_teamcolor = ctf_teams.team[v_teamcolor].color_hex
 	end
 
-	if reason.type ~= "punch" then
-		add_kill("", "ctf_modebase_skull.png", {text = player:get_player_name(), color = v_teamcolor or nil})
-	end
-
-
-	update_all_kill_list_huds()
-end)
+	add_kill(
+		{text = hitter, color = k_teamcolor or 0xFFF},
+		weapon_image or "default_tool_steelsword.png",
+		{text = player, color = v_teamcolor or 0xFFF}
+	)
+end

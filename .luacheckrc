@@ -2,7 +2,7 @@ unused_args = false
 
 globals = {
 	"ctf_core", "ctf_map", "ctf_teams", "ctf_modebase", "ctf_gui",
-	"ctf_rankings", "ctf_playertag", "ctf_ranged",
+	"ctf_rankings", "ctf_playertag", "ctf_ranged", "ctf_combat_mode", "ctf_kill_list",
 
 	"mode_classic",
 

@@ -43,7 +43,6 @@ ctf_core.include_files(
 	"mode_functions.lua",
 	"crafting.lua",
 	"hpregen.lua",
-	"kill_list.lua",
 	"respawn_delay.lua",
 	"markers.lua"
 )

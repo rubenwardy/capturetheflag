@@ -125,7 +125,18 @@ ctf_modebase.register_mode("classic", {
 	on_dieplayer = function(player, reason)
 		if reason.type == "punch" and reason.object:is_player() then
 			rankings.add(reason.object, {kills = 1, score = rankings.calculate_killscore(player)})
+		else
+			local combat_mode = ctf_combat_mode.get(player)
+
+			if combat_mode and combat_mode.extra.hitter then
+				rankings.add(combat_mode.extra.hitter, {kills = 1, score = rankings.calculate_killscore(player)})
+				ctf_kill_list.add_kill(combat_mode.extra.hitter, nil, player)
+			else
+				ctf_kill_list.add_kill("", "ctf_modebase_skull.png", player)
+			end
 		end
+
+		ctf_combat_mode.remove(player)
 
 		rankings.add(player, {deaths = 1})
 	end,
@@ -232,6 +243,8 @@ ctf_modebase.register_mode("classic", {
 			return true
 		end
 
-		ctf_modebase.check_kill(player, hitter, ...)
+		ctf_combat_mode.set(player, 15, {hitter = hitter:get_player_name()})
+
+		ctf_kill_list.on_punchplayer(player, hitter, ...)
 	end,
 })

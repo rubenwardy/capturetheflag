@@ -56,6 +56,8 @@ ctf_modebase.register_mode("classic", {
 		["default:cobble"] = {min_count = 45, max_count = 99, rarity = 0.4, max_stacks = 5},
 		["default:wood"  ] = {min_count = 10, max_count = 60, rarity = 0.5, max_stacks = 4},
 
+		["ctf_teams:door_steel"] = {rarity = 0.2, max_stacks = 3},
+
 		["default:pick_steel"  ] = {rarity = 0.4, max_stacks = 3},
 		["default:shovel_steel"] = {rarity = 0.4, max_stacks = 2},
 		["default:axe_steel"   ] = {rarity = 0.4, max_stacks = 2},

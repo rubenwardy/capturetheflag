@@ -32,13 +32,15 @@ function ctf_ranged.register_simple_weapon(name, def)
 		loaded_def.groups.not_in_creative_inventory = nil
 		loaded_def.on_use = function(itemstack, user)
 			if shoot_cooldown:get(user) then
-				if def.automatic then
-					rawf.enable_automatic(0, itemstack, user)
-				end
-
 				return
-			elseif def.automatic then
-				rawf.enable_automatic(def.fire_interval, itemstack, user)
+			end
+
+			if def.automatic then
+				if not rawf.enable_automatic(def.fire_interval, itemstack, user) then
+					return
+				end
+			else
+				shoot_cooldown:start(user, def.fire_interval)
 			end
 
 			local spawnpos, look_dir = rawf.get_bullet_start_data(user)
@@ -92,8 +94,6 @@ function ctf_ranged.register_simple_weapon(name, def)
 				end
 			end
 
-			shoot_cooldown:start(user, def.fire_interval)
-
 			return rawf.unload_weapon(itemstack)
 		end
 	end))
@@ -105,10 +105,10 @@ ctf_ranged.register_simple_weapon("ctf_ranged:pistol", {
 	texture = "ctf_ranged_pistol.png",
 	fire_sound = "ctf_ranged_pistol",
 	rounds = 30,
-	range = 50,
+	range = 75,
 	damage = 4,
 	automatic = true,
-	fire_interval = 0.2,
+	fire_interval = 0.4,
 })
 
 ctf_ranged.register_simple_weapon("ctf_ranged:rifle", {
@@ -117,7 +117,7 @@ ctf_ranged.register_simple_weapon("ctf_ranged:rifle", {
 	texture = "ctf_ranged_rifle.png",
 	fire_sound = "ctf_ranged_rifle",
 	rounds = 40,
-	range = 76,
+	range = 150,
 	damage = 6,
 	fire_interval = 0.7,
 })
@@ -132,7 +132,7 @@ ctf_ranged.register_simple_weapon("ctf_ranged:shotgun", {
 		spread = 3,
 	},
 	rounds = 10,
-	range = 15,
+	range = 25,
 	damage = 1,
 	fire_interval = 2,
 })
@@ -147,7 +147,7 @@ ctf_ranged.register_simple_weapon("ctf_ranged:smg", {
 	},
 	automatic = true,
 	rounds = 40,
-	range = 50,
+	range = 75,
 	damage = 1,
 	fire_interval = 0.1,
 })

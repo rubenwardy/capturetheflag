@@ -68,16 +68,23 @@ local function show_quick_hud_event(player, huddef)
 	end
 end
 
+local timer = 0
 minetest.register_globalstep(function(dtime)
-	for player, time in pairs(quick_event_timer) do
-		time = time + dtime
+	timer = timer + dtime
 
-		if time >= HUD_SHOW_QUICK_TIME then
-			quick_event_timer[player] = nil
-			hud:remove(player, "hud_event_quick")
-		else
-			quick_event_timer[player] = time
+	if timer >= 1 then
+		for player, time in pairs(quick_event_timer) do
+			time = time + timer
+
+			if time >= HUD_SHOW_QUICK_TIME then
+				quick_event_timer[player] = nil
+				hud:remove(player, "hud_event_quick")
+			else
+				quick_event_timer[player] = time
+			end
 		end
+
+		timer = 0
 	end
 end)
 

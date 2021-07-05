@@ -1,7 +1,7 @@
 ctf_teams = {
 	team = {
 		red = {
-			color = "#dd0000",
+			color = "#dc0f0f",
 			color_hex = 0x000,
 		},
 		green = {
@@ -9,7 +9,7 @@ ctf_teams = {
 			color_hex = 0x000,
 		},
 		blue = {
-			color = "#0073ff",
+			color = "#0062ff",
 			color_hex = 0x000,
 		},
 		orange = {
@@ -49,6 +49,43 @@ ctf_core.include_files(
 	"team_door.lua"
 )
 
-minetest.register_on_joinplayer(function(player)
+local old_join_func = minetest.send_join_message
+local old_leave_func = minetest.send_leave_message
+
+local function empty_func() end
+
+minetest.send_join_message = empty_func
+minetest.send_leave_message = empty_func
+
+minetest.register_on_joinplayer(function(player, ...)
 	ctf_teams.allocate_player(player)
+
+	local pteam = ctf_teams.get(player)
+
+	if not pteam then
+		old_join_func(player:get_player_name(), ...)
+	else
+		local tcolor = ctf_teams.team[pteam].color
+
+		minetest.chat_send_all(string.format("*** %s joined the game. %s",
+			minetest.colorize(tcolor, player:get_player_name()),
+			minetest.colorize(tcolor, string.format("[Team %s]", HumanReadable(pteam)))
+		))
+	end
+end)
+
+minetest.register_on_leaveplayer(function(player, timed_out, ...)
+	local pteam = ctf_teams.get(player)
+
+	if not pteam then
+		old_leave_func(player:get_player_name(), timed_out, ...)
+	else
+		local tcolor = ctf_teams.team[pteam].color
+
+		minetest.chat_send_all(string.format("*** %s left the game%s. %s",
+			minetest.colorize(tcolor, player:get_player_name()),
+			timed_out and " (timed out)" or "",
+			minetest.colorize(tcolor, string.format("[Team %s]", HumanReadable(pteam)))
+		))
+	end
 end)

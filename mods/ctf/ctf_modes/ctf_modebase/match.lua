@@ -95,7 +95,7 @@ function ctf_modebase.start_mode_vote()
 end
 
 
-function ctf_modebase.start_new_match(show_form, new_mode)
+function ctf_modebase.start_new_match(show_form, new_mode, specific_map)
 	local old_map = ctf_map.current_map
 	local old_mode = ctf_modebase.current_mode
 
@@ -105,7 +105,7 @@ function ctf_modebase.start_new_match(show_form, new_mode)
 		end
 		ctf_teams.team_chests = {}
 
-		local map = ctf_modebase.place_map(ctf_modebase.current_mode)
+		local map = ctf_modebase.place_map(ctf_modebase.current_mode, specific_map)
 
 		give_initial_stuff.reset_stuff_providers()
 
@@ -167,7 +167,7 @@ function ctf_modebase.show_modechoose_form(player)
 		on_quit = function(pname)
 			if voting then
 				minetest.after(0.1, function()
-					if voting and not voters[pname].choice then
+					if voting and voters[pname] and not voters[pname].choice then
 						ctf_modebase.show_modechoose_form(pname)
 					end
 				end)

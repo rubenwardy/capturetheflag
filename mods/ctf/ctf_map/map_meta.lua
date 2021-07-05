@@ -177,7 +177,10 @@ function ctf_map.save_map(mapmeta)
 		if not def.enabled then
 			mapmeta.teams[id] = nil
 		else
-			mapmeta.teams[id].flag_pos = vector.subtract(def.flag_pos, mapmeta.offset)
+			mapmeta.teams[id].flag_pos = vector.subtract(
+				minetest.find_node_near(def.flag_pos, 3, "group:flag_bottom", true),
+				mapmeta.offset
+			)
 
 			mapmeta.teams[id].pos1 = vector.subtract(def.pos1, mapmeta.offset)
 			mapmeta.teams[id].pos2 = vector.subtract(def.pos2, mapmeta.offset)

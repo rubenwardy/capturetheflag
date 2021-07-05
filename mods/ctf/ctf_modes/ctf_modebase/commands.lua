@@ -28,11 +28,17 @@ end
 minetest.register_chatcommand("ctf_next", {
 	description = "Skip to a new match.",
 	privs = {ctf_admin = true},
+	params = "[<technical modename> | <technical mapname>]",
 	func = function(name, param)
-		if param and ctf_modebase.modes[param] then
-			ctf_modebase.current_mode = param
-			ctf_modebase.start_new_match(nil, true)
-			return true
+		if param then
+			if ctf_modebase.modes[param] then
+				ctf_modebase.current_mode = param
+				ctf_modebase.start_new_match(nil, true)
+				return true
+			elseif table.indexof(minetest.get_dir_list(ctf_map.maps_dir, true), param) ~= -1 then
+				ctf_modebase.start_new_match(nil, nil, param)
+				return true
+			end
 		end
 
 		if ctf_modebase.current_mode then

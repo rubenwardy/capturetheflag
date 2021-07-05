@@ -1,5 +1,14 @@
 local DISALLOW_MOD_ABMS = {"default", "fire", "flowers", "tnt"}
 
+local disabled_ores = {
+	"default:stone_with_copper",
+	"default:stone_with_gold",
+}
+
+for _, ore in pairs(disabled_ores) do
+	minetest.register_alias_force(ore, "default:stone")
+end
+
 minetest.register_on_mods_loaded(function()
 
 	-- Remove Unneeded ABMs

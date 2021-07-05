@@ -99,20 +99,23 @@ ctf_modebase.register_mode("classic", {
 		local bscore = (total.blue and total.blue.score) or 0
 		local rscore = (total.red and total.red.score) or 0
 
-		if bscore == rscore then
-			ctf_teams.set_team(player, next_team)
-
-			next_team = next_team == "red" and "blue" or "red"
+		if math.abs(bscore - rscore) <= 100 then
+			if not ctf_teams.remembered_player[player] then
+				ctf_teams.set_team(player, next_team)
+				next_team = next_team == "red" and "blue" or "red"
+			else
+				ctf_teams.set_team(player, ctf_teams.remembered_player[player])
+			end
 		elseif bscore > rscore then
 			-- Only allocate player to remembered team if they aren't desperately needed in the other
-			if ctf_teams.remembered_player[player] and bscore - rscore < 1000 then
+			if ctf_teams.remembered_player[player] and bscore - rscore < 500 then
 				ctf_teams.set_team(player, ctf_teams.remembered_player[player])
 			else
 				ctf_teams.set_team(player, "red")
 			end
 		else
 			-- Only allocate player to remembered team if they aren't desperately needed in the other
-			if ctf_teams.remembered_player[player] and rscore - bscore < 1000 then
+			if ctf_teams.remembered_player[player] and rscore - bscore < 500 then
 				ctf_teams.set_team(player, ctf_teams.remembered_player[player])
 			else
 				ctf_teams.set_team(player, "blue")

@@ -7,6 +7,7 @@ local KILLSTAT_REMOVAL_TIME = 30
 local MAX_NAME_LENGTH = 19
 local HUD_LINES = 6
 local HUD_LINE_HEIGHT = 36
+local HUDNAME_FORMAT = "kill_list:%d,%d"
 
 local HUD_DEFINITIONS = {
 	{
@@ -38,32 +39,34 @@ local function update_hud_line(player, idx, new)
 	idx = HUD_LINES - (idx-1)
 
 	for i=1, 3, 1 do
-		local hname = string.format("kill_list:%d,%d", idx, i)
+		local hname = string.format(HUDNAME_FORMAT, idx, i)
 		local phud = hud:get(player, hname)
 
-		if phud then
+		if new then
+			if phud then
+				hud:change(player, hname, {
+					text = (new[i].text or new[i]),
+					color = new[i].color or 0xFFF
+				})
+			else
+				local newhud = table.copy(HUD_DEFINITIONS[i])
+
+				newhud.offset.y = -(idx-1)*HUD_LINE_HEIGHT
+				newhud.text = new[i].text or new[i]
+				newhud.color = new[i].color or 0xFFF
+				hud:add(player, hname, newhud)
+			end
+		elseif phud then
 			hud:change(player, hname, {
-				offset = {x = phud.def.offset.x, y = -(idx-1)*HUD_LINE_HEIGHT},
-				text = (new[i].text or new[i]),
-				color = new[i].color or 0xFFF
+				text = ""
 			})
-		else
-			local newhud = table.copy(HUD_DEFINITIONS[i])
-
-
-			newhud.offset.y = -(idx-1)*HUD_LINE_HEIGHT
-			newhud.text = new[i].text or new[i]
-			newhud.color = new[i].color or 0xFFF
-			hud:add(player, hname, newhud)
 		end
 	end
 end
 
 local function update_kill_list_hud(player)
 	for i=1, HUD_LINES, 1 do
-		if kill_list[i] then
-			update_hud_line(player, i, kill_list[i])
-		end
+		update_hud_line(player, i, kill_list[i])
 	end
 end
 
@@ -71,7 +74,7 @@ local globalstep_timer = 0
 local function add_kill(x, y, z)
 	table.insert(kill_list, 1, {x, y, z})
 
-	if #kill_list == HUD_LINES then
+	if #kill_list > HUD_LINES then
 		table.remove(kill_list)
 	end
 

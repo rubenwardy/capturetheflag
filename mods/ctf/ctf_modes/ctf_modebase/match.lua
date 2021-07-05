@@ -100,6 +100,11 @@ function ctf_modebase.start_new_match(show_form, new_mode)
 	local old_mode = ctf_modebase.current_mode
 
 	local function start_new_match()
+		for _, pos in pairs(ctf_teams.team_chests) do
+			minetest.remove_node(pos)
+		end
+		ctf_teams.team_chests = {}
+
 		local map = ctf_modebase.place_map(ctf_modebase.current_mode)
 
 		give_initial_stuff.reset_stuff_providers()

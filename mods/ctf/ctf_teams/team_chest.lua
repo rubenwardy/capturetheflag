@@ -72,6 +72,8 @@ for _, chest_color in pairs(colors) do
 		local pteam = ctf_teams.get(name)
 
 		if meta:get_string("infotext") == "" then
+			table.insert(ctf_teams.team_chests, pos)
+
 			def.on_construct(pos)
 		end
 

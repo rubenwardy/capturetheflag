@@ -25,6 +25,8 @@ ctf_teams = {
 	player_team = {},
 	current_team_list = {},
 	remembered_player = {}, -- Holds players that have been set to a team previously. Format: ["player_name"] = teamname
+
+	team_chests = {}, -- Whenever a team chest is initialized it'll be put in this table
 }
 
 for team, def in pairs(ctf_teams.team) do

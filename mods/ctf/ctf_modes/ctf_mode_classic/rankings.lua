@@ -78,9 +78,9 @@ return {
 		if not specific_player then
 			rankings.previous_recent = table.copy(rankings.recent)
 			rankings.recent = {}
+			rankings.total = {}
 		else
 			rankings.recent[specific_player] = nil
-			rankings.total = {}
 		end
 	end,
 	get_total = function(specific_team)

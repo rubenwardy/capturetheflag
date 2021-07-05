@@ -116,7 +116,7 @@ ctf_ranged.register_simple_weapon("ctf_ranged:pistol", {
 	range = 75,
 	damage = 1,
 	automatic = true,
-	fire_interval = 0.4,
+	fire_interval = 0.6,
 })
 
 ctf_ranged.register_simple_weapon("ctf_ranged:rifle", {

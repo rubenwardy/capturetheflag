@@ -74,7 +74,7 @@ local function update_top_50()
 		if not cache[a] then cache[a] = rankings:get(a) or {score = 0} end
 		if not cache[b] then cache[b] = rankings:get(b) or {score = 0} end
 
-		return cache[a].score or 0 < cache[b].score or 0
+		return (cache[a].score or 0) < (cache[b].score or 0)
 	end)
 
 	mods:set_string("top_50", minetest.serialize(rankings.top_50))

@@ -22,6 +22,8 @@ function ctf_teams.set_team(player, teamname)
 		ctf_teams.remembered_player[player] = teamname
 
 		RunCallbacks(ctf_teams.registered_on_allocplayer, PlayerObj(player), teamname)
+
+		return true
 	end
 end
 

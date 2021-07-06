@@ -71,8 +71,8 @@ local function update_top_50()
 	local cache = {}
 
 	table.sort(rankings.top_50, function(a, b)
-		if not cache[a] then cache[a] = rankings:get(a) end
-		if not cache[b] then cache[b] = rankings:get(b) end
+		if not cache[a] then cache[a] = rankings:get(a) or {score = 0} end
+		if not cache[b] then cache[b] = rankings:get(b) or {score = 0} end
 
 		return cache[a].score < cache[b].score
 	end)

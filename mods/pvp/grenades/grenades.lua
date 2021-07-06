@@ -19,6 +19,12 @@ local fragdef = {
 
 		local player = minetest.get_player_by_name(name)
 
+		if ctf_match.is_in_build_time() then
+			player:get_inventory():add_item("main", "grenades:frag")
+			minetest.chat_send_player(name, "Match hasn't started yet!")
+			return
+		end
+
 		local radius = 10
 
 		minetest.add_particlespawner({
@@ -94,6 +100,14 @@ grenades.register_grenade("grenades:smoke", {
 	on_explode = function(pos, pname)
 		local player = minetest.get_player_by_name(pname)
 		if not player or not pos then return end
+
+			if ctf_match.is_in_build_time() then
+				if player then
+					player:get_inventory():add_item("main", "grenades:smoke")
+					minetest.chat_send_player(pname, "Match hasn't started yet!")
+					return
+				end
+			end
 
 		local fpos = ctf_classes.get_flag_pos(player)
 

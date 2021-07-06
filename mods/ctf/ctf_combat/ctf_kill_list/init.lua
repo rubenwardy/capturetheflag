@@ -119,12 +119,21 @@ function ctf_kill_list.on_punchplayer(player, hitter, time_from_last_punch, tool
 		for group, texture in pairs(damage_group_textures) do
 			if tool_capabilities.damage_groups[group] then
 				killwep_invimage = texture
+
 				break
 			end
 		end
 
-		if not killwep_invimage or killwep_invimage == "" then
+		if not killwep_invimage then
 			killwep_invimage = hitter:get_wielded_item():get_definition().inventory_image
+		end
+
+		if killwep_invimage == "" then
+			killwep_invimage = "wieldhand.png^[transformR90"
+		end
+
+		if tool_capabilities.damage_groups.ranged then
+			killwep_invimage = killwep_invimage .. "^[transformFX"
 		end
 
 		ctf_kill_list.add_kill(hitter, killwep_invimage, player)

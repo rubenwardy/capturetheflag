@@ -1,6 +1,6 @@
 ctf_modebase = {
 	-- Time until voting ends
-	VOTING_TIME          = 25,    ---@type integer
+	VOTING_TIME          = 20,    ---@type integer
 
 	-- Amount of maps that need to be played before a mode vote starts
 	MAPS_PER_MODE        = 5,     ---@type integer

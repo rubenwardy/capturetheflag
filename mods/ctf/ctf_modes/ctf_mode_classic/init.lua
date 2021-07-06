@@ -1,4 +1,6 @@
-mode_classic = {}
+mode_classic = {
+	SUMMARY_RANKS = {"flag_captures", _sort = "score", "flag_attempts", "kills", "deaths", "hp_healed"}
+}
 
 local flag_huds, rankings, build_timer, crafts = ctf_core.include_files(
 	"flag_huds.lua",
@@ -7,7 +9,6 @@ local flag_huds, rankings, build_timer, crafts = ctf_core.include_files(
 	"crafts.lua"
 )
 
-local SUMMARY_RANKS = {"flag_captures", _sort = "score", "flag_attempts", "kills", "deaths", "hp_healed"}
 local FLAG_CAPTURE_TIMER = 60 * 2.5
 
 function mode_classic.tp_player_near_flag(player)
@@ -242,7 +243,7 @@ ctf_modebase.register_mode("classic", {
 		for _, pname in pairs(minetest.get_connected_players()) do
 			pname = pname:get_player_name()
 
-			ctf_modebase.show_summary_gui(pname, rankings.get_recent(), table.copy(SUMMARY_RANKS), {previous = true})
+			ctf_modebase.show_summary_gui(pname, rankings.get_recent(), mode_classic.SUMMARY_RANKS, {previous = true})
 		end
 
 		ctf_playertag.set(minetest.get_player_by_name(player), ctf_playertag.TYPE_ENTITY)
@@ -262,9 +263,9 @@ ctf_modebase.register_mode("classic", {
 	end,
 	summary_func = function(name, param)
 		if not param or param == "" then
-			return true, rankings.get_recent() or {}, table.copy(SUMMARY_RANKS), {previous = true}
+			return true, rankings.get_recent() or {}, mode_classic.SUMMARY_RANKS, {previous = true}
 		elseif param:match("p") then
-			return true, rankings.get_previous_recent() or {}, table.copy(SUMMARY_RANKS), {next = true}
+			return true, rankings.get_previous_recent() or {}, mode_classic.SUMMARY_RANKS, {next = true}
 		else
 			return false, "Don't understand param "..dump(param)
 		end

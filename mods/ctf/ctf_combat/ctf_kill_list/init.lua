@@ -21,7 +21,7 @@ local HUD_DEFINITIONS = {
 		hud_elem_type = "image",
 		position = {x = 0, y = 0.8},
 		image_scale = 2,
-		offset = {x = (MAX_NAME_LENGTH*10) + 29, y = 0},
+		offset = {x = (MAX_NAME_LENGTH*10) + 28, y = 0},
 		alignment = {x = "center", y = "center"},
 	},
 	{
@@ -129,7 +129,7 @@ function ctf_kill_list.on_punchplayer(player, hitter, time_from_last_punch, tool
 		end
 
 		if killwep_invimage == "" then
-			killwep_invimage = "wieldhand.png^[transformR90"
+			killwep_invimage = "ctf_kill_list_punch.png"
 		end
 
 		if tool_capabilities.damage_groups.ranged then

@@ -1,6 +1,8 @@
 local rankings = ctf_rankings.init()
+local mods = rankings.modstorage
 
 rankings.total = {}
+rankings.top_50 = minetest.deserialize(mods:get_string("top_50")) or {}
 
 ----
 ------ COMMANDS
@@ -22,20 +24,90 @@ local rank_def = {
 			return false, string.format("Player %s has no rankings!", target)
 		end
 
-		return true, string.format("Rankings of player %s: %s", target, HumanReadable(dump2(prank)))
+		return true, string.format("Rankings of player %s: %s", target, HumanReadable(dump(prank)))
 	end
 }
 
 ctf_modebase.register_chatcommand("classic", "rank", rank_def)
 ctf_modebase.register_chatcommand("classic", "r"   , rank_def)
 
+ctf_modebase.register_chatcommand("classic", "reset_rankings", {
+	description = minetest.colorize("red", "Resets rankings of you or another player to nothing"),
+	params = "[playername]",
+	func = function(name, param)
+		if param and param ~= "" then
+			if minetest.check_player_privs(name, {ctf_admin = true}) then
+				rankings:set(param, {}, true)
+
+				return true, "Rankings reset for player "..param
+			else
+				return false, "The ctf_admin priv is required to reset the rankings of other players!"
+			end
+		else
+			rankings:set(name, {}, true)
+
+			return true, "Your rankings have been reset"
+		end
+	end
+})
+
+ctf_modebase.register_chatcommand("classic", "top50", {
+	description = "Show the top 50 players",
+	func = function(name)
+		local top50 = {}
+
+		for _, pname in pairs(rankings.top_50) do
+			top50[pname] = rankings:get(pname)
+		end
+
+		ctf_modebase.show_summary_gui(name, top50, mode_classic.SUMMARY_RANKS, {
+			title = "Top 50 Players",
+			disable_nonuser_colors = true
+		})
+	end,
+})
+
+local function update_top_50()
+	local cache = {}
+
+	table.sort(rankings.top_50, function(a, b)
+		if not cache[a] then cache[a] = rankings:get(a) end
+		if not cache[b] then cache[b] = rankings:get(b) end
+
+		return cache[a].score < cache[b].score
+	end)
+
+	mods:set_string("top_50", minetest.serialize(rankings.top_50))
+end
+
 return {
 	add = function(player, amounts, no_hud)
 		local hud_text = ""
 		local pteam = ctf_teams.get(player)
+		player = PlayerName(player)
 
 		for name, val in pairs(amounts) do
 			hud_text = string.format("%s+%d %s | ", hud_text, val, HumanReadable(name))
+		end
+
+		if amounts.score then -- handle top50
+			local current = rankings:get(player)
+
+			if table.indexof(rankings.top_50, player) == -1 then
+				if rankings.top_50[50] then
+					if current.score or 0 + amounts.score > rankings:get(rankings.top_50[50]).score then
+						table.remove(rankings.top_50)
+						table.insert(rankings.top_50, player)
+
+						update_top_50()
+					end
+				else
+					table.insert(rankings.top_50, player)
+					update_top_50()
+				end
+			else
+				update_top_50()
+			end
 		end
 
 		if pteam then

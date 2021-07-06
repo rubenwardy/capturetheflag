@@ -8,12 +8,15 @@ local concat = table.concat
 ---@param name string Player name
 ---@param rankings table Recent rankings to show in the gui
 ---@param rank_values table Example: `{_sort = "score", "captures" "kills"}`
----@param buttons table table enabling the next/previous buttons. Example: {next = true}
-function ctf_modebase.show_summary_gui(name, rankings, rank_values, buttons)
+---@param formdef table table for customizing the formspec
+function ctf_modebase.show_summary_gui(name, rankings, rank_values, formdef)
+	rankings = table.copy(rankings)
+
 	local rows = {}
 	local sort_by
 
-	if not buttons then buttons = {} end
+	if not formdef then formdef = {} end
+	if not formdef.buttons then formdef.buttons = {} end
 
 	if rank_values._sort then
 		insert(rank_values, 1, rank_values._sort)
@@ -22,16 +25,20 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, buttons)
 	sort_by = rank_values[1]
 
 	for pname, ranks in pairs(rankings) do
-		local color = "grey"
+		local color = "white"
 
-		if not ranks._row_color then
-			local team = get_team(pname)
+		if not formdef.disable_nonuser_colors then
+			if not ranks._row_color then
+				local team = get_team(pname)
 
-			if team then
-				color = teams[team].color
+				if team then
+					color = teams[team].color
+				end
+			else
+				color = ranks._row_color
 			end
-		else
-			color = ranks._row_color
+		elseif name == pname then
+			color = "gold"
 		end
 
 		local row = format("%s,%s", color, pname)
@@ -51,7 +58,7 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, buttons)
 	end
 
 	ctf_gui.show_formspec(name, "ctf_modebase:summary", {
-		title = "Match Summary",
+		title = formdef.title or "Match Summary",
 		elements = {
 			rankings = {
 				type = "table",
@@ -71,7 +78,7 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, buttons)
 					concat(rows, ",")
 				}
 			},
-			next = buttons.next and {
+			next = formdef.buttons.next and {
 				type = "button",
 				label = "See Current",
 				pos = {"center", ctf_gui.FORM_SIZE[2] - (ctf_gui.ELEM_SIZE[2] + 2.5)},
@@ -87,7 +94,7 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, buttons)
 					end
 				end,
 			},
-			previous = buttons.previous and {
+			previous = formdef.buttons.previous and {
 				type = "button",
 				label = "See Previous",
 				pos = {"center", ctf_gui.FORM_SIZE[2] - (ctf_gui.ELEM_SIZE[2] + 2.5)},

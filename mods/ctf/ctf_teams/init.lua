@@ -67,9 +67,8 @@ minetest.register_on_joinplayer(function(player, ...)
 	else
 		local tcolor = ctf_teams.team[pteam].color
 
-		minetest.chat_send_all(string.format("*** %s joined the game. %s",
-			minetest.colorize(tcolor, player:get_player_name()),
-			minetest.colorize(tcolor, string.format("[Team %s]", HumanReadable(pteam)))
+		minetest.chat_send_all(string.format("*** %s joined the game.",
+			minetest.colorize(tcolor, player:get_player_name())
 		))
 	end
 end)
@@ -82,10 +81,9 @@ minetest.register_on_leaveplayer(function(player, timed_out, ...)
 	else
 		local tcolor = ctf_teams.team[pteam].color
 
-		minetest.chat_send_all(string.format("*** %s left the game%s. %s",
+		minetest.chat_send_all(string.format("*** %s left the game%s.",
 			minetest.colorize(tcolor, player:get_player_name()),
-			timed_out and " (timed out)" or "",
-			minetest.colorize(tcolor, string.format("[Team %s]", HumanReadable(pteam)))
+			timed_out and " (timed out)" or ""
 		))
 	end
 end)

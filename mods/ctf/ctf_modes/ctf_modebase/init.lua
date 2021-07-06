@@ -27,6 +27,9 @@ ctf_modebase = {
 
 	-- flag_taken[Team Name] = Name of thief
 	flag_taken           = {},
+
+	--flag_captured[Team name] = true if captured, otherwise nil
+	flag_captured        = {},
 }
 
 ctf_gui.init()

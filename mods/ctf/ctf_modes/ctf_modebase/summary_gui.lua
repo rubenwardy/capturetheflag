@@ -10,7 +10,7 @@ local concat = table.concat
 ---@param rank_values table Example: `{_sort = "score", "captures" "kills"}`
 ---@param formdef table table for customizing the formspec
 function ctf_modebase.show_summary_gui(name, rankings, rank_values, formdef)
-	rankings = table.copy(rankings)
+	rank_values = table.copy(rank_values)
 
 	local rows = {}
 	local sort_by

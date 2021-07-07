@@ -25,12 +25,13 @@ git clone --recursive https://github.com/MT-CTF/capturetheflag.git
 
 * Hosting your server using the `dummy` backend.
 
-* Hosting using the `redis` rankings backend:
+* Storing rankings using the `redis` backend:
   * Ubuntu:
     * `sudo apt install luarocks redis`
     * `sudo luarocks install luaredis`
     * Add `ctf_rankings` to your secure.trusted_mods. MIGHT BE POSSIBLE FOR OTHER MODS TO BREACH SECURITY. MAKE SURE YOU ADD NO MALICIOUS MODS TO YOUR CTF SERVER
     * Run something like this when starting your server (With parentheses): (cd minetest/worlds/yourworld && redis-server) | <command to launch your minetest server>
+    * If you run your Minetest server using a system service it is recommended to run redis-server in it's own service, with the Minetest one depending upon it
 
 ## License
 

@@ -7,3 +7,7 @@ ctf_server_mode (Server Mode) enum play play,mapedit
 # - default: Store rankings in modstorage, not recommended for servers
 # - redis: Store rankings in a redis DB, recommended for servers, requires some setup
 ctf_rankings_backend (Rankings Backend) enum default default,redis
+
+# Port the redis server is hosted on.
+# This setting is only used when ctf_rankings_backend = redis
+ctf_rankings_redis_server_port (Rankings Redis Server Port) int 6379

@@ -23,30 +23,27 @@ git clone --recursive https://github.com/MT-CTF/capturetheflag.git
 
 ### Recommended
 
-Hosting your server using the `dummy` backend.
+* Hosting your server using the `dummy` backend.
 
-### Minimum
-
-Hosting your server using the `leveldb` or `redis` backend.
-
-Hosting using `sqlite3` on an SSD or ramdisk ([with this guide](https://forum.minetest.net/viewtopic.php?f=10&t=9588)).
+* Hosting using the `redis` rankings backend:
+  * Ubuntu:
+    * `sudo apt install luarocks redis`
+    * `sudo luarocks install luaredis`
+    * Add `ctf_rankings` to your secure.trusted_mods. MIGHT BE POSSIBLE FOR OTHER MODS TO BREACH SECURITY. MAKE SURE YOU ADD NO MALICIOUS MODS TO YOUR CTF SERVER
+    * Run something like this when starting your server (With parentheses): (cd minetest/worlds/yourworld && redis-server) | <command to launch your minetest server>
 
 ## License
 
-Created by [rubenwardy](https://rubenwardy.com/).
-Code: LGPLv2.1+
+Created by [rubenwardy](https://rubenwardy.com/) and [Lone_Wolf](https://github.com/LoneWolfHT).
+
+Licenses where not specified:
+Code: zlib license
 Textures: CC-BY-SA 3.0
 
 ### Textures
 
-* ctf_classes_skin_* created by GreenDimond/GreenXenith
-    * ctf_classes_skin_rocketeer with help from Lone_Wolf
 * [Header](menu/header.png): CC BY-SA 4.0 by xenonca
 
 ### Mods
 
 Check out [mods/](mods/) to see all the installed mods and their respective licenses.
-
-## update.sh
-
-Content in this repository and its sub-modules are arranged in a manner best optimised for distribution. For all features of CTF to work properly, run update.sh instead of manually syncing the local copy. update.sh automatically pulls the latest master of the repository and all its submodules, and does some extra processing to make stuff work.

@@ -142,7 +142,6 @@ function ctf_stats.player(name)
 
 	local match_player_stats =
 			ctf_stats.current.red[name] or ctf_stats.current.blue[name]
-
 	return player_stats, match_player_stats
 end
 

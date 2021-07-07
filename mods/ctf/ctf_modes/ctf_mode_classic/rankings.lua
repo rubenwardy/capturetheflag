@@ -1,5 +1,7 @@
 local rankings = ctf_rankings.init()
-local mods = rankings.modstorage
+
+-- can't call minetest.get_mod_storage() twice, the modstorage rankings backend calls it first
+local mods = rankings.modstorage or minetest.get_mod_storage()
 
 rankings.total = {}
 rankings.top_50 = minetest.deserialize(mods:get_string("top_50")) or {}
@@ -57,7 +59,7 @@ ctf_modebase.register_chatcommand("classic", "top50", {
 		local top50 = {}
 
 		for _, pname in pairs(rankings.top_50) do
-			top50[pname] = rankings:get(pname)
+			top50[pname] = rankings:get(pname) or nil
 		end
 
 		ctf_modebase.show_summary_gui(name, top50, mode_classic.SUMMARY_RANKS, {

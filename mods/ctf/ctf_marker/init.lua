@@ -50,7 +50,7 @@ function ctf_marker.add_marker(name, tname, pos, str)
 		minetest.log("action", name .. " placed a marker at " ..
 				minetest.pos_to_string(pos) .. ": '" .. str .. "'")
 		minetest.chat_send_player(pname,
-				msg("* " .. name .. " placed a marker!"))
+				msg("* " .. name .. " placed a marker: " .. str))
 	end
 end
 

@@ -26,7 +26,7 @@ minetest.register_globalstep(function(dtime)
 
 	for pname, info in pairs(voters) do
 		if not info.choice and timer > 0 then
-			return
+			ctf_modebase.show_modechoose_form(pname)
 		else
 			votes[info.choice] = (votes[info.choice] or 0) + 1
 
@@ -105,7 +105,7 @@ function ctf_modebase.start_new_match(show_form, new_mode, specific_map)
 		end
 		ctf_teams.team_chests = {}
 
-		if new_mode ~= old_mode then
+		if new_mode and new_mode ~= old_mode then
 			maps_placed = {}
 		end
 
@@ -113,7 +113,7 @@ function ctf_modebase.start_new_match(show_form, new_mode, specific_map)
 			ctf_modebase.current_mode = new_mode
 			RunCallbacks(ctf_modebase.registered_on_new_mode, new_mode, old_mode)
 		end
-		local map = ctf_modebase.place_map(new_mode, specific_map)
+		local map = ctf_modebase.place_map(new_mode or ctf_modebase.current_mode, specific_map)
 
 		give_initial_stuff.reset_stuff_providers()
 

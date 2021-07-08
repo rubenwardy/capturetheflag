@@ -188,6 +188,10 @@ ctf_modebase.register_mode("classic", {
 
 		ctf_combat_mode.remove(player)
 
+		if not build_timer.in_progress() then
+			ctf_modebase.prep_delayed_respawn(player)
+		end
+
 		rankings.add(player, {deaths = 1})
 	end,
 	on_respawnplayer = function(player)
@@ -196,7 +200,7 @@ ctf_modebase.register_mode("classic", {
 
 			waitpos.y = ctf_map.current_map.pos2.y + 5
 
-			if ctf_modebase.delay_respawn(player, 7, waitpos) then
+			if ctf_modebase.delay_respawn(player, 7, 4) then
 				return true
 			end
 		end

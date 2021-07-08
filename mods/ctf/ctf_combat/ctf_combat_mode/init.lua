@@ -55,6 +55,10 @@ function ctf_combat_mode.get(player)
 	return in_combat[PlayerName(player)]
 end
 
+function ctf_combat_mode.get_all()
+	return in_combat
+end
+
 function ctf_combat_mode.remove(player)
 	in_combat[PlayerName(player)] = nil
 
@@ -63,6 +67,17 @@ function ctf_combat_mode.remove(player)
 	end
 end
 
+function ctf_combat_mode.remove_all()
+	for _, player in pairs(minetest.get_connected_players()) do
+		local pname = player:get_player_name()
+
+		if in_combat[pname] then
+			hud:remove(player, "combat_indicator")
+			in_combat[pname] = nil
+		end
+	end
+end
+
 minetest.register_on_leaveplayer(function(player)
-	in_combat[player:get_player_name()] = nil
+	minetest.after(0, function() in_combat[player:get_player_name()] = nil end)
 end)

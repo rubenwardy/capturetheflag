@@ -9,7 +9,7 @@ if backend == "redis" then
 
 	rankings = env.dofile(env.core.get_modpath(env.core.get_current_modname()).."/redis.lua")
 else
-	ctf_core.include_files(backend..".lua")
+	rankings = ctf_core.include_files(backend..".lua")
 end
 
 ctf_rankings = {

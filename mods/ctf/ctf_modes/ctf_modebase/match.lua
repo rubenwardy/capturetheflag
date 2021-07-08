@@ -40,14 +40,14 @@ minetest.register_globalstep(function(dtime)
 	voting = false
 	voters = {}
 
-	ctf_modebase.current_mode = votes._most.n or ctf_modebase.modelist[math.random(1, #ctf_modebase.modelist)]
+	local new_mode = votes._most.n or ctf_modebase.modelist[math.random(1, #ctf_modebase.modelist)]
 
 	minetest.chat_send_all(string.format("Voting is over, '%s' won with %d votes!",
-		HumanReadable(ctf_modebase.current_mode),
+		HumanReadable(new_mode),
 		votes._most.c or 0
 	))
 
-	ctf_modebase.start_new_match(nil, true)
+	ctf_modebase.start_new_match(nil, new_mode)
 end)
 
 minetest.register_on_joinplayer(function(player)
@@ -105,7 +105,15 @@ function ctf_modebase.start_new_match(show_form, new_mode, specific_map)
 		end
 		ctf_teams.team_chests = {}
 
-		local map = ctf_modebase.place_map(ctf_modebase.current_mode, specific_map)
+		if new_mode ~= old_mode then
+			maps_placed = {}
+		end
+
+		if new_mode then
+			ctf_modebase.current_mode = new_mode
+			RunCallbacks(ctf_modebase.registered_on_new_mode, new_mode, old_mode)
+		end
+		local map = ctf_modebase.place_map(new_mode, specific_map)
 
 		give_initial_stuff.reset_stuff_providers()
 
@@ -115,10 +123,6 @@ function ctf_modebase.start_new_match(show_form, new_mode, specific_map)
 
 		RunCallbacks(ctf_modebase.registered_on_new_match, map, old_map)
 
-		if new_mode then
-			RunCallbacks(ctf_modebase.registered_on_new_mode, ctf_modebase.current_mode, old_mode)
-		end
-
 		ctf_teams.allocate_teams(map.teams)
 
 		ctf_modebase.current_mode_matches = ctf_modebase.current_mode_matches + 1
@@ -127,8 +131,6 @@ function ctf_modebase.start_new_match(show_form, new_mode, specific_map)
 	-- Show mode selection form every 'ctf_modebase.MAPS_PER_MODE'-th match
 	if ctf_modebase.current_mode_matches >= ctf_modebase.MAPS_PER_MODE or show_form then
 		ctf_modebase.current_mode_matches = 0
-
-		maps_placed = {}
 
 		ctf_modebase.start_mode_vote()
 	else

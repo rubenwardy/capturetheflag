@@ -32,8 +32,7 @@ minetest.register_chatcommand("ctf_next", {
 	func = function(name, param)
 		if param then
 			if ctf_modebase.modes[param] then
-				ctf_modebase.current_mode = param
-				ctf_modebase.start_new_match(nil, true)
+				ctf_modebase.start_new_match(nil, param)
 				return true
 			elseif table.indexof(minetest.get_dir_list(ctf_map.maps_dir, true), param) ~= -1 then
 				ctf_modebase.start_new_match(nil, nil, param)

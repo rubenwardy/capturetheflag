@@ -87,10 +87,10 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, formdef)
 
 					if not current_mode then return end
 
-					local result, ranks, match_rank_values, newbuttons = current_mode.summary_func(playername)
+					local result, ranks, match_rank_values, newformdef = current_mode.summary_func(playername)
 
 					if result then
-						ctf_modebase.show_summary_gui(playername, ranks, match_rank_values, newbuttons)
+						ctf_modebase.show_summary_gui(playername, ranks, match_rank_values, newformdef)
 					end
 				end,
 			},
@@ -103,10 +103,10 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, formdef)
 
 					if not current_mode then return end
 
-					local result, ranks, match_rank_values, newbuttons = current_mode.summary_func(playername, "previous")
+					local result, ranks, match_rank_values, newformdef = current_mode.summary_func(playername, "previous")
 
 					if result then
-						ctf_modebase.show_summary_gui(playername, ranks, match_rank_values, newbuttons)
+						ctf_modebase.show_summary_gui(playername, ranks, match_rank_values, newformdef)
 					end
 				end,
 			},
@@ -124,10 +124,10 @@ minetest.register_chatcommand("summary", {
 		end
 
 		if current_mode.summary_func then
-			local result, rankings, rank_values, buttons = current_mode.summary_func(name, param)
+			local result, rankings, rank_values, formdef = current_mode.summary_func(name, param)
 
 			if result then
-				ctf_modebase.show_summary_gui(name, rankings, rank_values, buttons)
+				ctf_modebase.show_summary_gui(name, rankings, rank_values, formdef)
 			else
 				return result, rankings -- rankings holds an error message in this case
 			end

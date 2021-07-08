@@ -163,46 +163,44 @@ ctf_modebase.register_mode("classic", {
 	on_dieplayer = function(player, reason)
 		local killscore = rankings.calculate_killscore(player)
 
-		if reason.type == "punch" and reason.object:is_player() then
-			local combat = ctf_combat_mode.get(reason.object)
+		if reason.object ~= player then
+			if reason.type == "punch" and reason.object:is_player() then
+				local combat = ctf_combat_mode.get(reason.object)
 
-			rankings.add(reason.object, {kills = 1, score = killscore})
+				rankings.add(reason.object, {kills = 1, score = killscore})
 
-			if combat and combat.extra.healer then
-				rankings.add(combat.extra.healer, {score = math.ceil(killscore/2)})
-			end
-		else
-			local combat_mode = ctf_combat_mode.get(player)
-
-			if combat_mode and combat_mode.extra.hitter then
-				local hitter_combat = ctf_combat_mode.get(combat_mode.extra.hitter)
-
-				rankings.add(combat_mode.extra.hitter, {kills = 1, score = killscore})
-
-				if hitter_combat and hitter_combat.extra.healer then
-					rankings.add(hitter_combat.extra.healer, {score = math.ceil(killscore/2)})
+				if combat and combat.extra.healer then
+					rankings.add(combat.extra.healer, {score = math.ceil(killscore/2)})
 				end
-
-				ctf_kill_list.add_kill(combat_mode.extra.hitter, nil, player)
 			else
-				ctf_kill_list.add_kill("", "ctf_modebase_skull.png", player)
+				local combat_mode = ctf_combat_mode.get(player)
+
+				if combat_mode and combat_mode.extra.hitter then
+					local hitter_combat = ctf_combat_mode.get(combat_mode.extra.hitter)
+
+					rankings.add(combat_mode.extra.hitter, {kills = 1, score = killscore})
+
+					if hitter_combat and hitter_combat.extra.healer then
+						rankings.add(hitter_combat.extra.healer, {score = math.ceil(killscore/2)})
+					end
+
+					ctf_kill_list.add_kill(combat_mode.extra.hitter, nil, player)
+				else
+					ctf_kill_list.add_kill("", "ctf_modebase_skull.png", player)
+				end
 			end
 		end
 
 		ctf_combat_mode.remove(player)
 
 		if not build_timer.in_progress() then
-			ctf_modebase.prep_delayed_respawn(player)
+			if ctf_modebase.prep_delayed_respawn(player) then
+				rankings.add(player, {deaths = 1})
+			end
 		end
-
-		rankings.add(player, {deaths = 1})
 	end,
 	on_respawnplayer = function(player)
 		if not build_timer.in_progress() then
-			local waitpos = player:get_pos()
-
-			waitpos.y = ctf_map.current_map.pos2.y + 5
-
 			if ctf_modebase.delay_respawn(player, 7, 4) then
 				return true
 			end
@@ -300,7 +298,9 @@ ctf_modebase.register_mode("classic", {
 			return true
 		end
 
-		ctf_combat_mode.set(player, 15, {hitter = hitter:get_player_name()})
+		if player ~= hitter then
+			ctf_combat_mode.set(player, 15, {hitter = hitter:get_player_name()})
+		end
 
 		ctf_kill_list.on_punchplayer(player, hitter, ...)
 	end,

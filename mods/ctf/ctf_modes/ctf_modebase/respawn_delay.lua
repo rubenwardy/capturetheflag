@@ -17,23 +17,49 @@ local function run_respawn_timer(pname)
 	else
 		hud:remove(pname, "timer")
 
+		local hp_max = respawn_delay[pname].hp_max
+		local immunity_after = respawn_delay[pname].immunity_after
+
+		player:set_properties({
+			hp_max = hp_max,
+			pointable = not immunity_after and true,
+		})
+		physics.remove(pname, "ctf_modebase:respawn_freeze")
+
+		player:set_hp(hp_max)
+
+		if immunity_after then
+			minetest.after(immunity_after, function()
+				if player then
+					player:set_properties({
+						pointable = true
+					})
+				end
+			end)
+		end
+
 		respawn_delay[pname].state = "done"
 		RunCallbacks(minetest.registered_on_respawnplayers, player)
 	end
 end
 
+-- Returns true unless player has already been prepped
 function ctf_modebase.prep_delayed_respawn(player)
 	player = PlayerObj(player)
 	local pname = player:get_player_name()
 
-	respawn_delay[pname] = {state = "prepped", hp_max = player:get_properties().hp_max}
+	if not respawn_delay[pname] then
+		respawn_delay[pname] = {state = "prepped", hp_max = player:get_properties().hp_max}
 
-	player:set_properties({
-		hp_max = 0,
-		pointable = false,
-	})
+		player:set_properties({
+			hp_max = 0,
+			pointable = false,
+		})
 
-	physics.set(pname, "ctf_modebase:respawn_freeze", {speed = 0, jump = 0.5})
+		physics.set(pname, "ctf_modebase:respawn_freeze", {speed = 0, jump = 0, gravity = 0})
+
+		return true
+	end
 end
 
 -- Returns false if timer is up, true if timer is ongoing
@@ -43,30 +69,6 @@ function ctf_modebase.delay_respawn(player, time, immunity_after)
 
 	if respawn_delay[pname] then
 		if respawn_delay[pname].state == "done" then
-			local hp_max = respawn_delay[pname].hp_max
-
-			player:set_properties({
-				hp_max = hp_max,
-				pointable = not immunity_after and true,
-			})
-			physics.remove(pname, "ctf_modebase:respawn_freeze")
-
-			minetest.after(0, function()
-				if player then
-					player:set_hp(hp_max)
-				end
-			end)
-
-			if immunity_after then
-				minetest.after(immunity_after, function()
-					if player then
-						player:set_properties({
-							pointable = true
-						})
-					end
-				end)
-			end
-
 			respawn_delay[pname] = nil
 
 			return false
@@ -78,6 +80,7 @@ function ctf_modebase.delay_respawn(player, time, immunity_after)
 	end
 
 	respawn_delay[pname].timer = time
+	respawn_delay[pname].immunity_after = immunity_after
 	respawn_delay[pname].state = "in_progress"
 
 	hud:add(pname, "timer", {

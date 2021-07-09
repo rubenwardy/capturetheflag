@@ -88,12 +88,16 @@ for _, chest_color in pairs(colors) do
 			"list[current_player;main;0,7.85;8,1;]",
 			"list[current_player;main;0,9.08;8,3;8]",
 		}, "")
+		local reg_access, pro_access = ctf_modebase:get_current_mode().get_chest_access(name)
 
-		if not ctf_modebase:get_current_mode().get_chest_access(name) == true then
-			local msg = "You need at least 10 score to access the team chest.\n" ..
-				"Try killing an enemy player, or at least try to capture the flag.\n" ..
-				"Find resources in chests scattered around the map."
-			formspec = formspec .. "label[0.75,3;" .. minetest.formspec_escape(msg) .. "]"
+		if type(reg_access) == "string" then
+			formspec = formspec .. "label[0.75,3;" ..
+				minetest.formspec_escape(minetest.wrap_text(
+					reg_access or "You aren't allowed to access the team chest",
+					60
+				)) ..
+			"]"
+
 			minetest.show_formspec(name, "ctf_teams:no_access", formspec)
 			return
 		end
@@ -103,16 +107,19 @@ for _, chest_color in pairs(colors) do
 		formspec = formspec .. "list[" .. chestinv .. ";main;0,0.3;4,7;]" ..
 			"background[4,-0.2;4.15,7.7;ctf_map_pro_section.png;false]"
 
-		if current_mode.get_chest_access(name) == "pro" then
+		if pro_access == true then
 			formspec = formspec .. "list[" .. chestinv .. ";pro;4,0.3;4,7;]" ..
 				"listring[" .. chestinv ..";pro]" ..
 				"listring[" .. chestinv .. ";helper]" ..
 				"label[5,-0.2;" ..
 				minetest.formspec_escape("Pro players only") .. "]"
 		else
-			formspec = formspec .. "label[4.75,3;" ..
-				minetest.formspec_escape("You need at least 10000" ..
-				"\nscore, 1.5+ KD, and 10+\ncaptures to access the\npro section") .. "]"
+			formspec = formspec .. "label[4.5,3;" ..
+				minetest.formspec_escape(minetest.wrap_text(
+					pro_access or "You aren't allowed to access the pro section",
+					36
+				)) ..
+			"]"
 		end
 
 		formspec = formspec ..

@@ -313,13 +313,17 @@ ctf_modebase.register_mode("classic", {
 	get_chest_access = function(pname)
 		local rank = rankings.get(pname)
 
-		if not rank or not rank.score then return end
-
-		if rank.score >= 10000 then
-			return "pro"
-		elseif rank.score >= 10 then
-			return true
+		-- Remember to update /makepro in rankings.lua if you change anything here
+		if rank then
+			if (rank.score or 0) >= 10000 and (rank.kills or 0) / (rank.deaths or 0) >= 1.5 then
+				return true, true
+			elseif (rank.score or 0) >= 10 then
+				return true, "You need to have more than 1.5 kills per death, and at least 10,000 score to access the pro section"
+			end
 		end
+
+		return "You need at least 10 score to access this chest",
+		       "You need to have more kills than deaths, and at least 10000 score to access the pro section"
 	end,
 	summary_func = function(name, param)
 		if not param or param == "" then

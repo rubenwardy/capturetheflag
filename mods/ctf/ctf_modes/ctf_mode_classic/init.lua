@@ -1,5 +1,5 @@
 mode_classic = {
-	SUMMARY_RANKS = {"flag_captures", _sort = "score", "flag_attempts", "kills", "deaths", "hp_healed"}
+	SUMMARY_RANKS = {"flag_captures", _sort = "score", "flag_attempts", "kills", "kill_assists", "deaths", "hp_healed"}
 }
 
 local flag_huds, rankings, build_timer, crafts = ctf_core.include_files(
@@ -62,6 +62,57 @@ local function insert_team_totals(match_rankings, total)
 	end
 
 	return ranks
+end
+
+-- Returns true if player was in combat mode
+local function end_combat_mode(player, killer)
+	local victim_combat_mode = ctf_combat_mode.get(player)
+
+	if not victim_combat_mode then return end
+
+	if killer ~= player then
+		local killscore = rankings.calculate_killscore(player)
+		local attackers = {}
+
+		-- populate attackers table
+		ctf_combat_mode.manage_extra(player, function(pname, type)
+			if type == "hitter" then
+				table.insert(attackers, pname)
+			else
+				return type
+			end
+		end)
+
+		if killer then
+			rankings.add(killer, {kills = 1, score = killscore})
+
+			-- share kill score with healers
+			ctf_combat_mode.manage_extra(killer, function(pname, type)
+				if type == "healer" then
+					rankings.add(pname, {score = killscore})
+				end
+
+				return type
+			end)
+		else
+			-- Only take score for suicide if they're in combat for being healed
+			if victim_combat_mode and #attackers >= 1 then
+				rankings.add(player, {score = -math.ceil(killscore/2)})
+			end
+
+			ctf_kill_list.add_kill("", "ctf_modebase_skull.png", player)
+		end
+
+		for _, pname in pairs(attackers) do
+			if not killer or pname ~= killer:get_player_name() then
+				rankings.add(pname, {kill_assists = 1, score = math.ceil(killscore / #attackers)})
+			end
+		end
+	end
+
+	ctf_combat_mode.remove(player)
+
+	return true
 end
 
 local next_team = "red"
@@ -174,54 +225,18 @@ ctf_modebase.register_mode("classic", {
 			rankings.reset_recent(pname)
 		end
 
+		if end_combat_mode(player) then
+			rankings.add(player, {deaths = 1})
+		end
+
 		flag_huds.untrack_capturer(pname)
 	end,
 	on_dieplayer = function(player, reason)
-		local killscore = rankings.calculate_killscore(player)
-
-		if reason.type ~= "punch" or reason.object ~= player then
-			local victim_combat_mode = ctf_combat_mode.get(player)
-			local attackers = {}
-			local killer_name -- If killer was a player this will hold their name
-
-			-- populate attackers table
-			ctf_combat_mode.manage_extra(player, function(pname, type)
-				if type == "hitter" then
-					table.insert(attackers, pname)
-				else
-					return type
-				end
-			end)
-
-			if reason.type == "punch" and reason.object:is_player() then
-				killer_name = reason.object:get_player_name()
-				rankings.add(reason.object, {kills = 1, score = killscore})
-
-				-- share kill score with healers
-				ctf_combat_mode.manage_extra(reason.object, function(pname, type)
-					if type == "healer" then
-						rankings.add(pname, {score = killscore})
-					end
-
-					return type
-				end)
-			else
-				-- Only take score for suicide if they're in combat for being healed
-				if victim_combat_mode and #attackers >= 1 then
-					rankings.add(player, {score = -math.ceil(killscore/2)})
-				end
-
-				ctf_kill_list.add_kill("", "ctf_modebase_skull.png", player)
-			end
-
-			for _, pname in pairs(attackers) do
-				if pname ~= killer_name then
-					rankings.add(pname, {kill_assists = 1, score = math.ceil(killscore / #attackers)})
-				end
-			end
+		if reason.type == "punch" and reason.object and reason.object:is_player() then
+			end_combat_mode(player, reason.object)
+		else
+			end_combat_mode(player)
 		end
-
-		ctf_combat_mode.remove(player)
 
 		if not build_timer.in_progress() then
 			if ctf_modebase.prep_delayed_respawn(player) then

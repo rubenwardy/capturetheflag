@@ -9,7 +9,7 @@ local flag_huds, rankings, build_timer, crafts = ctf_core.include_files(
 	"crafts.lua"
 )
 
-local FLAG_CAPTURE_TIMER = 60 * 2.5
+local FLAG_CAPTURE_TIMER = 60 * 3
 
 function mode_classic.tp_player_near_flag(player)
 	local tname = ctf_teams.get(player)

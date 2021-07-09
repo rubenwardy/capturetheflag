@@ -53,6 +53,21 @@ ctf_modebase.register_chatcommand("classic", "reset_rankings", {
 	end
 })
 
+ctf_modebase.register_chatcommand("classic", "makepro", {
+	description = "Make yourself or another player into a pro",
+	params = "[playername]",
+	privs = {ctf_admin = true},
+	func = function(name, param)
+		if not param or param == "" then
+			param = name
+		end
+
+		rankings:set(param, {score = 10000, kills = 15, deaths = 10})
+
+		return true, "Player "..param.." is now a pro!"
+	end
+})
+
 ctf_modebase.register_chatcommand("classic", "top50", {
 	description = "Show the top 50 players",
 	func = function(name)

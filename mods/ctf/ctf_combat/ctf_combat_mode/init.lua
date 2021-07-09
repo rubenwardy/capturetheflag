@@ -45,8 +45,12 @@ function ctf_combat_mode.set(player, time, extra)
 	else
 		in_combat[player].time = time
 
-		for k, v in pairs(extra) do
-			in_combat[player].extra[k] = v
+		if extra._set then
+			in_combat[player].extra = extra
+		else
+			for k, v in pairs(extra) do
+				in_combat[player].extra[k] = v
+			end
 		end
 	end
 end
@@ -59,6 +63,16 @@ function ctf_combat_mode.get_all()
 	return in_combat
 end
 
+function ctf_combat_mode.manage_extra(player, func)
+	local pname = PlayerName(player)
+
+	if in_combat[pname] and in_combat[pname].extra then
+		for k, v in pairs(in_combat[pname].extra) do
+			in_combat[pname].extra[k] = func(k, v)
+		end
+	end
+end
+
 function ctf_combat_mode.remove(player)
 	in_combat[PlayerName(player)] = nil
 
@@ -69,11 +83,8 @@ end
 
 function ctf_combat_mode.remove_all()
 	for _, player in pairs(minetest.get_connected_players()) do
-		local pname = player:get_player_name()
-
-		if in_combat[pname] then
-			hud:remove(player, "combat_indicator")
-			in_combat[pname] = nil
+		if in_combat[player:get_player_name()] then
+			ctf_combat_mode.remove(player)
 		end
 	end
 end

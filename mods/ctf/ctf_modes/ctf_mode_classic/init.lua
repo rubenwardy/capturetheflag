@@ -163,30 +163,44 @@ ctf_modebase.register_mode("classic", {
 	on_dieplayer = function(player, reason)
 		local killscore = rankings.calculate_killscore(player)
 
-		if reason.object ~= player then
-			if reason.type == "punch" and reason.object:is_player() then
-				local combat = ctf_combat_mode.get(reason.object)
+		if reason.type ~= "punch" or reason.object ~= player then
+			local victim_combat_mode = ctf_combat_mode.get(player)
+			local attackers = {}
+			local killer_name -- If killer was a player this will hold their name
 
+			-- populate attackers table
+			ctf_combat_mode.manage_extra(player, function(pname, type)
+				if type == "hitter" then
+					table.insert(attackers, pname)
+				else
+					return type
+				end
+			end)
+
+			if reason.type == "punch" and reason.object:is_player() then
+				killer_name = reason.object:get_player_name()
 				rankings.add(reason.object, {kills = 1, score = killscore})
 
-				if combat and combat.extra.healer then
-					rankings.add(combat.extra.healer, {score = math.ceil(killscore/2)})
-				end
-			else
-				local combat_mode = ctf_combat_mode.get(player)
-
-				if combat_mode and combat_mode.extra.hitter then
-					local hitter_combat = ctf_combat_mode.get(combat_mode.extra.hitter)
-
-					rankings.add(combat_mode.extra.hitter, {kills = 1, score = killscore})
-
-					if hitter_combat and hitter_combat.extra.healer then
-						rankings.add(hitter_combat.extra.healer, {score = math.ceil(killscore/2)})
+				-- share kill score with healers
+				ctf_combat_mode.manage_extra(reason.object, function(pname, type)
+					if type == "healer" then
+						rankings.add(pname, {score = killscore})
 					end
 
-					ctf_kill_list.add_kill(combat_mode.extra.hitter, nil, player)
-				else
-					ctf_kill_list.add_kill("", "ctf_modebase_skull.png", player)
+					return type
+				end)
+			else
+				-- Only take score for suicide if they're in combat for being healed
+				if victim_combat_mode and #attackers >= 1 then
+					rankings.add(player, {score = -math.ceil(killscore/2)})
+				end
+
+				ctf_kill_list.add_kill("", "ctf_modebase_skull.png", player)
+			end
+
+			for _, pname in pairs(attackers) do
+				if pname ~= killer_name then
+					rankings.add(pname, {kill_assists = 1, score = math.ceil(killscore / #attackers)})
 				end
 			end
 		end
@@ -301,13 +315,13 @@ ctf_modebase.register_mode("classic", {
 		end
 
 		if player ~= hitter then
-			ctf_combat_mode.set(player, 15, {hitter = hitter:get_player_name()})
+			ctf_combat_mode.set(player, 15, {[hitter:get_player_name()] = "hitter"})
 		end
 
 		ctf_kill_list.on_punchplayer(player, hitter, ...)
 	end,
 	on_healplayer = function(player, patient, amount)
-		ctf_combat_mode.set(patient, 15, {healer = player:get_player_name()})
+		ctf_combat_mode.set(patient, 15, {[player:get_player_name()] = "healer"})
 
 		rankings.add(player, {hp_healed = amount}, true)
 	end,

@@ -332,7 +332,7 @@ ctf_modebase.register_mode("classic", {
 				rankings.total()
 			), mode_classic.SUMMARY_RANKS, {
 				title = "Match Summary",
-				special_row_title = "Total Team Score",
+				special_row_title = "Total Team Stats",
 				buttons = {previous = true}
 			}
 		elseif param:match("p") then
@@ -341,7 +341,7 @@ ctf_modebase.register_mode("classic", {
 				rankings.previous_total()
 			), mode_classic.SUMMARY_RANKS, {
 				title = "Previous Match Summary",
-				special_row_title = "Total Team Score",
+				special_row_title = "Total Team Stats",
 				buttons = {next = true}
 			}
 		else

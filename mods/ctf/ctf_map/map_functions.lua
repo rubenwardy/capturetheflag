@@ -39,17 +39,19 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 		end
 	end
 
-	for _, object_drop in pairs(minetest.get_objects_in_area(mapmeta.pos1, mapmeta.pos2)) do
-		if not object_drop:is_player() then
-			local drop = object_drop:get_luaentity()
+	minetest.after(0, function()
+		for _, object_drop in pairs(minetest.get_objects_in_area(mapmeta.pos1, mapmeta.pos2)) do
+			if not object_drop:is_player() then
+				local drop = object_drop:get_luaentity()
 
-			if drop and drop.name == "__builtin:item" then
-				object_drop:remove()
+				if drop and drop.name == "__builtin:item" then
+					object_drop:remove()
+				end
 			end
 		end
-	end
+	end)
 
-	minetest.after(5, function()
+	minetest.after(3, function()
 		minetest.fix_light(mapmeta.pos1, mapmeta.pos2)
 	end)
 

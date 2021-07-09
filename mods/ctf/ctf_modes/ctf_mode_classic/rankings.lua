@@ -128,13 +128,15 @@ return {
 
 		rankings:add(player, amounts)
 	end,
-	set_summary_row_color = function(player, color)
+	set_team = function(player, team)
 		local pname = PlayerName(player)
+		local tcolor = ctf_teams.team[team].color
 
 		if not rankings.recent[pname] then
-			rankings.recent[pname] = {_row_color = color}
+			rankings.recent[pname] = {_row_color = tcolor, _group = team}
 		else
-			rankings.recent[pname]._row_color = color
+			rankings.recent[pname]._row_color = tcolor
+			rankings.recent[pname]._group = team
 		end
 	end,
 	get = function(player, specific)
@@ -148,26 +150,17 @@ return {
 
 		return math.round(kd * 5)
 	end,
-	reset_recent = function(specific_player)
-		if not specific_player then
-			rankings.previous_recent = table.copy(rankings.recent)
-			rankings.recent = {}
-			rankings.total = {}
-		else
-			rankings.recent[specific_player] = nil
-		end
+	reset_recent = function(player)
+		rankings.recent[player] = nil
 	end,
-	get_total = function(specific_team)
-		if specific_team then
-			return rankings.total[specific_team]
-		else
-			return rankings.total
-		end
+	next_match = function()
+		rankings.previous_recent = table.copy(rankings.recent)
+		rankings.previous_total  = table.copy(rankings.total )
+		rankings.recent = {}
+		rankings.total = {}
 	end,
-	get_previous_recent = function()
-		return rankings.previous_recent or false
-	end,
-	get_recent = function(specific_player)
-		return specific_player and rankings.recent[specific_player] or rankings.recent
-	end
+	total           = function() return rankings.total           end,
+	previous_total  = function() return rankings.previous_total  end,
+	recent          = function() return rankings.recent          end,
+	previous_recent = function() return rankings.previous_recent end,
 }

@@ -51,9 +51,11 @@ function ctf_gui.show_formspec(player, formname, formdef)
 	local maxyscroll = 0
 	local formspec = "formspec_version[4]" ..
 			string.format("size[%f,%f]", ctf_gui.FORM_SIZE[1], ctf_gui.FORM_SIZE[2]) ..
-			"hypertext[0,0.2;"..ctf_gui.FORM_SIZE[1]-ctf_gui.SCROLLBAR_WIDTH..",1.6;title;<center><big>"..formdef.title.."</big>\n" ..
+				"hypertext[0,0.2;"..ctf_gui.FORM_SIZE[1]-ctf_gui.SCROLLBAR_WIDTH..
+					",1.6;title;<center><big>"..formdef.title.."</big>\n" ..
 					(formdef.description or "\b") .."</center>]" ..
-			"scroll_container[0.1,1.8;"..ctf_gui.FORM_SIZE[1]-ctf_gui.SCROLLBAR_WIDTH..","..ctf_gui.FORM_SIZE[2]..";formcontent;vertical]"
+				"scroll_container[0.1,1.8;"..ctf_gui.FORM_SIZE[1]-ctf_gui.SCROLLBAR_WIDTH..
+				","..ctf_gui.FORM_SIZE[2]..";formcontent;vertical]"
 
 	local using_scrollbar = false
 	if formdef.elements then
@@ -209,8 +211,12 @@ function ctf_gui.show_formspec(player, formname, formdef)
 			formdef.scroll_pos = formdef.scrollheight or 500
 		end
 
-		formspec = formspec .. "scrollbaroptions[max=" .. (formdef.scrollheight or 500) ..";]" ..
-				"scrollbar["..ctf_gui.FORM_SIZE[1]-(ctf_gui.SCROLLBAR_WIDTH - 0.1)..",0;"..(ctf_gui.SCROLLBAR_WIDTH - 0.1)..","..ctf_gui.FORM_SIZE[2]..";vertical;formcontent;" .. formdef.scroll_pos .. "]"
+		formspec = formspec ..
+				"scrollbaroptions[max=" .. (formdef.scrollheight or 500) ..";]" ..
+				"scrollbar["..ctf_gui.FORM_SIZE[1]-(ctf_gui.SCROLLBAR_WIDTH - 0.1) ..
+					",0;"..(ctf_gui.SCROLLBAR_WIDTH - 0.1)..","..ctf_gui.FORM_SIZE[2] ..
+					";vertical;formcontent;" .. formdef.scroll_pos ..
+				"]"
 	end
 
 	context[player] = formdef

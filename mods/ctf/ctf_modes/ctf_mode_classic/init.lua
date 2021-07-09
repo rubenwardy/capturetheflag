@@ -48,6 +48,22 @@ function mode_classic.celebrate_team(teamname)
 	end
 end
 
+local function insert_team_totals(match_rankings, total)
+	if not match_rankings then return {} end
+
+	local ranks = table.copy(match_rankings)
+
+	for team, rank_values in pairs(total) do
+		rank_values._special_row = true
+		rank_values._row_color = ctf_teams.team[team].color
+
+		-- There will be problems with this if player names can contain spaces
+		ranks[HumanReadable("team "..team)] = rank_values
+	end
+
+	return ranks
+end
+
 local next_team = "red"
 ctf_modebase.register_mode("classic", {
 	map_whitelist = {"bridge", "caverns", "coast", "iceage", "two_hills", "plains", "desert_spikes"},
@@ -83,7 +99,7 @@ ctf_modebase.register_mode("classic", {
 	physics = {sneak_glitch = true, new_move = false},
 	commands = {"ctf_start", "rank", "r"},
 	on_new_match = function(mapdef)
-		rankings.reset_recent()
+		rankings.next_match()
 
 		build_timer.start(mapdef)
 
@@ -96,7 +112,7 @@ ctf_modebase.register_mode("classic", {
 	allocate_player = function(player)
 		player = player:get_player_name()
 
-		local total = rankings.get_total()
+		local total = rankings.total()
 		local bscore = (total.blue and total.blue.score) or 0
 		local rscore = (total.red and total.red.score) or 0
 
@@ -133,7 +149,7 @@ ctf_modebase.register_mode("classic", {
 		player:hud_set_hotbar_image("gui_hotbar.png^[colorize:" .. tcolor .. ":128")
 		player:hud_set_hotbar_selected_image("gui_hotbar_selected.png^[multiply:" .. tcolor)
 
-		rankings.set_summary_row_color(player, tcolor)
+		rankings.set_team(player, teamname)
 
 		ctf_playertag.set(player, ctf_playertag.TYPE_ENTITY)
 
@@ -147,7 +163,7 @@ ctf_modebase.register_mode("classic", {
 	end,
 	on_leaveplayer = function(player)
 		local pname = player:get_player_name()
-		local recent = rankings.get_recent(pname)
+		local recent = rankings.recent()[pname]
 		local count = 0
 
 		for _ in pairs(recent or {}) do
@@ -251,7 +267,8 @@ ctf_modebase.register_mode("classic", {
 		ctf_playertag.set(minetest.get_player_by_name(player), ctf_playertag.TYPE_ENTITY)
 	end,
 	on_flag_capture = function(player, captured_team)
-		mode_classic.celebrate_team(ctf_teams.get(player))
+		local pteam = ctf_teams.get(player)
+		mode_classic.celebrate_team(pteam)
 
 		flag_huds.update()
 
@@ -262,9 +279,16 @@ ctf_modebase.register_mode("classic", {
 		for _, pname in pairs(minetest.get_connected_players()) do
 			pname = pname:get_player_name()
 
-			ctf_modebase.show_summary_gui(pname, rankings.get_recent(), mode_classic.SUMMARY_RANKS, {
-				buttons = {previous = true}
-			})
+			ctf_modebase.show_summary_gui(
+				pname,
+				insert_team_totals(rankings.recent(), rankings.total()),
+				mode_classic.SUMMARY_RANKS,
+				{
+					title = HumanReadable(pteam).." Team Wins!",
+					special_row_title = "Total Team Score",
+					buttons = {previous = true}
+				}
+			)
 		end
 
 		ctf_playertag.set(minetest.get_player_by_name(player), ctf_playertag.TYPE_ENTITY)
@@ -284,9 +308,23 @@ ctf_modebase.register_mode("classic", {
 	end,
 	summary_func = function(name, param)
 		if not param or param == "" then
-			return true, rankings.get_recent() or {}, mode_classic.SUMMARY_RANKS, {buttons = {previous = true}}
+			return true, insert_team_totals(
+				rankings.recent(),
+				rankings.total()
+			), mode_classic.SUMMARY_RANKS, {
+				title = "Match Summary",
+				special_row_title = "Total Team Score",
+				buttons = {previous = true}
+			}
 		elseif param:match("p") then
-			return true, rankings.get_previous_recent() or {}, mode_classic.SUMMARY_RANKS, {buttons = {next = true}}
+			return true, insert_team_totals(
+				rankings.previous_recent(),
+				rankings.previous_total()
+			), mode_classic.SUMMARY_RANKS, {
+				title = "Previous Match Summary",
+				special_row_title = "Total Team Score",
+				buttons = {next = true}
+			}
 		else
 			return false, "Don't understand param "..dump(param)
 		end

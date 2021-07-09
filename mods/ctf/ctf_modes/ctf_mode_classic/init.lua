@@ -92,7 +92,7 @@ ctf_modebase.register_mode("classic", {
 		["default:apple"       ] = {min_count = 5, max_count = 30, rarity = 0.1 , max_stacks = 2},
 		["ctf_healing:bandage" ] = {                               rarity = 0.2 , max_stacks = 1},
 
-		["grenades:frag" ] = {rarity = 0.1, max_stacks = 2},
+		["grenades:frag" ] = {rarity = 0.1, max_stacks = 1},
 		["grenades:smoke"] = {rarity = 0.2, max_stacks = 2},
 	},
 	crafts = crafts,

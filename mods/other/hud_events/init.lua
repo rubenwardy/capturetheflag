@@ -64,8 +64,9 @@ local function show_quick_hud_event(player, huddef)
 		})
 	else
 		hud:change(player, "hud_event_quick", {text = huddef.text, color = huddef.color})
-		quick_event_timer[player] = 0
 	end
+
+	quick_event_timer[player] = 0
 end
 
 local timer = 0
@@ -77,8 +78,8 @@ minetest.register_globalstep(function(dtime)
 			time = time + timer
 
 			if time >= HUD_SHOW_QUICK_TIME then
-				quick_event_timer[player] = nil
 				hud:remove(player, "hud_event_quick")
+				quick_event_timer[player] = nil
 			else
 				quick_event_timer[player] = time
 			end

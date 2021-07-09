@@ -2,11 +2,15 @@ if ctf_core.settings.server_mode == "play" then
 	local old_protected = minetest.is_protected
 	minetest.is_protected = function(pos, ...)
 		local foundpos = minetest.find_node_near(pos, 2, "ctf_modebase:flag", true)
-		if foundpos and pos.y >= foundpos.y-1 then
-			return true
-		else
-			return old_protected(pos, ...)
+
+		if foundpos and pos.y > foundpos.y-1 then
+			-- Allow placement of blocks in the corners of the 3x3 flag area (at all heights)
+			if vector.distance(vector.new(foundpos.x, 0, foundpos.z), vector.new(pos.x, 0, pos.z)) < 2.8 then
+				return true
+			end
 		end
+
+		return old_protected(pos, ...)
 	end
 end
 

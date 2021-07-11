@@ -38,7 +38,7 @@ git clone --recursive https://github.com/MT-CTF/capturetheflag.git
 Created by [rubenwardy](https://rubenwardy.com/) and [Lone_Wolf](https://github.com/LoneWolfHT).
 
 Licenses where not specified:
-Code: zlib license
+Code: LGPLv2.1+
 Textures: CC-BY-SA 3.0
 
 ### Textures

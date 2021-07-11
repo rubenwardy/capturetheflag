@@ -13,7 +13,7 @@ ctf_teams = {
 			color_hex = 0x000,
 		},
 		orange = {
-			color = "#ff7700",
+			color = "#ff4e00",
 			color_hex = 0x000,
 		},
 		purple = {

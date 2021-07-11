@@ -1,5 +1,12 @@
 mode_classic = {
-	SUMMARY_RANKS = {"flag_captures", _sort = "score", "flag_attempts", "kills", "kill_assists", "deaths", "hp_healed"}
+	SUMMARY_RANKS = {
+		_sort = "score",
+		"score",
+		"flag_captures", "flag_attempts",
+		"kills", "kill_assists",
+		"deaths",
+		"hp_healed"
+	}
 }
 
 local flag_huds, rankings, build_timer, crafts = ctf_core.include_files(
@@ -18,9 +25,9 @@ function mode_classic.tp_player_near_flag(player)
 
 	PlayerObj(player):set_pos(
 		vector.offset(ctf_map.current_map.teams[tname].flag_pos,
-			math.random(-2, 2),
+			math.random(-1, 1),
 			0.5,
-			math.random(-2, 2)
+			math.random(-1, 1)
 		)
 	)
 
@@ -197,7 +204,7 @@ ctf_modebase.register_mode("classic", {
 		local tcolor = ctf_teams.team[teamname].color
 
 		player:set_properties({
-			textures = {"character.png^(ctf_mode_classic_shirt.png^[colorize:"..tcolor..":180)"}
+			textures = {ctf_cosmetics.get_colored_skin(player, tcolor)}
 		})
 
 		player:hud_set_hotbar_image("gui_hotbar.png^[colorize:" .. tcolor .. ":128")

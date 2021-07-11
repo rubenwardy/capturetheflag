@@ -13,17 +13,11 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, formdef)
 	rank_values = table.copy(rank_values)
 
 	local rows = {}
-	local sort_by
+	local sort_by = rank_values._sort or rank_values[1]
 	local special_rows = {}
 
 	if not formdef then formdef = {} end
 	if not formdef.buttons then formdef.buttons = {} end
-
-	if rank_values._sort then
-		insert(rank_values, 1, rank_values._sort)
-	end
-
-	sort_by = rank_values[1]
 
 	for pname, ranks in pairs(rankings) do
 		local color = "white"
@@ -45,7 +39,6 @@ function ctf_modebase.show_summary_gui(name, rankings, rank_values, formdef)
 		local row = format("%s,%s", color, pname)
 
 		for idx, rank in ipairs(rank_values) do
-			if not sort_by then sort_by = rank end
 			row = format("%s,%s", row, ranks[rank] or 0)
 		end
 

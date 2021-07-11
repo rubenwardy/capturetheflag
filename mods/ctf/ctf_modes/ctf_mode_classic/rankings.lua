@@ -20,18 +20,23 @@ local rank_def = {
 			target = param
 		end
 
-		local stats = rankings:get(target)
-		local prank = minetest.colorize("#63d437", "Rankings for player ") .. minetest.colorize("#ffea00", target) .. ": \n "
+		local prank = rankings:get(target) -- [p]layer [rank]
 
-		if not stats then
+		if not prank then
 			return false, string.format("Player %s has no rankings!", target)
 		end
 
-		for _, statk in ipairs(mode_classic.SUMMARY_RANKS) do
-			prank = prank .. minetest.colorize("#63d437", HumanReadable(statk)) .. ": " .. minetest.colorize("#ffea00", (stats[statk] or 0)) .. ",\n "
+		local return_str = string.format("Rankings for player %s:\n\t", minetest.colorize("#ffea00", target))
+
+		for _, rank in ipairs(mode_classic.SUMMARY_RANKS) do
+			return_str = string.format("%s%s: %s,\n\t",
+				return_str,
+				minetest.colorize("#63d437", HumanReadable(rank)),
+				minetest.colorize("#ffea00", prank[rank] or 0)
+			)
 		end
 
-		return true, prank:sub(1, -4)
+		return true, return_str:sub(1, -3)
 	end
 }
 

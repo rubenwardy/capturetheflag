@@ -45,12 +45,10 @@ end)
 --- STRINGS
 --
 
--- Credit to https://stackoverflow.com/q/20284515/11433667 for capitalization
-local gsub = string.gsub
-function HumanReadable(string)
-	local out = gsub(string, "(%l)(%w*)", function(a,b) return string.upper(a)..b end)
+function HumanReadable(str)
+	local out = str:gsub("(%a)([%w'-]*)", function(a,b) return a:upper()..b:lower() end)
 
-	return gsub(out, "_", " ")
+	return out:gsub("_", " ")
 end
 
 --

@@ -9,7 +9,7 @@ globals = {
 
 	"PlayerObj", "PlayerName", "HumanReadable", "RunCallbacks",
 
-	"ChatCmdBuilder", "mhud", "rawf",
+	"ChatCmdBuilder", "mhud", "rawf", "chatplus",
 
 	"physics", "give_initial_stuff", "medkits", "grenades", "dropondie",
 	"vote", "random_messages", "sfinv", "email", "hb", "wield3d", "irc",
@@ -54,6 +54,8 @@ read_globals = {
 			"insert_all",
 			"key_value_swap",
 			"shuffle",
+			"count",
+			"random",
 		}
 	},
 

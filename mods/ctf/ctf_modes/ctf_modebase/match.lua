@@ -194,6 +194,10 @@ function ctf_modebase.place_map(mode_def, mapidx)
 		local map_pool = mode_def.map_whitelist or dirlist
 		local new_pool = {}
 
+		if #maps_placed >= #map_pool then
+			maps_placed = {}
+		end
+
 		for _, name in pairs(map_pool) do
 			if table.indexof(maps_placed, name) == -1 then
 				table.insert(new_pool, name)

@@ -112,7 +112,7 @@ return {
 
 			if table.indexof(rankings.top_50, player) == -1 then
 				if rankings.top_50[50] then
-					if current.score or 0 + amounts.score > rankings:get(rankings.top_50[50]).score then
+					if (current and current.score or 0) + amounts.score > rankings:get(rankings.top_50[50]).score then
 						table.remove(rankings.top_50)
 						table.insert(rankings.top_50, player)
 

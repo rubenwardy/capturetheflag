@@ -37,7 +37,7 @@ minetest.is_protected = function(pos, pname, ...)
 	local pteam = ctf_teams.get(pname)
 
 	if pteam and not ctf_core.pos_inside(pos, ctf_teams.get_team_territory(pteam)) then
-		minetest.chat_send_player(pname, "You can't interact with the other side of the barrier!")
+		minetest.chat_send_player(pname, "You can't interact outside of your team territory during build time!")
 
 		return true
 	else

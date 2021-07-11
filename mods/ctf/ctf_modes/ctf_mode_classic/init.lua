@@ -115,6 +115,7 @@ local function end_combat_mode(player, killer)
 	return true
 end
 
+local flag_captured = false
 local next_team = "red"
 ctf_modebase.register_mode("classic", {
 	map_whitelist = {"bridge", "caverns", "coast", "iceage", "two_hills", "plains", "desert_spikes"},
@@ -151,6 +152,8 @@ ctf_modebase.register_mode("classic", {
 	commands = {"ctf_start", "rank", "r"},
 	on_new_match = function(mapdef)
 		rankings.next_match()
+
+		flag_captured = false
 
 		build_timer.start(mapdef)
 
@@ -238,8 +241,8 @@ ctf_modebase.register_mode("classic", {
 			end_combat_mode(player)
 		end
 
-		if not build_timer.in_progress() then
-			if ctf_modebase.prep_delayed_respawn(player) then
+		if ctf_modebase.prep_delayed_respawn(player) then
+			if not build_timer.in_progress() then
 				rankings.add(player, {deaths = 1})
 			end
 		end
@@ -247,6 +250,10 @@ ctf_modebase.register_mode("classic", {
 	on_respawnplayer = function(player)
 		if not build_timer.in_progress() then
 			if ctf_modebase.delay_respawn(player, 7, 4) then
+				return true
+			end
+		else
+			if ctf_modebase.delay_respawn(player, 3) then
 				return true
 			end
 		end
@@ -284,6 +291,8 @@ ctf_modebase.register_mode("classic", {
 	on_flag_capture = function(player, captured_team)
 		local pteam = ctf_teams.get(player)
 		mode_classic.celebrate_team(pteam)
+
+		flag_captured = true
 
 		flag_huds.update()
 
@@ -349,6 +358,8 @@ ctf_modebase.register_mode("classic", {
 		end
 	end,
 	on_punchplayer = function(player, hitter, ...)
+		if flag_captured then return true end
+
 		if not hitter:is_player() or player:get_hp() <= 0 then return end
 
 		local pname, hname = player:get_player_name(), hitter:get_player_name()

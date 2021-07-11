@@ -151,13 +151,13 @@ ctf_classes.register("sniper", {
 	}
 })
 ]]--
-
---[[ctf_classes.register("rocketeer", {
+ctf_classes.register("rocketeer", {
 	description = "Rocketeer",
 	pros = { "Can craft rockets" },
 	cons = {},
 	color = "#fa0",
 	properties = {
+		allow_rockets = true,
 		initial_stuff = {
 			"shooter_rocket:rocket_gun_loaded",
 			"shooter_rocket:rocket 4",
@@ -165,6 +165,7 @@ ctf_classes.register("sniper", {
 
 		additional_item_blacklist = {
 			"shooter_rocket:rocket_gun",
+			"shooter_rocket:rocket"
 		},
 
 		allowed_guns = {
@@ -177,4 +178,4 @@ ctf_classes.register("sniper", {
 			"shooter_rocket:rocket"
 		},
 	},
-})]]
+})

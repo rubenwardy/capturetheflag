@@ -107,7 +107,7 @@ local function end_combat_mode(player, killer)
 				rankings.add(player, {score = -math.ceil(killscore/2)})
 			end
 
-			ctf_kill_list.add_kill("", "ctf_modebase_skull.png", player)
+			ctf_kill_list.add_kill("", "ctf_modebase_skull.png", player) -- suicide
 		end
 
 		for _, pname in pairs(attackers) do
@@ -245,7 +245,9 @@ ctf_modebase.register_mode("classic", {
 		if reason.type == "punch" and reason.object and reason.object:is_player() then
 			end_combat_mode(player, reason.object)
 		else
-			end_combat_mode(player)
+			if not end_combat_mode(player) then
+				ctf_kill_list.add_kill("", "ctf_modebase_skull.png", player)
+			end
 		end
 
 		if ctf_modebase.prep_delayed_respawn(player) then

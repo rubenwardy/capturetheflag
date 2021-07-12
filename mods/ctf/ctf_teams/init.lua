@@ -3,22 +3,27 @@ ctf_teams = {
 		red = {
 			color = "#dc0f0f",
 			color_hex = 0x000,
+			irc_color = 4,
 		},
 		green = {
 			color = "#00bb00",
 			color_hex = 0x000,
+			irc_color = 3,
 		},
 		blue = {
 			color = "#0062ff",
 			color_hex = 0x000,
+			irc_color = 2,
 		},
 		orange = {
 			color = "#ff4e00",
 			color_hex = 0x000,
+			irc_color = 8,
 		},
 		purple = {
 			color = "#6f00a7",
 			color_hex = 0x000,
+			irc_color = 6,
 		},
 	},
 	teamlist = {},

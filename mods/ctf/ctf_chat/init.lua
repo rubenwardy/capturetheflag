@@ -29,7 +29,8 @@ local function me_func() end
 if minetest.global_exists("irc") then
 	function irc.playerMessage(name, message)
 		local pteam = ctf_teams.get(name)
-		local color = pteam and ctf_teams.team[pteam].color or "#FFF"
+
+		local color = pteam and ctf_teams.team[pteam].irc_color or 16
 		local clear = "\x0F"
 		if color then
 			color = "\x03" .. color
@@ -44,8 +45,10 @@ if minetest.global_exists("irc") then
 
 	me_func = function(...)
 		local message = irc.playerMessage(...)
+		local start_escape = message:sub(1, message:find("<")-1)
 
-		message = "*" .. message:sub(message:find(" "))
+		-- format is: \startescape < \endescape playername \startescape > \endescape
+		message = message:gsub("\15(.-)"..start_escape, "* %1"):gsub("[<>]", "")
 
 		irc.say(message)
 	end

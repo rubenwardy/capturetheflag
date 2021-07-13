@@ -18,15 +18,16 @@ function ctf_modebase.drop_flags(pname, capture)
 			if capture then
 				ctf_modebase.flag_captured[flagteam] = true
 			else
-				local fpos = vector.offset(ctf_map.current_map.teams[flagteam].flag_pos, 0, 1, 0)
-				local flag = minetest.get_node(fpos)
+				local fpos = minetest.find_node_near(ctf_map.current_map.teams[flagteam].flag_pos, 1,
+						"ctf_modebase:flag_captured_top", true)
 
-				if flag.name == "ctf_modebase:flag_captured_top" then
+				if fpos then
+					local flag = minetest.get_node(fpos)
+
 					flag.name = "ctf_modebase:flag_top_"..flagteam
 					minetest.set_node(fpos, flag)
 				else
-					ctf_core.error("ctf_modebase:flag_taking", "Failed to return flag to its position. "..
-							dump(flag.name).." - "..dump(fpos).." -> "..dump(ctf_map.current_map.teams[flagteam].flag_pos))
+					ctf_core.error("ctf_modebase:flag_taking", "Failed to return flag to its base!")
 				end
 			end
 		end

@@ -94,6 +94,7 @@ for name, def in pairs(ctf_teams.team) do
 		paramtype2 = "facedir",
 		walkable = false,
 		buildable_to = false,
+		pointable = ctf_core.settings.server_mode ~= "mapedit",
 		tiles = {
 			"default_wood.png",
 			"default_wood.png",

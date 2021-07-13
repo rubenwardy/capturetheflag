@@ -39,7 +39,7 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 		end
 	end
 
-	minetest.after(0, function()
+	minetest.after(3, function()
 		for _, object_drop in pairs(minetest.get_objects_in_area(mapmeta.pos1, mapmeta.pos2)) do
 			if not object_drop:is_player() then
 				local drop = object_drop:get_luaentity()
@@ -51,7 +51,7 @@ function ctf_map.place_map(idx, dirname, mapmeta)
 		end
 	end)
 
-	minetest.after(3, function()
+	minetest.after(7, function()
 		minetest.fix_light(mapmeta.pos1, mapmeta.pos2)
 	end)
 

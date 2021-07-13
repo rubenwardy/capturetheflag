@@ -48,7 +48,9 @@ end)
 function HumanReadable(str)
 	local out = str:gsub("(%a)([%w'-]*)", function(a,b) return a:upper()..b:lower() end)
 
-	return out:gsub("_", " ")
+	out = out:gsub("_", " ")
+
+	return out
 end
 
 --

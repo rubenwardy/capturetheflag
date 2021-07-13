@@ -26,7 +26,7 @@ function ctf_modebase.drop_flags(pname, capture)
 					minetest.set_node(fpos, flag)
 				else
 					ctf_core.error("ctf_modebase:flag_taking", "Failed to return flag to its position. "..
-							dump(flag.name).." - "..dump(fpos).." -> "..ctf_map.current_map.teams[flagteam].flag_pos)
+							dump(flag.name).." - "..dump(fpos).." -> "..dump(ctf_map.current_map.teams[flagteam].flag_pos))
 				end
 			end
 		end

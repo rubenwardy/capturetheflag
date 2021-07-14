@@ -178,7 +178,7 @@ function ctf_map.save_map(mapmeta)
 			mapmeta.teams[id] = nil
 		else
 			mapmeta.teams[id].flag_pos = vector.subtract(
-				minetest.find_node_near(def.flag_pos, 3, "group:flag_bottom", true),
+				assert(minetest.find_node_near(def.flag_pos, 3, {"group:flag_bottom"}, true), "Failed to find flag for team "..id),
 				mapmeta.offset
 			)
 

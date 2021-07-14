@@ -19,7 +19,7 @@ function ctf_modebase.drop_flags(pname, capture)
 				ctf_modebase.flag_captured[flagteam] = true
 			else
 				local fpos = minetest.find_node_near(ctf_map.current_map.teams[flagteam].flag_pos, 1,
-						"ctf_modebase:flag_captured_top", true)
+						{"group:flag_top"}, true)
 
 				if fpos then
 					local flag = minetest.get_node(fpos)

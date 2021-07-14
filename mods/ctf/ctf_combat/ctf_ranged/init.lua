@@ -112,7 +112,7 @@ ctf_ranged.register_simple_weapon("ctf_ranged:pistol", {
 	description = "Pistol",
 	texture = "ctf_ranged_pistol.png",
 	fire_sound = "ctf_ranged_pistol",
-	rounds = 30,
+	rounds = 50,
 	range = 75,
 	damage = 1,
 	automatic = true,
@@ -126,8 +126,8 @@ ctf_ranged.register_simple_weapon("ctf_ranged:rifle", {
 	fire_sound = "ctf_ranged_rifle",
 	rounds = 40,
 	range = 150,
-	damage = 6,
-	fire_interval = 0.7,
+	damage = 4,
+	fire_interval = 0.8,
 })
 
 ctf_ranged.register_simple_weapon("ctf_ranged:shotgun", {
@@ -154,8 +154,8 @@ ctf_ranged.register_simple_weapon("ctf_ranged:smg", {
 		spread = 1,
 	},
 	automatic = true,
-	rounds = 40,
+	rounds = 30,
 	range = 75,
-	damage = 1,
+	damage = 2,
 	fire_interval = 0.1,
 })

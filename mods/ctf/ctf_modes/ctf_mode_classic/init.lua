@@ -125,7 +125,10 @@ end
 local flag_captured = false
 local next_team = "red"
 ctf_modebase.register_mode("classic", {
-	map_whitelist = {"bridge", "caverns", "coast", "iceage", "two_hills", "plains", "desert_spikes"},
+	map_whitelist = {
+		"bridge", "caverns", "coast", "iceage", "two_hills", "plains", "desert_spikes",
+		"river_valley",
+	},
 	treasures = {
 		["default:ladder_wood"] = {                max_count = 20, rarity = 0.3, max_stacks = 5},
 		["default:torch" ] = {                max_count = 20, rarity = 0.3, max_stacks = 5},
@@ -139,7 +142,7 @@ ctf_modebase.register_mode("classic", {
 		["default:axe_steel"   ] = {rarity = 0.4, max_stacks = 2},
 
 		["ctf_melee:sword_steel"  ] = {rarity = 0.2  , max_stacks = 2},
-		["ctf_melee:sword_mese"   ] = {rarity = 0.05 , max_stacks = 1},
+		["ctf_melee:sword_mese"   ] = {rarity = 0.01 , max_stacks = 1},
 		["ctf_melee:sword_diamond"] = {rarity = 0.001, max_stacks = 1},
 
 		["ctf_ranged:pistol_loaded" ] = {rarity = 0.2 , max_stacks = 2},

@@ -113,19 +113,20 @@ function ctf_modebase.start_new_match(show_form, new_mode, specific_map)
 			ctf_modebase.current_mode = new_mode
 			RunCallbacks(ctf_modebase.registered_on_new_mode, new_mode, old_mode)
 		end
-		local map = ctf_modebase.place_map(new_mode or ctf_modebase.current_mode, specific_map)
 
-		give_initial_stuff.reset_stuff_providers()
+		ctf_modebase.place_map(new_mode or ctf_modebase.current_mode, specific_map, function(map)
+			give_initial_stuff.reset_stuff_providers()
 
-		give_initial_stuff.register_stuff_provider(function()
-			return map.initial_stuff or {}
+			give_initial_stuff.register_stuff_provider(function()
+				return map.initial_stuff or {}
+			end)
+
+			RunCallbacks(ctf_modebase.registered_on_new_match, map, old_map)
+
+			ctf_teams.allocate_teams(map.teams)
+
+			ctf_modebase.current_mode_matches = ctf_modebase.current_mode_matches + 1
 		end)
-
-		RunCallbacks(ctf_modebase.registered_on_new_match, map, old_map)
-
-		ctf_teams.allocate_teams(map.teams)
-
-		ctf_modebase.current_mode_matches = ctf_modebase.current_mode_matches + 1
 	end
 
 	-- Show mode selection form every 'ctf_modebase.MAPS_PER_MODE'-th match
@@ -182,7 +183,7 @@ function ctf_modebase.show_modechoose_form(player)
 end
 
 --- @param mode_def table | string
-function ctf_modebase.place_map(mode_def, mapidx)
+function ctf_modebase.place_map(mode_def, mapidx, callback)
 	-- Convert name of mode into it's def
 	if type(mode_def) == "string" then
 		mode_def = ctf_modebase.modes[mode_def]
@@ -209,36 +210,36 @@ function ctf_modebase.place_map(mode_def, mapidx)
 		mapidx = table.indexof(dirlist, mapidx)
 	end
 
-	local map = ctf_map.place_map(mapidx, dirlist[mapidx])
+	ctf_map.place_map(mapidx, dirlist[mapidx], function(map)
+		table.insert(maps_placed, dirlist[mapidx])
 
-	table.insert(maps_placed, dirlist[mapidx])
+		-- Set time, time_speed, skyboxes, and physics
 
-	-- Set time, time_speed, skyboxes, and physics
+		minetest.set_timeofday(map.start_time/24000)
 
-	minetest.set_timeofday(map.start_time/24000)
+		for _, player in pairs(minetest.get_connected_players()) do
+			local name = PlayerName(player)
 
-	for _, player in pairs(minetest.get_connected_players()) do
-		local name = PlayerName(player)
+			skybox.set(player, table.indexof(ctf_map.skyboxes, map.skybox)-1)
 
-		skybox.set(player, table.indexof(ctf_map.skyboxes, map.skybox)-1)
-
-		physics.set(name, "ctf_modebase:map_physics", {
-			speed = map.phys_speed,
-			jump = map.phys_jump,
-			gravity = map.phys_gravity,
-		})
-
-		if mode_def.physics then
-			player:set_physics_override({
-				sneak_glitch = mode_def.physics.sneak_glitch or false,
-				new_move = mode_def.physics.new_move or true
+			physics.set(name, "ctf_modebase:map_physics", {
+				speed = map.phys_speed,
+				jump = map.phys_jump,
+				gravity = map.phys_gravity,
 			})
+
+			if mode_def.physics then
+				player:set_physics_override({
+					sneak_glitch = mode_def.physics.sneak_glitch or false,
+					new_move = mode_def.physics.new_move or true
+				})
+			end
+
+			minetest.settings:set("time_speed", map.time_speed * 72)
 		end
 
-		minetest.settings:set("time_speed", map.time_speed * 72)
-	end
+		ctf_map.announce_map(map)
 
-	ctf_map.announce_map(map)
-
-	return map
+		callback(map)
+	end)
 end

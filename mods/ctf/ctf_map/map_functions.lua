@@ -11,55 +11,65 @@ function ctf_map.announce_map(map)
 end
 
 function ctf_map.place_map(idx, dirname, mapmeta)
+	local callback
+
+	if type(mapmeta) == "function" then
+		callback, mapmeta = mapmeta, nil
+	end
+
 	if not mapmeta then
 		mapmeta = ctf_map.load_map_meta(idx, dirname)
 	end
 
 	local schempath = ctf_map.maps_dir .. dirname .. "/map.mts"
-	local res = minetest.place_schematic(mapmeta.pos1, schempath)
+	ctf_map.emerge_with_callbacks(nil, mapmeta.pos1, mapmeta.pos2, function(ctx)
+		local res = minetest.place_schematic(mapmeta.pos1, schempath)
 
-	for name, def in pairs(mapmeta.teams) do
-		local p = def.flag_pos
+		minetest.log("action", string.format("Placed map %s in %.2fms", dirname, (os.clock() - ctx.start_time) * 1000))
 
-		local node = minetest.get_node(p)
+		for name, def in pairs(mapmeta.teams) do
+			local p = def.flag_pos
 
-		if node.name ~= "ctf_modebase:flag" then
-			minetest.log("error", name.."'s flag was set incorrectly, or there is no flag node placed")
-		else
-			minetest.set_node(vector.offset(p, 0, 1, 0), {name="ctf_modebase:flag_top_"..name, param2 = node.param2})
+			local node = minetest.get_node(p)
 
-			-- Place flag base if needed
-			if tonumber(mapmeta.map_version or "0") < 2 then
-				for x = -2, 2 do
-					for z = -2, 2 do
-						minetest.set_node(vector.offset(p, x, -1, z), {name = def.base_node or "ctf_map:cobble"})
+			if node.name ~= "ctf_modebase:flag" then
+				minetest.log("error", name.."'s flag was set incorrectly, or there is no flag node placed")
+			else
+				minetest.set_node(vector.offset(p, 0, 1, 0), {name="ctf_modebase:flag_top_"..name, param2 = node.param2})
+
+				-- Place flag base if needed
+				if tonumber(mapmeta.map_version or "0") < 2 then
+					for x = -2, 2 do
+						for z = -2, 2 do
+							minetest.set_node(vector.offset(p, x, -1, z), {name = def.base_node or "ctf_map:cobble"})
+						end
 					end
 				end
 			end
 		end
-	end
 
-	minetest.after(3, function()
-		for _, object_drop in pairs(minetest.get_objects_in_area(mapmeta.pos1, mapmeta.pos2)) do
-			if not object_drop:is_player() then
-				local drop = object_drop:get_luaentity()
+		minetest.after(3, function()
+			for _, object_drop in pairs(minetest.get_objects_in_area(mapmeta.pos1, mapmeta.pos2)) do
+				if not object_drop:is_player() then
+					local drop = object_drop:get_luaentity()
 
-				if drop and drop.name == "__builtin:item" then
-					object_drop:remove()
+					if drop and drop.name == "__builtin:item" then
+						object_drop:remove()
+					end
 				end
 			end
-		end
+		end)
+
+		minetest.after(7, function()
+			minetest.fix_light(mapmeta.pos1, mapmeta.pos2)
+		end)
+
+		assert(res, "Unable to place schematic, does the MTS file exist? Path: " .. schempath)
+
+		ctf_map.current_map = mapmeta
+
+		callback(mapmeta)
 	end)
-
-	minetest.after(7, function()
-		minetest.fix_light(mapmeta.pos1, mapmeta.pos2)
-	end)
-
-	assert(res, "Unable to place schematic, does the MTS file exist? Path: " .. schempath)
-
-	ctf_map.current_map = mapmeta
-
-	return mapmeta
 end
 
 --
@@ -74,7 +84,7 @@ function ctf_map.remove_barrier(mapmeta, pos2)
 	local pos1 = mapmeta
 
 	if not pos2 then
-		pos1, pos2 = mapmeta.pos1, mapmeta.pos2
+		pos1, pos2 = mapmeta.barrier_area.pos1, mapmeta.barrier_area.pos2
 	end
 
 	local vm = VoxelManip()

@@ -21,7 +21,7 @@ function ctf_gui.init()
 			context[pname].on_quit(pname, fields)
 		end
 
-		if context[pname].formname == formname then
+		if context[pname].formname == formname and context[pname].elements then
 			for name, info in pairs(fields) do
 				if context[pname].elements[name] and context[pname].elements[name].func then
 					if context[pname].privs then

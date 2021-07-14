@@ -47,7 +47,9 @@ function ctf_map.show_map_editor(player)
 							phys_jump     = 1,
 							phys_gravity  = 1,
 							--
-							chests        = {}
+							chests        = {},
+							teams         = {},
+							barrier_area  = {pos1 = pos1, pos2 = pos2},
 						}
 
 						minetest.chat_send_player(pname, "Build away!")
@@ -68,32 +70,32 @@ function ctf_map.show_map_editor(player)
 					end)
 
 					minetest.after(0.5, function()
-						local map = ctf_map.place_map(table.indexof(dirlist, fields.currentmaps), fields.currentmaps)
+						ctf_map.place_map(table.indexof(dirlist, fields.currentmaps), fields.currentmaps, function(map)
+							minetest.after(2, function()
+								ctf_map.announce_map(map)
 
-						minetest.after(2, function()
-							ctf_map.announce_map(map)
+								minetest.close_formspec(pname, "ctf_map:loading")
 
-							minetest.close_formspec(pname, "ctf_map:loading")
+								p:set_pos(vector.add(map.pos1, vector.divide(map.size, 2)))
 
-							p:set_pos(vector.add(map.pos1, vector.divide(map.size, 2)))
+								skybox.set(p, table.indexof(ctf_map.skyboxes, map.skybox)-1)
 
-							skybox.set(p, table.indexof(ctf_map.skyboxes, map.skybox)-1)
+								physics.set(pname, "ctf_map_editor_speed", {
+									speed = map.phys_speed,
+									jump = map.phys_jump,
+									gravity = map.phys_gravity,
+								})
 
-							physics.set(pname, "ctf_map_editor_speed", {
-								speed = map.phys_speed,
-								jump = map.phys_jump,
-								gravity = map.phys_gravity,
-							})
+								minetest.settings:set("time_speed", map.time_speed * 72)
+								minetest.registered_chatcommands["time"].func(pname, tostring(map.start_time))
+							end)
 
-							minetest.settings:set("time_speed", map.time_speed * 72)
-							minetest.registered_chatcommands["time"].func(pname, tostring(map.start_time))
+							minetest.after(10, function()
+								minetest.fix_light(map.pos1, map.pos2)
+							end)
+
+							context[pname] = map
 						end)
-
-						minetest.after(10, function()
-							minetest.fix_light(map.pos1, map.pos2)
-						end)
-
-						context[pname] = map
 					end)
 				end,
 			},
@@ -392,6 +394,21 @@ function ctf_map.show_map_save_form(player, scroll_pos)
 		end
 	end
 	idx = idx + 1
+
+	elements.barrier_area = {
+		type = "button", exit = true,
+		label = "Barrier Area - " .. minetest.pos_to_string(context[player].barrier_area.pos1, 0) ..
+				" - " .. minetest.pos_to_string(context[player].barrier_area.pos2, 0),
+		pos = {0, idx},
+		size = {9 - (ctf_gui.SCROLLBAR_WIDTH + 0.1), ctf_gui.ELEM_SIZE[2]},
+		func = function(pname)
+			ctf_map.get_pos_from_player(pname, 2, function(p, positions)
+				context[pname].barrier_area.pos1 = positions[1]
+				context[pname].barrier_area.pos2 = positions[2]
+			end)
+		end,
+	}
+	idx = idx + 1.5
 
 	-- FINISH EDITING
 	elements.finishediting = {

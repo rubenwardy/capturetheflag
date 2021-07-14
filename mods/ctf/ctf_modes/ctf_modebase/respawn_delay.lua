@@ -1,6 +1,30 @@
 local respawn_delay = {}
 local hud = mhud.init()
 
+minetest.register_entity("ctf_modebase:respawn_movement_freezer", {
+	initial_properties = {
+		physical = false,
+		is_visible = false,
+		makes_footstep_sound = false,
+		backface_culling = false,
+		static_save = false,
+	},
+	on_attach_child = function(self)
+		if self.handled_children then return end
+
+		self.handled_children = true
+
+		minetest.after(0.9, function()
+			if self.object and self.object:get_luaentity() then
+				for _, child in pairs(self.object:get_children()) do
+					child:set_detach()
+				end
+				self.object:remove()
+			end
+		end)
+	end
+})
+
 local function run_respawn_timer(pname)
 	if not respawn_delay[pname] then return end
 
@@ -56,7 +80,10 @@ function ctf_modebase.prep_delayed_respawn(player)
 			pointable = false,
 		})
 
+		local obj = minetest.add_entity(player:get_pos(), "ctf_modebase:respawn_movement_freezer")
+
 		physics.set(pname, "ctf_modebase:respawn_freeze", {speed = 0, jump = 0, gravity = 0})
+		player:set_attach(obj)
 
 		return true
 	end
@@ -66,6 +93,8 @@ end
 function ctf_modebase.delay_respawn(player, time, immunity_after)
 	player = PlayerObj(player)
 	local pname = player:get_player_name()
+
+	assert(time >= 1, "Delay time must be >= 1!")
 
 	if respawn_delay[pname] then
 		if respawn_delay[pname].state == "done" then
